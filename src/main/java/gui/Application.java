@@ -7,6 +7,7 @@ import javax.swing.*;
  */
 public class Application {
 
+    // Set application title.
     private final static String NAME_OF_CUI = "Chita";
 
     public static void main( String[] args ) {
@@ -14,7 +15,7 @@ public class Application {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                new DownloadManagerGUI(NAME_OF_CUI);
+                 new DownloadManagerGUI(NAME_OF_CUI);
             }
         });
 
