@@ -107,11 +107,6 @@ public class DownloadManagerGUI extends JFrame {
 
         downloadPanel.setDownloadPanelListener(new DownloadPanelListener() {
             @Override
-            public void rowSelectedEventOccured() {
-           //     updateButtons();
-            }
-
-            @Override
             public void stateChangedEventOccured(DownloadState downloadState) {
                 updateButtons(downloadState);
             }
@@ -133,46 +128,6 @@ public class DownloadManagerGUI extends JFrame {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
     }
-
-    /* Update is called when a Download notifies its
-       observers of any changes. */
-  //  public void update(Observable o, Object arg) {
-        // Update buttons if the selected download has changed.
-    //    if (selectedDownload != null && selectedDownload.equals(o))
-    //        SwingUtilities.invokeLater(new Runnable() {
-    //            public void run() {
-    //                updateButtons();
-    //            }
-  //          });
-  //  }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Pause the selected download.
-  //  private void actionPause() {
-   //     selectedDownload.pause();
-   //     updateButtons();
-  //  }
-
-    // Resume the selected download.
-   // private void actionResume() {
-   //     selectedDownload.resume();
-   //     updateButtons();
-   // }
-
-    // Cancel the selected download.
-  //  private void actionCancel() {
-   //     selectedDownload.cancel();
-     //   updateButtons();
- //   }
-
-    // Clear the selected download.
- //   private void actionClear() {
-  //      clearing = true;
-  //      tableModel.clearDownload(table.getSelectedRow());
-  //      clearing = false;
-  //      selectedDownload = null;
-  //      updateButtons();
-  //  }
 
     /* Update each button's state based off of the
        currently selected download's status. */

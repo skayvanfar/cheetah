@@ -109,7 +109,7 @@ public class DownloadPanel extends JPanel implements Observer {
             selectedDownload =
                     downloadsTableModel.getDownload(downloadTable.getSelectedRow());
             selectedDownload.addObserver(DownloadPanel.this);
-            downloadPanelListener.rowSelectedEventOccured();
+            downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
         }
     }
 
@@ -125,7 +125,6 @@ public class DownloadPanel extends JPanel implements Observer {
         if (selectedDownload != null && selectedDownload.equals(o))
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-           //         updateButtons();
                     downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
                 }
             });
