@@ -31,12 +31,6 @@ public class DownloadManagerGUI extends JFrame {
     private StatusPanel statusPanel;
     private AddNewDownloadDialog addNewDownloadDialog;
 
-////////////////////////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
@@ -169,7 +163,7 @@ public class DownloadManagerGUI extends JFrame {
         JMenu showMenu = new JMenu("Show");
         JMenuItem prefsItem = new JMenuItem("Preferences...");
 
-        JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem("Person Form");
+        JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem("Category");
         showFormItem.setSelected(true);
 
         showMenu.add(showFormItem);

@@ -5,9 +5,9 @@ package enums;
  */
 public enum DownloadState {
     // These are the status codes.
-    DOWNLOADING,
-    PAUSED,
-    COMPLETE,
-    CANCELLED,
-    ERROR;
+    DOWNLOADING,  // 0
+    PAUSED,  // 1
+    COMPLETE, // 2
+    CANCELLED, // 3
+    ERROR; // 4
 }

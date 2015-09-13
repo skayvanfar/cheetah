@@ -24,6 +24,13 @@ public class Download extends Observable implements Runnable {
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
     private DownloadState status; // current status of download
+    private String transferRate; // rate of transfer
+
+    private Thread downloadwatch;
+
+    // if really any thing changed //////////////////////////////////////////////
+  //  private boolean changed = false;
+    private float previousProgress;
 
     // Constructor for Download.
     public Download(URL url) {
@@ -34,6 +41,37 @@ public class Download extends Observable implements Runnable {
 
         // Begin the download.
         download();
+
+        downloadwatch = new Thread(new Runnable() {
+            ///////////////////////////////////////////////////////////////////////////////////// Download Watch
+            ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
+
+            @Override
+            public void run() {
+                do {
+                    Integer previousDownloaded = threadLocal.get();
+
+                    if (previousDownloaded == null) {
+                        previousDownloaded = 0;
+                    }
+                    int newDownloaded = downloaded;
+                    int differenceDownloaded = (newDownloaded - previousDownloaded) / 1024; // in KB
+
+                    // save new downloaded into threadLocal
+                    threadLocal.set(newDownloaded);
+
+                    // calculate differenceDownloaded
+                    transferRate = differenceDownloaded + "KB/sec";
+                    stateChanged();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } while (downloaded != size); ////////////////////// ????????
+            }
+        });
+        downloadwatch.start();
     }
 
     // Get this download's URL.
@@ -51,6 +89,10 @@ public class Download extends Observable implements Runnable {
         return ((float) downloaded / size) * 100;
     }
 
+    public String getTransferRate() {
+        return transferRate;
+    }
+
     // Get this download's status.
     public DownloadState getStatus() {
         return status;
@@ -60,6 +102,11 @@ public class Download extends Observable implements Runnable {
     public void pause() {
         status = DownloadState.PAUSED;
         stateChanged();
+        try {
+            downloadwatch.wait(); /////?????????????????????????????///
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // Resume this download.
@@ -67,18 +114,21 @@ public class Download extends Observable implements Runnable {
         status = DownloadState.DOWNLOADING;
         stateChanged();
         download();
+        downloadwatch.resume(); /////???????????????????????///
     }
 
     // Cancel this download.
     public void cancel() {
         status = DownloadState.CANCELLED;
         stateChanged();
+        downloadwatch.stop(); /////???????????????????????///
     }
 
     // Mark this download as having an error.
     private void error() {
         status = DownloadState.ERROR;
         stateChanged();
+        downloadwatch.stop(); /////???????????????????????///
     }
 
     // Start or resume downloading.
@@ -151,7 +201,9 @@ public class Download extends Observable implements Runnable {
                 // Write buffer to file.
                 file.write(buffer, 0, read);
                 downloaded += read;
-                stateChanged();
+                if (getProgress() - previousProgress > 1) { ///////////////////////////////////////// when 1% changed
+                    stateChanged();
+                }
             }
 
       /* Change status to complete if this point was
@@ -181,6 +233,9 @@ public class Download extends Observable implements Runnable {
 
     // Notify observers that this download's status has changed.
     private void stateChanged() {
+        /////////////////////////////////////////////// save previous progress
+        previousProgress = getProgress();
+
         setChanged();
         notifyObservers();
     }

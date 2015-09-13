@@ -13,10 +13,10 @@ import java.util.List;
 public class DownloadsTableModel extends AbstractTableModel implements Observer {
 
     // These are the names for the table's columns.
-    private static final String[] columnNames = {"URL", "Size", "Progress", "Status"};
+    private static final String[] columnNames = {"URL", "Size", "Progress", "Transfer Rate","Status"};
 
     // These are the classes for each column's values.
-    private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class};
+    private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class, String.class};
 
     // The table's list of downloads.
     // data
@@ -82,8 +82,10 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
                 return (size == -1) ? "" : Integer.toString(size);
             case 2: // Progress
                 return new Float(download.getProgress());
-            case 3: // Status
-                return Download.STATUSES[download.getStatus().ordinal()]; ///???????????????????????????????????????????///
+            case 3: // Transfer Rate ////////////////////////////////////////
+                return download.getTransferRate();
+            case 4: // Status
+                return Download.STATUSES[download.getStatus().ordinal()];
         }
         return null;
     }

@@ -37,7 +37,7 @@ public class AddNewDownloadDialog extends JDialog {
             }
         });
 
-        setSize(600, 230);
+        setSize(480, 74);
         setLocationRelativeTo(parent);
     }
 

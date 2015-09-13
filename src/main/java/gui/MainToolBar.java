@@ -1,6 +1,7 @@
 package gui;
 
 import gui.listener.MainToolbarListener;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,13 +23,36 @@ public class MainToolBar extends JToolBar implements ActionListener {
     public MainToolBar() {
         setBorder(BorderFactory.createEtchedBorder());
 
-        newDownloadButton = new JButton("New Download");
+        newDownloadButton = new JButton("Add URL");
+        newDownloadButton.setIcon(Utils.createIcon("/images/primo/label_blue_new.png"));
+        newDownloadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        newDownloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        newDownloadButton.setToolTipText("Add URL");
 
         // These are the buttons for managing the selected download.
         pauseButton = new JButton("Pause");
+        pauseButton.setIcon(Utils.createIcon("/images/primo/button_blue_pause.png"));
+        pauseButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        pauseButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        pauseButton.setToolTipText("Pause");
+
         resumeButton = new JButton("Resume");
+        resumeButton.setIcon(Utils.createIcon("/images/primo/others/download.png"));
+        resumeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        resumeButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        resumeButton.setToolTipText("Resume");
+
         cancelButton = new JButton("Cancel");
+        cancelButton.setIcon(Utils.createIcon("/images/primo/button_blue_stop.png"));
+        cancelButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancelButton.setToolTipText("Cancel");
+
         clearButton = new JButton("Clear");
+        clearButton.setIcon(Utils.createIcon("/images/primo/others/delete.png"));
+        clearButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        clearButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        clearButton.setToolTipText("Clear");
 
         newDownloadButton.addActionListener(this);
         pauseButton.addActionListener(this);
