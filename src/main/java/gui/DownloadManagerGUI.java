@@ -4,6 +4,8 @@ import enums.DownloadState;
 import gui.listener.AddNewDownloadListener;
 import gui.listener.DownloadPanelListener;
 import gui.listener.MainToolbarListener;
+import gui.listener.PreferencesListener;
+import gui.preference.PreferenceDialog;
 import model.Download;
 
 import javax.swing.*;
@@ -14,6 +16,7 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.prefs.Preferences;
 
 /**
  * Created by Saeed Kayvanfar on 9/10/2015.
@@ -30,6 +33,8 @@ public class DownloadManagerGUI extends JFrame {
     private JSplitPane mainSplitPane;
     private StatusPanel statusPanel;
     private AddNewDownloadDialog addNewDownloadDialog;
+    private PreferenceDialog preferenceDialog;
+    private Preferences preferences;
 
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
@@ -50,6 +55,9 @@ public class DownloadManagerGUI extends JFrame {
         mainTabPane.addTab("Download Panel", downloadPanel);
         mainTabPane.addTab("Messages", messagePanel);
 
+        preferenceDialog = new PreferenceDialog(this);
+
+        preferences = Preferences.userRoot().node("db"); // must db ===== MainFrame name ?????????????????????????????????
 
         addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
             @Override
@@ -106,6 +114,13 @@ public class DownloadManagerGUI extends JFrame {
             }
         });
 
+        preferenceDialog.setPreferencesListener(new PreferencesListener() {
+            @Override
+            public void preferencesSet(String user, String password, int port) {
+                System.out.println("in listener pref"); // TODO
+            }
+        });
+
         // Handle window closing events.
         addWindowListener(new WindowAdapter() {
             @Override
@@ -154,6 +169,8 @@ public class DownloadManagerGUI extends JFrame {
         JMenuItem importDataItem = new JMenuItem("Import Data...");
         JMenuItem exitItem = new JMenuItem("Exit");
 
+        exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/primo48/others/button_cancel.png"))); // NOI18N
+
         fileMenu.add(exportDataItem);
         fileMenu.add(importDataItem);
         fileMenu.addSeparator();
@@ -175,7 +192,7 @@ public class DownloadManagerGUI extends JFrame {
 
         prefsItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-       //         prefsDialog.setVisible(true);
+                preferenceDialog.setVisible(true);
             }
         });
 

@@ -78,8 +78,8 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
             case 0: // URL
                 return download.getUrl();
             case 1: // Size
-                int size = download.getSize();
-                return (size == -1) ? "" : Integer.toString(size);
+                String size = download.getSize();
+                return (size.equals("-1")) ? "" : size;
             case 2: // Progress
                 return new Float(download.getProgress());
             case 3: // Transfer Rate ////////////////////////////////////////

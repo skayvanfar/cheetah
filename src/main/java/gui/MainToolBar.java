@@ -23,36 +23,38 @@ public class MainToolBar extends JToolBar implements ActionListener {
     public MainToolBar() {
         setBorder(BorderFactory.createEtchedBorder());
 
-        newDownloadButton = new JButton("Add URL");
-        newDownloadButton.setIcon(Utils.createIcon("/images/primo/label_blue_new.png"));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
+        newDownloadButton = new JButton(bundle.getString("mainToolBar.newDownloadButton.label"));
+        newDownloadButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.newDownloadButton.iconPath")));
         newDownloadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         newDownloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        newDownloadButton.setToolTipText("Add URL");
+        newDownloadButton.setToolTipText(bundle.getString("mainToolBar.newDownloadButton.toolTip"));
 
         // These are the buttons for managing the selected download.
-        pauseButton = new JButton("Pause");
-        pauseButton.setIcon(Utils.createIcon("/images/primo/button_blue_pause.png"));
+        pauseButton = new JButton(bundle.getString("mainToolBar.pauseButton.label"));
+        pauseButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.pauseButton.iconPath")));
         pauseButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         pauseButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        pauseButton.setToolTipText("Pause");
+        pauseButton.setToolTipText(bundle.getString("mainToolBar.pauseButton.toolTip"));
 
-        resumeButton = new JButton("Resume");
-        resumeButton.setIcon(Utils.createIcon("/images/primo/others/download.png"));
+        resumeButton = new JButton(bundle.getString("mainToolBar.resumeButton.label"));
+        resumeButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.resumeButton.iconPath")));
         resumeButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         resumeButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        resumeButton.setToolTipText("Resume");
+        resumeButton.setToolTipText(bundle.getString("mainToolBar.resumeButton.toolTip"));
 
-        cancelButton = new JButton("Cancel");
-        cancelButton.setIcon(Utils.createIcon("/images/primo/button_blue_stop.png"));
+        cancelButton = new JButton(bundle.getString("mainToolBar.cancelButton.label"));
+        cancelButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.cancelButton.iconPath")));
         cancelButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setToolTipText("Cancel");
+        cancelButton.setToolTipText(bundle.getString("mainToolBar.cancelButton.toolTip"));
 
-        clearButton = new JButton("Clear");
-        clearButton.setIcon(Utils.createIcon("/images/primo/others/delete.png"));
+        clearButton = new JButton(bundle.getString("mainToolBar.clearButton.label"));
+        clearButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.clearButton.iconPath")));
         clearButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         clearButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        clearButton.setToolTipText("Clear");
+        clearButton.setToolTipText(bundle.getString("mainToolBar.clearButton.toolTip"));
 
         newDownloadButton.addActionListener(this);
         pauseButton.addActionListener(this);

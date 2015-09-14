@@ -24,7 +24,10 @@ public class AddNewDownloadDialog extends JDialog {
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        newButton = new JButton("New Download");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
+        newButton = new JButton(bundle.getString("addNewDownloadDialog.newButton.label"));
+        newButton.setToolTipText(bundle.getString("addNewDownloadDialog.newButton.toolTip"));
         newTextField = new JTextField(30);
 
         add(newButton);

@@ -25,7 +25,7 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
         leafRenderer = new JCheckBox();
         nonLeafRenderer = new DefaultTreeCellRenderer();
 
-        nonLeafRenderer.setLeafIcon(Utils.createIcon("/images/primo/images/Server16.png"));
+        nonLeafRenderer.setLeafIcon(Utils.createIcon("/images/primo48/images/Server16.png"));
         nonLeafRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
         nonLeafRenderer.setClosedIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponentAdd16.png"));
 
