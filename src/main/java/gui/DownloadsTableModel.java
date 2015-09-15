@@ -20,7 +20,7 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
 
     // The table's list of downloads.
     // data
-    private List<Download> downloadList = new ArrayList<Download>();
+    private List<Download> downloadList = new ArrayList<>();
 
     // TODO Maybe used after
     public void setDownloads(java.util.List<Download> downloads) {
@@ -52,6 +52,7 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
     }
 
     // Get table's column count.
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
@@ -67,11 +68,13 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
     }
 
     // Get table's row count.
+    @Override
     public int getRowCount() {
         return downloadList.size();
     }
 
     // Get value for a specific row and column combination.
+    @Override
     public Object getValueAt(int row, int col) {
         Download download = downloadList.get(row);
         switch (col) {
@@ -85,7 +88,7 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
             case 3: // Transfer Rate ////////////////////////////////////////
                 return download.getTransferRate();
             case 4: // Status
-                return Download.STATUSES[download.getStatus().ordinal()];
+                return download.getStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
         }
         return null;
     }

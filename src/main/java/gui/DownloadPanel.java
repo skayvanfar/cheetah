@@ -1,5 +1,6 @@
 package gui;
 
+import gui.Download.DownloadDialog;
 import gui.listener.DownloadPanelListener;
 import model.Download;
 
@@ -8,7 +9,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by Saeed on 9/10/2015.
@@ -65,7 +65,9 @@ public class DownloadPanel extends JPanel implements Observer {
     }
 
     public void addDownload(Download download) {
+        DownloadDialog downloadDialog = new DownloadDialog(download); ///////////////////////////////////?????
         downloadsTableModel.addDownload(download);
+        downloadDialog.setVisible(true);
     }
 
     public void refresh() {

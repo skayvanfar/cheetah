@@ -1,48 +1,47 @@
 package model;
 
-import enums.DownloadState;
+import enums.DownloadStatus;
+import enums.SizeType;
+import gui.listener.DownloadInfoListener;
+import utils.ConnectionUtil;
+import utils.FileUtil;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class Download extends Observable implements Runnable {
+public class Download extends Observable implements Observer {
 
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = 1024;
 
-    // These are the status names.
-    public static final String STATUSES[] = {"Downloading",
-            "Paused", "Complete", "Cancelled", "Error"};
-
-    enum SizeType {BYTE, KILOBYTE, MEGABYTE, TERABYTE}
-
-    ;
-
     private URL url; // download URL
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
-    private DownloadState status; // current status of download
+    private DownloadStatus status; // current status of download
     private String transferRate; // rate of transfer
 
-    private Thread downloadwatch;
+    private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
     // if really any thing changed //////////////////////////////////////////////
     //  private boolean changed = false;
     private float previousProgress;
+
+    private DownloadInfoListener downloadInfoListener;
 
     // Constructor for Download.
     public Download(URL url) {
         this.url = url;
         size = -1;
         downloaded = 0;
-        status = DownloadState.DOWNLOADING;
+        status = DownloadStatus.DOWNLOADING;
 
         // Begin the download.
         download();
@@ -55,7 +54,7 @@ public class Download extends Observable implements Runnable {
 
     // Get this download's size.
     public String getSize() {
-        return roundSizeTypeFormat((float) size, SizeType.BYTE);
+        return ConnectionUtil.roundSizeTypeFormat((float) size, SizeType.BYTE);
     }
 
     // Get this download's progress.
@@ -68,39 +67,53 @@ public class Download extends Observable implements Runnable {
     }
 
     // Get this download's status.
-    public DownloadState getStatus() {
+    public DownloadStatus getStatus() {
         return status;
+    }
+
+    public List<DownloadRange> getDownloadRangeList() {
+        return downloadRangeList;
+    }
+
+    public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
+        this.downloadInfoListener = downloadInfoListener;
     }
 
     // Pause this download.
     public void pause() {
-        status = DownloadState.PAUSED;
+        for (DownloadRange downloadRange : downloadRangeList)
+            downloadRange.pause();
+        status = DownloadStatus.PAUSED;
         stateChanged();
     }
 
     // Resume this download.
     public void resume() {
-        status = DownloadState.DOWNLOADING;
+        for (DownloadRange downloadRange : downloadRangeList)
+            downloadRange.resume();
+        status = DownloadStatus.DOWNLOADING;
         stateChanged();
-        download();
+   //     download();
     }
 
     // Cancel this download.
     public void cancel() {
-        status = DownloadState.CANCELLED;
+        for (DownloadRange downloadRange : downloadRangeList)
+            downloadRange.cancel();
+        status = DownloadStatus.CANCELLED;
         stateChanged();
     }
 
     // Mark this download as having an error.
     private void error() {
-        status = DownloadState.ERROR;
+        status = DownloadStatus.ERROR;
         stateChanged();
     }
 
     // Start or resume downloading.
     private void download() {
-        Thread thread = new Thread(this);
-        thread.start();
+  //      Thread thread = new Thread(this);
+  //      thread.start();
 
         new Thread(new Runnable() {
             ///////////////////////////////////////////////////////////////////////////////////// Download Watch
@@ -108,7 +121,7 @@ public class Download extends Observable implements Runnable {
 
             @Override
             public void run() {
-                while (status == DownloadState.DOWNLOADING) {
+                while (status == DownloadStatus.DOWNLOADING) {
                     Integer previousDownloaded = threadLocal.get();
 
                     if (previousDownloaded == null) {
@@ -121,7 +134,7 @@ public class Download extends Observable implements Runnable {
                     threadLocal.set(newDownloaded);
 
                     // calculate differenceDownloaded
-                    transferRate = roundSizeTypeFormat(differenceDownloaded, SizeType.BYTE);
+                    transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloaded, SizeType.BYTE) + "/sec";
                     stateChanged();
                     try {
                         Thread.sleep(1000);
@@ -132,13 +145,15 @@ public class Download extends Observable implements Runnable {
             }
         }).start();
 
+        run();
+
         /**     Second way that use SwingWorker
          SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {
 
          ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
 
          @Override protected Void doInBackground() throws Exception {
-         while (status == DownloadState.DOWNLOADING) {
+         while (status == DownloadStatus.DOWNLOADING) {
          Integer previousDownloaded = threadLocal.get();
 
          if (previousDownloaded == null) {
@@ -173,37 +188,8 @@ public class Download extends Observable implements Runnable {
          worker.execute(); */
     }
 
-    public String roundSizeTypeFormat(float transferRate, SizeType sizeType) {
-        if (transferRate < 999) {
-            String transferRateFormated = String.format("%.2f", transferRate);
-            switch (sizeType) {
-                case BYTE:
-                    return transferRateFormated + " B";
-                case KILOBYTE:
-                    return transferRateFormated + " KB";
-                case MEGABYTE:
-                    return transferRateFormated + " MB";
-                case TERABYTE:
-                    return transferRateFormated + " TB";
-                default:
-                    return String.valueOf(transferRate);
-            }
-        } else {
-            return roundSizeTypeFormat(transferRate / 1024, SizeType.values()[sizeType.ordinal() + 1]);
-        }
-    }
-
-    // Get file name portion of URL.
-    private String getFileName(URL url) {
-        String fileName = url.getFile();
-        return fileName.substring(fileName.lastIndexOf('/') + 1);
-    }
-
-    // Download file.
+   // @Override
     public void run() {
-        RandomAccessFile file = null;
-        InputStream stream = null;
-
         try {
             // Open connection to URL.
             HttpURLConnection connection =
@@ -211,9 +197,10 @@ public class Download extends Observable implements Runnable {
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range",
-                    "bytes=" + downloaded + "-");
+                    "bytes=" + 0 + "-");
 
             // Connect to server.
+            connection.setRequestMethod("HEAD");
             connection.connect();
 
             // Make sure response code is in the 200 range.
@@ -234,116 +221,57 @@ public class Download extends Observable implements Runnable {
                 stateChanged();
             }
 
-            // Open file and seek to the end of it.
-            file = new RandomAccessFile(getFileName(url), "rw");
-            file.seek(downloaded);
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// for 8 connection
+            createDownloadRanges(connection, 8);
 
-            stream = connection.getInputStream();
-
-            ////////////////////////////////////////////// for test performance
-            BufferedInputStream bin = new BufferedInputStream(stream);
-            ////////////////////////// for test
-            long before = System.currentTimeMillis();
-            //////////////////////////////////////////////////////////////////
-
-            while (status == DownloadState.DOWNLOADING) {
-                /* Size buffer according to how much of the
-                  file is left to download. */
-                byte buffer[];
-                if (size - downloaded > MAX_BUFFER_SIZE) {
-                    buffer = new byte[MAX_BUFFER_SIZE];
-                } else {
-                    buffer = new byte[size - downloaded];
-                }
-
-
-
-                //////////////////????????????????????????? for test performance
-                //      int bytesAvailable = stream.available( );
-                //       System.out.println("bytesAvailable  ==  " + bytesAvailable);
-
-                //       int bytesRead=0;
-                //      int bytesToRead=1024;
-                //      byte[] input = new byte[bytesToRead];
-                //      int result = 0;
-                //       while (bytesRead < bytesToRead) {
-                //          result = stream.read(input, bytesRead, bytesToRead - bytesRead);
-                //           System.out.println("result   ==  " + result);
-                //           if (result == -1) {
-                //               break;
-                //           }
-                //           bytesRead += result;
-                //       }
-
-                //       if (result == -1) {
-                //           break;
-                //       }
-
-                //       file.write(input, 0, bytesToRead);
-                //       downloaded += result;
-                //////////////////???????????????????????/?
-                ///    int bytesAvailable = stream.available();
-                //      if (bytesAvailable == 0 && downloaded != size)
-                //           continue;
-
-                //       byte[] input = new byte[bytesAvailable];
-                //       int bytesRead = stream.read(input, 0, bytesAvailable);
-                //       if (bytesRead == 0)
-                //          break;
-                //       file.write(input, 0, bytesRead);
-                //      downloaded += bytesRead;
-
-                /////////////////////>?????????????????????
-
-                //       int bytesAvailable = stream.available( );
-                //       System.out.println("bytesAvailable  ==  " + bytesAvailable)
-                /////////////////////////////////////////////////////////////////////
-
-
-                // Read from server into buffer.
-                int read = stream.read(buffer);
-                if (read == -1)
-                    break;
-
-                // Write buffer to file.
-                file.write(buffer, 0, read);
-                downloaded += read;
-                if (getProgress() - previousProgress > 1) { // when 1% changed
-                    stateChanged();
-                }
-            }
-
-            ////////////////////////////////////////////// for test performance
-            long after = System.currentTimeMillis();
-            long diff = after - before;
-            System.out.println("long time is: " + diff);
-            ///////////////////////////////////////////////////////////////////
-
-            /* Change status to complete if this point was
-              reached because downloading has finished. */
-            if (status == DownloadState.DOWNLOADING) {
-                status = DownloadState.COMPLETE;
-                stateChanged();
-            }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
             error();
         } finally {
-            // Close file.
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (Exception e) {
-                }
-            }
 
-            // Close connection to server.
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (Exception e) {
-                }
-            }
         }
+    }
+
+    private void createDownloadRanges(HttpURLConnection connection, int connectionSize) throws IOException {
+        int partSize= ConnectionUtil.getPartSizeOfDownload(size, connectionSize); // like 200
+        int startRange = 0;
+        int endRange = partSize;
+
+        ConnectionUtil.printHttpURLConnectionHeaders(connection);
+
+
+        // if connection is able to part download
+        if (connection.getResponseCode() == 206) {
+            for (int i = 0;  i < connectionSize; i++) {
+                DownloadRange downloadRange = new DownloadRange(i, url, startRange, endRange);
+                downloadRangeList.add(downloadRange);
+
+                if (downloadInfoListener != null) {
+                    downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
+                }
+
+                startRange = endRange + 1;
+                endRange = startRange + partSize;
+            }
+        } else {
+            DownloadRange downloadRange = new DownloadRange(0, url, startRange, endRange); //TODO for 0
+            downloadRangeList.add(downloadRange);
+        }
+    }
+
+    private void endOfDownload() {
+
+        List<File> files = new ArrayList<>();
+        for (DownloadRange downloadRange : downloadRangeList) {
+            files.add(downloadRange.getFile());
+        }
+
+       // files.sort(new FileComperarto()); TODO must sorted
+
+        FileUtil.joinDownloadedParts(files, ConnectionUtil.getFileExtension(url));
+
+        status = DownloadStatus.COMPLETE;
+        stateChanged();
     }
 
     // Notify observers that this download's status has changed.
@@ -354,4 +282,40 @@ public class Download extends Observable implements Runnable {
         setChanged();
         notifyObservers();
     }
+
+    // event that come from DownloadRange TODO may be synchrinized
+    @Override
+    public void update(Observable o, Object arg) {
+        DownloadRange downloadRange = (DownloadRange) o;
+        addDownloaded(downloadRange.getRead());
+
+        switch (downloadRange.getConnectionStatus()) {
+            case DISCONNECTED:
+                ///////////////
+                break;
+            case ERROR:
+                //////////////
+                break;
+            case WAITING_RESPONSE:
+                /////////////
+                break;
+            case COMPLETED:
+                if (downloaded == size) { // when all parts downloaded ????????????????/////
+                    endOfDownload();
+                }
+                break;
+            default:
+        }
+
+        stateChanged();
+    }
+
+    /**
+     * each DownloadRange thread call this method for add it's downloaded
+     * */
+    private synchronized void addDownloaded(int downloaded) {
+        this.downloaded += downloaded;
+        stateChanged();
+    }
+
 }

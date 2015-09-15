@@ -1,6 +1,6 @@
 package gui;
 
-import enums.DownloadState;
+import enums.DownloadStatus;
 import gui.listener.AddNewDownloadListener;
 import gui.listener.DownloadPanelListener;
 import gui.listener.MainToolbarListener;
@@ -9,13 +9,10 @@ import gui.preference.PreferenceDialog;
 import model.Download;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.peer.SystemTrayPeer;
 import java.net.URL;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.prefs.Preferences;
 
 /**
@@ -39,6 +36,25 @@ public class DownloadManagerGUI extends JFrame {
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
+                if ("Windows".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                } else if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                }
+            }
+          //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
 
         setLayout(new BorderLayout());
 
@@ -109,7 +125,7 @@ public class DownloadManagerGUI extends JFrame {
 
         downloadPanel.setDownloadPanelListener(new DownloadPanelListener() {
             @Override
-            public void stateChangedEventOccured(DownloadState downloadState) {
+            public void stateChangedEventOccured(DownloadStatus downloadState) {
                 updateButtons(downloadState);
             }
         });
@@ -140,7 +156,7 @@ public class DownloadManagerGUI extends JFrame {
 
     /* Update each button's state based off of the
        currently selected download's status. */
-    private void updateButtons(DownloadState state) {
+    private void updateButtons(DownloadStatus state) {
         if (state != null) {
             switch (state) {
                 case DOWNLOADING:
