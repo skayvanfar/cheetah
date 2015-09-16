@@ -196,8 +196,7 @@ public class Download extends Observable implements Observer {
                     (HttpURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
-            connection.setRequestProperty("Range",
-                    "bytes=" + 0 + "-");
+            connection.setRequestProperty("Range", "bytes=" + 0 + "-");
 
             // Connect to server.
             connection.setRequestMethod("HEAD");
@@ -245,13 +244,18 @@ public class Download extends Observable implements Observer {
             for (int i = 0;  i < connectionSize; i++) {
                 DownloadRange downloadRange = new DownloadRange(i, url, startRange, endRange);
                 downloadRangeList.add(downloadRange);
+                downloadRange.addObserver(this);
 
                 if (downloadInfoListener != null) {
                     downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
                 }
 
                 startRange = endRange + 1;
-                endRange = startRange + partSize;
+                if (size - startRange > partSize) { /////**************
+                    endRange = startRange + partSize;
+                } else { // last range download
+                    endRange = size;
+                }
             }
         } else {
             DownloadRange downloadRange = new DownloadRange(0, url, startRange, endRange); //TODO for 0
@@ -287,19 +291,24 @@ public class Download extends Observable implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         DownloadRange downloadRange = (DownloadRange) o;
-        addDownloaded(downloadRange.getRead());
+        updateInfo(downloadRange);
+    }
+
+    private synchronized void updateInfo(DownloadRange downloadRange) {
+        this.downloaded += downloadRange.getRead();
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:
-                ///////////////
+                System.out.println("disconnect");
                 break;
             case ERROR:
-                //////////////
+                System.out.println("error");
                 break;
             case WAITING_RESPONSE:
-                /////////////
+                System.out.println("WAITING_RESPONSE");
                 break;
             case COMPLETED:
+                System.out.println("COMPLETED download Range");
                 if (downloaded == size) { // when all parts downloaded ????????????????/////
                     endOfDownload();
                 }
@@ -307,14 +316,6 @@ public class Download extends Observable implements Observer {
             default:
         }
 
-        stateChanged();
-    }
-
-    /**
-     * each DownloadRange thread call this method for add it's downloaded
-     * */
-    private synchronized void addDownloaded(int downloaded) {
-        this.downloaded += downloaded;
         stateChanged();
     }
 

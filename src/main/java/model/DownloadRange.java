@@ -139,7 +139,7 @@ public class DownloadRange extends Observable implements Runnable {
             }
 
             // Check for valid content length.
-            int contentLength = connection.getContentLength();
+            int contentLength = endRange - startRange;
             if (contentLength < 1) {
                 error();
             }
@@ -182,8 +182,7 @@ public class DownloadRange extends Observable implements Runnable {
 
                 // Read from server into buffer.
                 read = stream.read(buffer);
-                if (read == -1)
-                    break;
+
 
                 // Write buffer to file.
                 randomAccessFile.write(buffer, 0, read);
@@ -191,6 +190,8 @@ public class DownloadRange extends Observable implements Runnable {
          //       if (getProgress() - previousProgress > 1) { // when 1% changed
                     stateChanged();
          //       }
+                if (size == downloaded)
+                    break;
             }
 
             ////////////////////////////////////////////// for test performance
@@ -206,6 +207,7 @@ public class DownloadRange extends Observable implements Runnable {
                 stateChanged();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             error();
         } finally {
             // Close file.
@@ -228,9 +230,6 @@ public class DownloadRange extends Observable implements Runnable {
 
     // Notify observers that this download's status has changed.
     private void stateChanged() {
-        /////////////////////////////////////////////// save previous progress
-    //    previousProgress = getProgress();
-
         setChanged();
         notifyObservers();
     }

@@ -36,7 +36,7 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        setSize(320, 230);
+        setSize(530, 230);
    //     setLocationRelativeTo(parent);
     }
 
