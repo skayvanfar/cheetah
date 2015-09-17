@@ -60,7 +60,7 @@ public class DownloadManagerGUI extends JFrame {
 
         mainToolbar = new MainToolBar();
         categoryPanel = new CategoryPanel();
-        downloadPanel = new DownloadPanel();
+        downloadPanel = new DownloadPanel(this);
         messagePanel = new MessagePanel();
         mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
@@ -101,7 +101,7 @@ public class DownloadManagerGUI extends JFrame {
             @Override
             public void pauseEventOccured() {
                 downloadPanel.actionPause();
-          //      updateButtons();
+                mainToolbar.setStateOfButtonsControl(false, false, false, false); // canceled
             }
 
             @Override
@@ -142,6 +142,7 @@ public class DownloadManagerGUI extends JFrame {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 System.out.println("Window Closing");
+                downloadPanel.cancelAllDownload();
                 dispose();
                 System.gc();
             }

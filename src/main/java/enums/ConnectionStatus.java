@@ -12,7 +12,8 @@ public enum ConnectionStatus {
     DISCONNECTED(3, "disconnect"), // 3
     WAITING_RESPONSE(4, "Waiting Response..."), // 4
     ERROR(5, "Error"), // 5
-    COMPLETED(6, "Completed"); // 6
+    COMPLETED(6, "Completed"), // 6
+    DISCONNECTING(7, "Disconnecting"); // 7
 
     private Integer value;
     private String desc;

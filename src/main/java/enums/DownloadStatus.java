@@ -6,10 +6,11 @@ package enums;
 public enum DownloadStatus {
     // These are the status names.
     DOWNLOADING(0, "Downloading"),// 0
-    PAUSED(0, "Paused"),  // 1
-    COMPLETE(0, "Complete"), // 2
-    CANCELLED(0, "canceled"), // 3
-    ERROR(0, "Error"); // 4
+    PAUSED(1, "Paused"),  // 1
+    COMPLETE(2, "Complete"), // 2
+    CANCELLED(3, "canceled"), // 3
+    ERROR(4, "Error"), // 4
+    DISCONNECTING(5, "Disconnecting");
 
     private Integer value;
     private String desc;

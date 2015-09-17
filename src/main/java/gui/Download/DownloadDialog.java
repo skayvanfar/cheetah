@@ -18,8 +18,8 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
 
     private Download download; // TODO may not needed hear
 
-    public DownloadDialog(Download download) {
-     //   super(parent, "Download Dialog", false);
+    public DownloadDialog(JFrame parent, Download download) {
+        super(parent, "Download Dialog", false);
 
         this.download = download;
 
@@ -37,11 +37,12 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
         add(tabbedPane, BorderLayout.CENTER);
 
         setSize(530, 230);
-   //     setLocationRelativeTo(parent);
+        setLocationRelativeTo(parent);
     }
 
     @Override
     public void newDownloadRangeEventOccured(DownloadRange downloadRange) {
         downloadInfoPanel.addDownloadRange(downloadRange);
     }
+
 }

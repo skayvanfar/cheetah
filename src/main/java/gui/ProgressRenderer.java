@@ -30,7 +30,6 @@ public class ProgressRenderer extends JProgressBar implements TableCellRenderer 
         // Set JProgressBar's percent complete value.
     //    setValue((int) ((Float) value).floatValue());
    //     setString(((Float) value).floatValue() + "%");
-        System.out.println(((Float) value).floatValue());
 
         setString(percentFormat.format(((Float) value).floatValue()));
 

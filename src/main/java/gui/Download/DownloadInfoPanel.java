@@ -4,7 +4,10 @@ import model.Download;
 import model.DownloadRange;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Saeed on 9/14/2015.
@@ -28,22 +31,24 @@ public class DownloadInfoPanel extends JPanel {
         // Set up Downloads table.
         downloadRangesTableModel = new DownloadRangesTableModel();
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        // set DonloadRangeList to model of table
-        //   downloadRangesTableModel.setDownloadRanges(download.getDownloadRangeList());
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-        // set DonloadRangeList to model of table
-        downloadRangesTableModel.setDownloadRanges(download.getDownloadRangeList());
-
         downloadRangeTable = new JTable(downloadRangesTableModel);
+        downloadRangeTable.setShowGrid(false);
 
+        setColumnWidths();
 
         add(new JScrollPane(downloadRangeTable), BorderLayout.CENTER);
     }
 
     public void addDownloadRange(DownloadRange downloadRange) {
         downloadRangesTableModel.addDownloadRange(downloadRange);
+    }
+
+    private void setColumnWidths(){
+        downloadRangeTable.getColumnModel().getColumn(0).setPreferredWidth(56);
+        downloadRangeTable.getColumnModel().getColumn(0).setMaxWidth(70);
+        downloadRangeTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+        downloadRangeTable.getColumnModel().getColumn(1).setMaxWidth(150);
+
+        downloadRangeTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
     }
 }

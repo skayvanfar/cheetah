@@ -22,6 +22,10 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
     // data
     private List<Download> downloadList = new ArrayList<>();
 
+    public List<Download> getDownloadList() {
+        return downloadList;
+    }
+
     // TODO Maybe used after
     public void setDownloads(java.util.List<Download> downloads) {
         this.downloadList = downloads;

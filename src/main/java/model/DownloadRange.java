@@ -62,7 +62,7 @@ public class DownloadRange extends Observable implements Runnable {
     }
 
     public String getDownloaded() {
-        return downloaded + "";
+        return String.valueOf(downloaded);
     }
 
     // Get this downloads status.
@@ -72,15 +72,15 @@ public class DownloadRange extends Observable implements Runnable {
 
     // Pause this download.
     public void disConnect() {
-        connectionStatus = ConnectionStatus.DISCONNECTED;
-        stateChanged();
+        connectionStatus = ConnectionStatus.DISCONNECTING;
+        stateChanged(); // TODO two time call and print "disconnect from download .... "
     }
 
     // Pause this download.
-    public void pause() {
-        connectionStatus = ConnectionStatus.DISCONNECTED;
-        stateChanged();
-    }
+  //  public void pause() {
+//        connectionStatus = ConnectionStatus.DISCONNECTED;
+//        stateChanged();
+//    }
 
     // Resume this download.
     public void resume() {
@@ -90,10 +90,10 @@ public class DownloadRange extends Observable implements Runnable {
     }
 
     // Cancel this download.
-    public void cancel() {
-        connectionStatus = ConnectionStatus.DISCONNECTED;
-        stateChanged();
-    }
+ //   public void cancel() {
+ //       connectionStatus = ConnectionStatus.DISCONNECTED;
+ //       stateChanged();
+ //   }
 
     // Mark this download as having an error.
     private void error() {
@@ -159,16 +159,9 @@ public class DownloadRange extends Observable implements Runnable {
 
             stream = connection.getInputStream();
 
-            ////////////////////////////////////////////// for test performance
-            BufferedInputStream bin = new BufferedInputStream(stream);
-
             // set status for read data from stream
             connectionStatus = ConnectionStatus.RECEIVING_DATA;
             stateChanged();
-
-            ////////////////////////// for test
-            long before = System.currentTimeMillis();
-            //////////////////////////////////////////////////////////////////
 
             while (connectionStatus == ConnectionStatus.RECEIVING_DATA) {
                 /* Size buffer according to how much of the
@@ -195,18 +188,18 @@ public class DownloadRange extends Observable implements Runnable {
                     break;
             }
 
-            ////////////////////////////////////////////// for test performance
-            long after = System.currentTimeMillis();
-            long diff = after - before;
-            System.out.println("long time is: " + diff);
-            ///////////////////////////////////////////////////////////////////
+            if (connectionStatus == ConnectionStatus.DISCONNECTING) {
+                connectionStatus = ConnectionStatus.DISCONNECTED;
+     //           stateChanged();
+            }
 
             /* Change status to complete if this point was
               reached because downloading has finished. */
             if (connectionStatus == ConnectionStatus.RECEIVING_DATA) {
                 connectionStatus = ConnectionStatus.COMPLETED;
-                stateChanged();
+    //            stateChanged();
             }
+            stateChanged();
         } catch (Exception e) {
             e.printStackTrace();
             error();

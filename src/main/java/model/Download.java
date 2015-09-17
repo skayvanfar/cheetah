@@ -1,5 +1,6 @@
 package model;
 
+import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.SizeType;
 import gui.listener.DownloadInfoListener;
@@ -17,7 +18,7 @@ import java.util.Observer;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class Download extends Observable implements Observer {
+public class Download extends Observable implements Observer , Runnable{
 
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = 1024;
@@ -82,8 +83,8 @@ public class Download extends Observable implements Observer {
     // Pause this download.
     public void pause() {
         for (DownloadRange downloadRange : downloadRangeList)
-            downloadRange.pause();
-        status = DownloadStatus.PAUSED;
+            downloadRange.disConnect();
+        status = DownloadStatus.DISCONNECTING;
         stateChanged();
     }
 
@@ -99,7 +100,7 @@ public class Download extends Observable implements Observer {
     // Cancel this download.
     public void cancel() {
         for (DownloadRange downloadRange : downloadRangeList)
-            downloadRange.cancel();
+            downloadRange.disConnect();
         status = DownloadStatus.CANCELLED;
         stateChanged();
     }
@@ -112,8 +113,8 @@ public class Download extends Observable implements Observer {
 
     // Start or resume downloading.
     private void download() {
-  //      Thread thread = new Thread(this);
-  //      thread.start();
+        Thread thread = new Thread(this);
+        thread.start();
 
 
         new Thread(new Runnable() {
@@ -129,8 +130,7 @@ public class Download extends Observable implements Observer {
                         previousDownloaded = 0;
                     }
                     int newDownloaded = downloaded;
-                    int differenceDownloaded = newDownloaded - previousDownloaded;
-              //      float differenceDownloaded = calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000,"sec"); // in Byte
+                    float differenceDownloaded = ConnectionUtil.calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000, "sec"); // in Byte
 
                     // save new downloaded into threadLocal
                     threadLocal.set(newDownloaded);
@@ -147,7 +147,7 @@ public class Download extends Observable implements Observer {
             }
         }).start();
 
-        run();
+     //   run();
 
         /**     Second way that use SwingWorker
          SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {
@@ -190,7 +190,7 @@ public class Download extends Observable implements Observer {
          worker.execute(); */
     }
 
-   // @Override
+    @Override
     public void run() {
         try {
             // Open connection to URL.
@@ -320,7 +320,14 @@ public class Download extends Observable implements Observer {
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:
-                System.out.println("disconnect");
+
+                if (downloadRange.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
+                    if (isDisConnect()) {
+                        status = DownloadStatus.PAUSED;
+                    }
+                }
+
+                System.out.println("disconnect from download .... ");
                 break;
             case ERROR:
                 System.out.println("error");
@@ -338,11 +345,15 @@ public class Download extends Observable implements Observer {
         }
     }
 
-    private float calculateTransferRateInUnit(float differenceDownloaded, int longTime, String unit) {
-
-        if (unit.equalsIgnoreCase("sec")) {
-            return (differenceDownloaded * 1000) / longTime;
+    private boolean isDisConnect() {
+        boolean state = true;
+        for (DownloadRange downloadRange : downloadRangeList) {
+            if (downloadRange.getConnectionStatus() != ConnectionStatus.DISCONNECTED) {
+                state = false;
+                break;
+            }
         }
-        return 0; // TODO for other units
+        return state;
     }
+
 }

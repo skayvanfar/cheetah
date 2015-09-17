@@ -1,5 +1,6 @@
 package gui.Download;
 
+import enums.ConnectionStatus;
 import model.DownloadRange;
 
 import javax.swing.table.AbstractTableModel;
@@ -83,12 +84,22 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableModel#isCellEditable(int, int)
+     */
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
+    }
+
     /* Update is called when a Download notifies its
        observers of any changes */
     @Override
     public void update(Observable o, Object arg) {
         int index = downloadRangeList.indexOf(o);
+
         // Fire table row update notification to table.
         fireTableRowsUpdated(index, index);
     }
+
+
 }

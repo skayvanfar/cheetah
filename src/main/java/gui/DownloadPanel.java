@@ -1,14 +1,20 @@
 package gui;
 
 import gui.Download.DownloadDialog;
+import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadPanelListener;
+import gui.listener.DownloadStatusListener;
 import model.Download;
+import model.DownloadRange;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by Saeed on 9/10/2015.
@@ -29,8 +35,12 @@ public class DownloadPanel extends JPanel implements Observer {
 
     private DownloadPanelListener downloadPanelListener;
 
-    public DownloadPanel() {
+    private JFrame parent;
 
+    private DownloadDialog downloadDialog;
+
+    public DownloadPanel(JFrame parent) {
+        this.parent = parent;
         setLayout(new BorderLayout());
 
         // Set up Downloads table.
@@ -55,6 +65,22 @@ public class DownloadPanel extends JPanel implements Observer {
         // Set table's row height large enough to fit JProgressBar.
         downloadTable.setRowHeight((int) renderer.getPreferredSize().getHeight());
 
+        downloadTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                int row = downloadTable.rowAtPoint(e.getPoint());
+                downloadTable.getSelectionModel().setSelectionInterval(row, row);
+                if (e.getButton() == MouseEvent.BUTTON3) { // TODO right click
+                    //     popup.show(table, e.getX(), e.getY());
+                } else  if (e.getClickCount() == 2) {  // double click
+                    if (!downloadDialog.isVisible()) {
+                        downloadDialog.setVisible(true);
+                    }
+                }
+
+            }
+        });
 
         add(new JScrollPane(downloadTable), BorderLayout.CENTER);
     }
@@ -65,7 +91,7 @@ public class DownloadPanel extends JPanel implements Observer {
     }
 
     public void addDownload(Download download) {
-        DownloadDialog downloadDialog = new DownloadDialog(download); ///////////////////////////////////?????
+        downloadDialog = new DownloadDialog(parent, download);
         downloadsTableModel.addDownload(download);
         downloadDialog.setVisible(true);
     }
@@ -131,4 +157,22 @@ public class DownloadPanel extends JPanel implements Observer {
                 }
             });
     }
+
+    public void cancelAllDownload() {
+        List<Download> downloadList = downloadsTableModel.getDownloadList();
+        for (Download download : downloadList) {
+            download.cancel();
+        }
+    }
+
+ //   @Override TODO can use a EventListener instead observer fro better performance, see DownloadStatusListener
+///   public void downloadStatusChanged(Download download) {
+        // Update buttons if the selected download has changed.
+ //       if (selectedDownload != null && selectedDownload.equals(download))
+  //          SwingUtilities.invokeLater(new Runnable() {
+  //              public void run() {
+  //                  downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
+   //             }
+   //         });
+  //  }
 }

@@ -36,7 +36,7 @@ public class ConnectionUtil {
 
     public static String roundSizeTypeFormat(float transferRate, SizeType sizeType) {
         if (transferRate < 999) {
-            String transferRateFormated = String.format("%.2f", transferRate);
+            String transferRateFormated = String.format("%.3f", transferRate);
             switch (sizeType) {
                 case BYTE:
                     return transferRateFormated + " B";
@@ -56,5 +56,13 @@ public class ConnectionUtil {
 
     public static int getPartSizeOfDownload(int downloadSize, int connectionSize) {
         return downloadSize /connectionSize;
+    }
+
+    public static float calculateTransferRateInUnit(float differenceDownloaded, int longTime, String unit) {
+
+        if (unit.equalsIgnoreCase("sec")) {
+            return (differenceDownloaded * 1000) / longTime;
+        }
+        return 0; // TODO for other units
     }
 }
