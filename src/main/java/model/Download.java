@@ -59,7 +59,7 @@ public class Download extends Observable implements Observer {
 
     // Get this download's progress.
     public float getProgress() {
-        return ((float) downloaded / size) * 100;
+        return ((float) downloaded / size); // *100
     }
 
     public String getTransferRate() {
@@ -115,6 +115,7 @@ public class Download extends Observable implements Observer {
   //      Thread thread = new Thread(this);
   //      thread.start();
 
+
         new Thread(new Runnable() {
             ///////////////////////////////////////////////////////////////////////////////////// Download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
@@ -128,7 +129,8 @@ public class Download extends Observable implements Observer {
                         previousDownloaded = 0;
                     }
                     int newDownloaded = downloaded;
-                    int differenceDownloaded = (newDownloaded - previousDownloaded); // in Byte
+                    int differenceDownloaded = newDownloaded - previousDownloaded;
+              //      float differenceDownloaded = calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000,"sec"); // in Byte
 
                     // save new downloaded into threadLocal
                     threadLocal.set(newDownloaded);
@@ -196,7 +198,7 @@ public class Download extends Observable implements Observer {
                     (HttpURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
-            connection.setRequestProperty("Range", "bytes=" + 0 + "-");
+            connection.setRequestProperty("Range", "bytes=0-");
 
             // Connect to server.
             connection.setRequestMethod("HEAD");
@@ -292,10 +294,29 @@ public class Download extends Observable implements Observer {
     public void update(Observable o, Object arg) {
         DownloadRange downloadRange = (DownloadRange) o;
         updateInfo(downloadRange);
+        stateChanged();
     }
 
+
+//    private int previousDownloaded = 0;
+//    private long previousTime = 0;
     private synchronized void updateInfo(DownloadRange downloadRange) {
-        this.downloaded += downloadRange.getRead();
+        downloaded += downloadRange.getRead();
+
+   //     int currentDownloaded = downloaded;
+    //    int differenceDownloaded = (downloaded - previousDownloaded); // in Byte
+
+   //     long currentTime = System.nanoTime();
+
+    //    int longTime = (int) (currentTime - previousTime);
+    ///    float differenceDownloadedInUnit = calculateTransferRateInUnit(differenceDownloaded, longTime, "sec");
+
+    //    previousDownloaded = downloaded;
+   //     previousTime = currentTime;
+
+        // calculate differenceDownloaded
+   //     transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloadedInUnit, SizeType.BYTE) + "/sec";
+   //     stateChanged();
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:
@@ -315,8 +336,13 @@ public class Download extends Observable implements Observer {
                 break;
             default:
         }
-
-        stateChanged();
     }
 
+    private float calculateTransferRateInUnit(float differenceDownloaded, int longTime, String unit) {
+
+        if (unit.equalsIgnoreCase("sec")) {
+            return (differenceDownloaded * 1000) / longTime;
+        }
+        return 0; // TODO for other units
+    }
 }

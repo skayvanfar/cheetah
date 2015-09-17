@@ -19,7 +19,7 @@ public class DownloadRange extends Observable implements Runnable {
 
 
     // Max size of download buffer.
-    private static final int MAX_BUFFER_SIZE = 1024;
+    private static final int MAX_BUFFER_SIZE = 1024; // 1024 - 4096
 
     private URL url; // download URL
     private int number;
@@ -183,12 +183,13 @@ public class DownloadRange extends Observable implements Runnable {
                 // Read from server into buffer.
                 read = stream.read(buffer);
 
-
                 // Write buffer to file.
                 randomAccessFile.write(buffer, 0, read);
                 downloaded += read;
          //       if (getProgress() - previousProgress > 1) { // when 1% changed
+                if (read != 0) {
                     stateChanged();
+                }
          //       }
                 if (size == downloaded)
                     break;
