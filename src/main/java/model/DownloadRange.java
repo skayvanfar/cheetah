@@ -2,6 +2,7 @@ package model;
 
 import enums.ConnectionStatus;
 import enums.DownloadStatus;
+import org.apache.log4j.Logger;
 import utils.ConnectionUtil;
 
 import java.io.BufferedInputStream;
@@ -17,6 +18,8 @@ import java.util.Observable;
  */
 public class DownloadRange extends Observable implements Runnable {
 
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = 1024; // 1024 - 4096
@@ -156,7 +159,7 @@ public class DownloadRange extends Observable implements Runnable {
             /* Set the size for this download if it
               hasn't been already set. */
             if (rangeSize == -1) {
-                rangeSize = rangeContentLength; // like 10
+                rangeSize = rangeContentLength;
                 stateChanged(0);
             }
 

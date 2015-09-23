@@ -11,9 +11,17 @@ import java.awt.*;
  */
 public class PreferenceDialog extends JDialog implements PreferenceCategoryPanelListener {
 
-    private GeneralPanel generalPanel;
-    private SavePanel savePanel;
-    private DownloadPanel downloadPanel;
+    private PreferenceGeneralPanel preferenceGeneralPanel;
+    private PreferenceFileTypesPanel preferenceFileTypesPanel;
+    private PreferenceSavePanel preferenceSavePanel;
+    private PreferenceDownloadPanel preferenceDownloadPanel;
+
+    private PreferenceConnectionPanel preferenceConnectionPanel;
+    private PreferenceProxySocksPanel preferenceProxySocksPanel;
+    private PreferenceSitesLoginsPanel preferenceSitesLoginsPanel;
+    private PreferenceDialUpVPN preferenceDialUpVPN;
+    private PreferenceSoundPanel preferenceSoundPanel;
+
   //  private JTabbedPane tabPane;
 
     private PreferenceCategoryPanel preferenceCategoryPanel;
@@ -28,9 +36,15 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
         setLayout(new BorderLayout());
 
-        generalPanel = new GeneralPanel();
-        savePanel = new SavePanel();
-        downloadPanel = new DownloadPanel();
+        preferenceGeneralPanel = new PreferenceGeneralPanel();
+        preferenceFileTypesPanel = new PreferenceFileTypesPanel();
+        preferenceSavePanel = new PreferenceSavePanel();
+        preferenceDownloadPanel = new PreferenceDownloadPanel();
+        preferenceConnectionPanel = new PreferenceConnectionPanel();
+        preferenceProxySocksPanel = new PreferenceProxySocksPanel();
+        preferenceSitesLoginsPanel = new PreferenceSitesLoginsPanel();
+        preferenceDialUpVPN = new PreferenceDialUpVPN();
+        preferenceSoundPanel = new PreferenceSoundPanel();
     //    tabPane = new JTabbedPane();
 
   //      tabPane.addTab("General", generalPanel);
@@ -45,15 +59,21 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         cardLayout = new CardLayout();
         preferenceCards = new JPanel();
         preferenceCards.setLayout(cardLayout);
-        preferenceCards.add(generalPanel, "generalPanel");
-        preferenceCards.add(savePanel, "savePanel");
-        preferenceCards.add(downloadPanel, "downloadPanel");
-        preferenceCards.add(savePanel, "savePanel");
+        preferenceCards.add(preferenceGeneralPanel, "General");
+        preferenceCards.add(preferenceFileTypesPanel, "File Types");
+        preferenceCards.add(preferenceSavePanel, "Save To");
+        preferenceCards.add(preferenceDownloadPanel, "Downloads");
+        preferenceCards.add(preferenceConnectionPanel, "Connection");
+        preferenceCards.add(preferenceProxySocksPanel, "Proxy / Socks");
+        preferenceCards.add(preferenceSitesLoginsPanel, "Site Logins");
+        preferenceCards.add(preferenceDialUpVPN, "dial Up / VPN");
+        preferenceCards.add(preferenceSoundPanel, "Sounds");
 
         add(preferenceCategoryPanel, BorderLayout.WEST);
         add(preferenceCards, BorderLayout.CENTER);
 
-        setSize(400, 250);
+        setMinimumSize(new Dimension(350,250));
+        setSize(600, 400);
         setLocationRelativeTo(parent);
     }
 
@@ -68,28 +88,8 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
     }
 
     @Override
-    public void generalSelectedEventOccured() {
-        cardLayout.show(preferenceCards, "general");
-    }
-
-    @Override
-    public void downloadSelectedEventOccured() {
-        cardLayout.show(preferenceCards, "download");
-    }
-
-    @Override
-    public void saveToSelectedEventOccured() {
-
-    }
-
-    @Override
-    public void fileTypesSelectedEventOccured() {
-
-    }
-
-    @Override
-    public void connectionSelectedEventOccured() {
-
+    public void nodeSelectedEventOccured(String nodeName) {
+        cardLayout.show(preferenceCards, nodeName);
     }
 
 }

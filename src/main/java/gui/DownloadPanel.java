@@ -1,11 +1,13 @@
 package gui;
 
 import gui.Download.DownloadDialog;
+import gui.listener.DownloadDialogListener;
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadPanelListener;
 import gui.listener.DownloadStatusListener;
 import model.Download;
 import model.DownloadRange;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -19,7 +21,10 @@ import java.util.List;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class DownloadPanel extends JPanel implements Observer {
+public class DownloadPanel extends JPanel implements DownloadDialogListener {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     // Table showing downloads.
     private JTable downloadTable;
@@ -28,7 +33,9 @@ public class DownloadPanel extends JPanel implements Observer {
     private DownloadsTableModel downloadsTableModel;
 
     // Currently selected download.
-    private Download selectedDownload;
+  //  private Download selectedDownload;
+
+    private DownloadDialog selectedDownloadDialog;
 
     // Flag for whether or not table selection is being cleared.
     private boolean clearing;
@@ -36,8 +43,6 @@ public class DownloadPanel extends JPanel implements Observer {
     private DownloadPanelListener downloadPanelListener;
 
     private JFrame parent;
-
-    private DownloadDialog downloadDialog;
 
     public DownloadPanel(JFrame parent) {
         this.parent = parent;
@@ -74,8 +79,8 @@ public class DownloadPanel extends JPanel implements Observer {
                 if (e.getButton() == MouseEvent.BUTTON3) { // TODO right click
                     //     popup.show(table, e.getX(), e.getY());
                 } else  if (e.getClickCount() == 2) {  // double click
-                    if (!downloadDialog.isVisible()) {
-                        downloadDialog.setVisible(true);
+                    if (!selectedDownloadDialog.isVisible()) {
+                        selectedDownloadDialog.setVisible(true);
                     }
                 }
 
@@ -86,14 +91,14 @@ public class DownloadPanel extends JPanel implements Observer {
     }
 
     // TODO Maybe used after
-    public void setDownloads(java.util.List<Download> downloads) {
-        downloadsTableModel.setDownloads(downloads);
-    }
+ //   public void setDownloads(java.util.List<Download> downloads) {
+ //       downloadsTableModel.setDownloads(downloads);
+ //   }
 
     public void addDownload(Download download) {
-        downloadDialog = new DownloadDialog(parent, download);
-        downloadsTableModel.addDownload(download);
-        downloadDialog.setVisible(true);
+        selectedDownloadDialog = new DownloadDialog(parent, download);
+        downloadsTableModel.addDownloadDialog(selectedDownloadDialog);
+        selectedDownloadDialog.setVisible(true);
     }
 
     public void refresh() {
@@ -102,17 +107,17 @@ public class DownloadPanel extends JPanel implements Observer {
 
     // Pause the selected download.
     public void actionPause() {
-        selectedDownload.pause();
+        selectedDownloadDialog.pause();
     }
 
     // Resume the selected download.
     public void actionResume() {
-        selectedDownload.resume();
+        selectedDownloadDialog.resume();
     }
 
     // Cancel the selected download.
     public void actionCancel() {
-        selectedDownload.cancel();
+        selectedDownloadDialog.cancel();
     }
 
     // Clear the selected download.
@@ -120,24 +125,23 @@ public class DownloadPanel extends JPanel implements Observer {
         clearing = true;
         downloadsTableModel.clearDownload(downloadTable.getSelectedRow());
         clearing = false;
-        selectedDownload = null;
+        selectedDownloadDialog = null; //todo just this ...
     }
 
     // Called when table row selection changes.
     private void tableSelectionChanged() {
     /* Unregister from receiving notifications
        from the last selected download. */
-        if (selectedDownload != null)
-            selectedDownload.deleteObserver(DownloadPanel.this);
+        if (selectedDownloadDialog != null)
+            selectedDownloadDialog.deleteDownloadDialogListener(DownloadPanel.this);
 
     /* If not in the middle of clearing a download,
        set the selected download and register to
        receive notifications from it. */
         if (!clearing && downloadTable.getSelectedRow() > -1) {
-            selectedDownload =
-                    downloadsTableModel.getDownload(downloadTable.getSelectedRow());
-            selectedDownload.addObserver(DownloadPanel.this);
-            downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
+            selectedDownloadDialog = downloadsTableModel.getDownloadDialog(downloadTable.getSelectedRow());
+            selectedDownloadDialog.addDownloadDialogListener(DownloadPanel.this);
+            downloadPanelListener.stateChangedEventOccured(selectedDownloadDialog.getStatus());
         }
     }
 
@@ -145,34 +149,18 @@ public class DownloadPanel extends JPanel implements Observer {
         this.downloadPanelListener = downloadPanelListener;
     }
 
-    /* Update is called when a Download notifies its
-       observers of any changes. */
-    @Override
-    public void update(Observable o, Object arg) {
-        // Update buttons if the selected download has changed.
-        if (selectedDownload != null && selectedDownload.equals(o))
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
-                }
-            });
-    }
-
     public void cancelAllDownload() {
-        List<Download> downloadList = downloadsTableModel.getDownloadList();
-        for (Download download : downloadList) {
-            download.cancel();
+        List<DownloadDialog> downloadDialogList = downloadsTableModel.getDownloadDialogList();
+        for (DownloadDialog downloadDialog : downloadDialogList) {
+            downloadDialog.cancel();
         }
     }
 
- //   @Override TODO can use a EventListener instead observer fro better performance, see DownloadStatusListener
-///   public void downloadStatusChanged(Download download) {
+    @Override
+    public void downloadStatusChanged(DownloadDialog downloadDialog) {
         // Update buttons if the selected download has changed.
- //       if (selectedDownload != null && selectedDownload.equals(download))
-  //          SwingUtilities.invokeLater(new Runnable() {
-  //              public void run() {
-  //                  downloadPanelListener.stateChangedEventOccured(selectedDownload.getStatus());
-   //             }
-   //         });
-  //  }
+        if (selectedDownloadDialog != null && selectedDownloadDialog.equals(downloadDialog))
+            downloadPanelListener.stateChangedEventOccured(selectedDownloadDialog.getStatus());
+    }
+
 }

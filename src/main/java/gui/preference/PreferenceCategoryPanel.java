@@ -1,6 +1,7 @@
 package gui.preference;
 
 import gui.listener.PreferenceCategoryPanelListener;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,25 +15,10 @@ import java.awt.event.ActionListener;
 /**
  * Created by Saeed on 9/22/2015.
  */
-public class PreferenceCategoryPanel extends JPanel implements ActionListener {
+public class PreferenceCategoryPanel extends JPanel {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JButton clicked= (JButton) e.getSource();
-//        if (mainToolbarListener != null) {
-        //          if (clicked == newDownloadButton) {
-        //            mainToolbarListener.newDownloadEventOccured();
-        //      } else if (clicked == pauseButton) {
-        //        mainToolbarListener.pauseEventOccured();
-        //  } else if (clicked == resumeButton) {
-        //         mainToolbarListener.resumeEventOccured();
-        //    } else if (clicked == cancelButton) {
-        //       mainToolbarListener.cancelEventOccured();
-        // } else if (clicked == clearButton) {
-        //     mainToolbarListener.clearEventOccured();
-        //  }
-        //  }
-    }
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private JTree categoryTree;
   //  private CategotyTreeCellRenderer categotyTreeCellRenderer;
@@ -42,16 +28,29 @@ public class PreferenceCategoryPanel extends JPanel implements ActionListener {
     public PreferenceCategoryPanel() {
         categoryTree = new JTree(initTree());
 
+        categoryTree.setRootVisible(false);
+   //     categoryTree.setShowsRootHandles(true);
+
         categoryTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                preferenceCategoryPanelListener.generalSelectedEventOccured();////???????????????
+                //Returns the last path element of the selection.
+                //This method is useful only when the selection model allows a single selection.
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) categoryTree.getLastSelectedPathComponent();
+
+                if (node == null)
+                    //Nothing is selected.
+                    return;
+
+                String nodeName = (String) node.getUserObject();
+
+                preferenceCategoryPanelListener.nodeSelectedEventOccured(nodeName);////???????????????
             }
         });
 
-        categoryTree.setEditable(true);
+        categoryTree.setEditable(false);
 
-        setLayout(new BorderLayout()); /////**************88
+        setLayout(new BorderLayout());
 
         JScrollPane scrollPane = new JScrollPane(categoryTree);
         scrollPane.setMinimumSize(new Dimension(150, 400));
@@ -68,82 +67,27 @@ public class PreferenceCategoryPanel extends JPanel implements ActionListener {
     }
 
     private DefaultMutableTreeNode initTree() {
-        // Must get data from database
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("category");
 
-        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode("Preferences");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Category");
+        DefaultMutableTreeNode generalBranch = new DefaultMutableTreeNode("General");
+        DefaultMutableTreeNode fileTypesBranch = new DefaultMutableTreeNode("File Types");
+        DefaultMutableTreeNode saveToBranch = new DefaultMutableTreeNode("Save To");
+        DefaultMutableTreeNode downloadsBranch = new DefaultMutableTreeNode("Downloads");
+        DefaultMutableTreeNode connectionBranch = new DefaultMutableTreeNode("Connection");
+        DefaultMutableTreeNode proxySocksBranch = new DefaultMutableTreeNode("Proxy / Socks");
+        DefaultMutableTreeNode siteLoginsBranch = new DefaultMutableTreeNode("Site Logins");
+        DefaultMutableTreeNode dialUpVPNBranch = new DefaultMutableTreeNode("dial Up / VPN");
+        DefaultMutableTreeNode soundsBranch = new DefaultMutableTreeNode("Sounds");
 
-        //     DefaultMutableTreeNode server1 = new DefaultMutableTreeNode(new ServerInfo("New York", 0, selectedServers.contains(0)));
-        //      DefaultMutableTreeNode server2 = new DefaultMutableTreeNode(new ServerInfo("Boston", 1, selectedServers.contains(1)));
-        //      DefaultMutableTreeNode server3 = new DefaultMutableTreeNode(new ServerInfo("Los Angles", 2, selectedServers.contains(2)));
-        DefaultMutableTreeNode compressedLeaf = new DefaultMutableTreeNode("General");
-        DefaultMutableTreeNode documentsLeaf = new DefaultMutableTreeNode("Download");
-        DefaultMutableTreeNode musicsLeaf = new DefaultMutableTreeNode("Save To");
-        DefaultMutableTreeNode programsLeaf = new DefaultMutableTreeNode("File Types");
-        DefaultMutableTreeNode videosLeaf = new DefaultMutableTreeNode("Connection");
-
-        allDownloadsBranch.add(compressedLeaf);
-        allDownloadsBranch.add(documentsLeaf);
-        allDownloadsBranch.add(musicsLeaf);
-        allDownloadsBranch.add(programsLeaf);
-        allDownloadsBranch.add(videosLeaf);
-
-
-        DefaultMutableTreeNode unfinishedBranch = new DefaultMutableTreeNode("Unfinished");
-
-        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
-
-        DefaultMutableTreeNode compressedUnfinishedLeaf = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode documentsUnfinishedLeaf = new DefaultMutableTreeNode("Documents");
-        DefaultMutableTreeNode musicsUnfinishedLeaf = new DefaultMutableTreeNode("musics");
-        DefaultMutableTreeNode programsUnfinishedLeaf = new DefaultMutableTreeNode("Programs");
-        DefaultMutableTreeNode videosUnfinishedLeaf = new DefaultMutableTreeNode("Videos");
-
-
-        unfinishedBranch.add(compressedUnfinishedLeaf);
-        unfinishedBranch.add(documentsUnfinishedLeaf);
-        unfinishedBranch.add(musicsUnfinishedLeaf);
-        unfinishedBranch.add(programsUnfinishedLeaf);
-        unfinishedBranch.add(videosUnfinishedLeaf);
-
-
-        DefaultMutableTreeNode finishedBranch = new DefaultMutableTreeNode("Finished");
-
-        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
-
-        DefaultMutableTreeNode compressedFinishedLeaf = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode documentsFinishedLeaf = new DefaultMutableTreeNode("Documents");
-        DefaultMutableTreeNode musicsFinishedLeaf = new DefaultMutableTreeNode("musics");
-        DefaultMutableTreeNode programsFinishedLeaf = new DefaultMutableTreeNode("Programs");
-        DefaultMutableTreeNode videosFinishedLeaf = new DefaultMutableTreeNode("Videos");
-
-
-        finishedBranch.add(compressedFinishedLeaf);
-        finishedBranch.add(documentsFinishedLeaf);
-        finishedBranch.add(musicsFinishedLeaf);
-        finishedBranch.add(programsFinishedLeaf);
-        finishedBranch.add(videosFinishedLeaf);
-
-
-
-        DefaultMutableTreeNode queuesBranch = new DefaultMutableTreeNode("Queues");
-
-        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
-
-        DefaultMutableTreeNode mainDownloadQueueLeaf = new DefaultMutableTreeNode("Main Download Queue");
-        DefaultMutableTreeNode synchronizedQueueLeaf = new DefaultMutableTreeNode("Synchronized Queue");
-
-        queuesBranch.add(mainDownloadQueueLeaf);
-        queuesBranch.add(synchronizedQueueLeaf);
-
-
-        top.add(allDownloadsBranch);
-        top.add(unfinishedBranch);
-        top.add(finishedBranch);
-        top.add(queuesBranch);
+        top.add(generalBranch);
+        top.add(fileTypesBranch);
+        top.add(saveToBranch);
+        top.add(downloadsBranch);
+        top.add(connectionBranch);
+        top.add(proxySocksBranch);
+        top.add(siteLoginsBranch);
+        top.add(dialUpVPNBranch);
+        top.add(soundsBranch);
 
         return top;
     }

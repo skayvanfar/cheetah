@@ -31,6 +31,7 @@ public class ProgressRenderer extends JProgressBar implements TableCellRenderer 
     //    setValue((int) ((Float) value).floatValue());
    //     setString(((Float) value).floatValue() + "%");
 
+        setValue((int) (((Float) value).floatValue() * 100) + 1);
         setString(percentFormat.format(((Float) value).floatValue()));
 
         return this;

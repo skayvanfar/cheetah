@@ -23,6 +23,9 @@ public class CategoryPanel extends JPanel {
 
         categoryTree = new JTree(initTree());
 
+        categoryTree.setRootVisible(false);
+        categoryTree.setShowsRootHandles(true);
+
         DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer(); // if defult want use
         //	treeCellRenderer.setLeafIcon(Utils.createIcon("/udemy/swinglearn/images/Server16.png"));
         //	treeCellRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
@@ -30,7 +33,7 @@ public class CategoryPanel extends JPanel {
 
         //     categoryTree.setCellRenderer(categotyTreeCellRenderer);
   //      categoryTree.setCellEditor(treeCellEditor);
-        categoryTree.setEditable(true);
+        categoryTree.setEditable(false);
 
         setLayout(new BorderLayout()); /////**************88
 
@@ -45,35 +48,83 @@ public class CategoryPanel extends JPanel {
     }
 
     private DefaultMutableTreeNode initTree() {
+
         // Must get data from database
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("category");
 
-        DefaultMutableTreeNode branch1 = new DefaultMutableTreeNode("All Downloads");
+        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode("Preferences");
 
-   //     DefaultMutableTreeNode server1 = new DefaultMutableTreeNode(new ServerInfo("New York", 0, selectedServers.contains(0)));
-  //      DefaultMutableTreeNode server2 = new DefaultMutableTreeNode(new ServerInfo("Boston", 1, selectedServers.contains(1)));
-  //      DefaultMutableTreeNode server3 = new DefaultMutableTreeNode(new ServerInfo("Los Angles", 2, selectedServers.contains(2)));
-        DefaultMutableTreeNode server1 = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode server2 = new DefaultMutableTreeNode("Documents");
-        DefaultMutableTreeNode server3 = new DefaultMutableTreeNode("musics");
+        //     DefaultMutableTreeNode server1 = new DefaultMutableTreeNode(new ServerInfo("New York", 0, selectedServers.contains(0)));
+        //      DefaultMutableTreeNode server2 = new DefaultMutableTreeNode(new ServerInfo("Boston", 1, selectedServers.contains(1)));
+        //      DefaultMutableTreeNode server3 = new DefaultMutableTreeNode(new ServerInfo("Los Angles", 2, selectedServers.contains(2)));
+        DefaultMutableTreeNode compressedLeaf = new DefaultMutableTreeNode("General");
+        DefaultMutableTreeNode documentsLeaf = new DefaultMutableTreeNode("Download");
+        DefaultMutableTreeNode musicsLeaf = new DefaultMutableTreeNode("Save To");
+        DefaultMutableTreeNode programsLeaf = new DefaultMutableTreeNode("File Types");
+        DefaultMutableTreeNode videosLeaf = new DefaultMutableTreeNode("Connection");
 
-        branch1.add(server1);
-        branch1.add(server2);
-        branch1.add(server3);
+        allDownloadsBranch.add(compressedLeaf);
+        allDownloadsBranch.add(documentsLeaf);
+        allDownloadsBranch.add(musicsLeaf);
+        allDownloadsBranch.add(programsLeaf);
+        allDownloadsBranch.add(videosLeaf);
 
-        DefaultMutableTreeNode branch2 = new DefaultMutableTreeNode("Finished");
 
-  //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-  //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
+        DefaultMutableTreeNode unfinishedBranch = new DefaultMutableTreeNode("Unfinished");
 
-        DefaultMutableTreeNode server4 = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode server5 = new DefaultMutableTreeNode("Documents");
+        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
+        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
 
-        branch2.add(server4);
-        branch2.add(server5);
+        DefaultMutableTreeNode compressedUnfinishedLeaf = new DefaultMutableTreeNode("Compressed");
+        DefaultMutableTreeNode documentsUnfinishedLeaf = new DefaultMutableTreeNode("Documents");
+        DefaultMutableTreeNode musicsUnfinishedLeaf = new DefaultMutableTreeNode("musics");
+        DefaultMutableTreeNode programsUnfinishedLeaf = new DefaultMutableTreeNode("Programs");
+        DefaultMutableTreeNode videosUnfinishedLeaf = new DefaultMutableTreeNode("Videos");
 
-        top.add(branch1);
-        top.add(branch2);
+
+        unfinishedBranch.add(compressedUnfinishedLeaf);
+        unfinishedBranch.add(documentsUnfinishedLeaf);
+        unfinishedBranch.add(musicsUnfinishedLeaf);
+        unfinishedBranch.add(programsUnfinishedLeaf);
+        unfinishedBranch.add(videosUnfinishedLeaf);
+
+
+        DefaultMutableTreeNode finishedBranch = new DefaultMutableTreeNode("Finished");
+
+        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
+        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
+
+        DefaultMutableTreeNode compressedFinishedLeaf = new DefaultMutableTreeNode("Compressed");
+        DefaultMutableTreeNode documentsFinishedLeaf = new DefaultMutableTreeNode("Documents");
+        DefaultMutableTreeNode musicsFinishedLeaf = new DefaultMutableTreeNode("musics");
+        DefaultMutableTreeNode programsFinishedLeaf = new DefaultMutableTreeNode("Programs");
+        DefaultMutableTreeNode videosFinishedLeaf = new DefaultMutableTreeNode("Videos");
+
+
+        finishedBranch.add(compressedFinishedLeaf);
+        finishedBranch.add(documentsFinishedLeaf);
+        finishedBranch.add(musicsFinishedLeaf);
+        finishedBranch.add(programsFinishedLeaf);
+        finishedBranch.add(videosFinishedLeaf);
+
+
+
+        DefaultMutableTreeNode queuesBranch = new DefaultMutableTreeNode("Queues");
+
+        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
+        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
+
+        DefaultMutableTreeNode mainDownloadQueueLeaf = new DefaultMutableTreeNode("Main Download Queue");
+        DefaultMutableTreeNode synchronizedQueueLeaf = new DefaultMutableTreeNode("Synchronized Queue");
+
+        queuesBranch.add(mainDownloadQueueLeaf);
+        queuesBranch.add(synchronizedQueueLeaf);
+
+
+        top.add(allDownloadsBranch);
+        top.add(unfinishedBranch);
+        top.add(finishedBranch);
+        top.add(queuesBranch);
 
         return top;
     }

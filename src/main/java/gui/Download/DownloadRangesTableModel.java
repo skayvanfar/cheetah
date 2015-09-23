@@ -20,8 +20,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
     // These are the classes for each column's values.
     private static final Class[] columnClasses = {String.class, String.class, String.class};
 
-    // The table's list of downloads.
-    // data
+    // The table's list of downloadRanges.
     private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
     // TODO Maybe used after
@@ -39,7 +38,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
 
     // Add a new download to the table.
     public void addDownloadRange(DownloadRange downloadRange) {
-        // Register to be notified when the download changes.
+        // Register to be notified when the download changes.downloadRange.addObserver(this);
         downloadRange.addObserver(this);
 
         downloadRangeList.add(downloadRange);

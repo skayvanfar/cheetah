@@ -1,5 +1,7 @@
 package gui;
 
+import gui.Download.DownloadDialog;
+import gui.listener.DownloadDialogListener;
 import model.Download;
 
 import javax.swing.*;
@@ -10,7 +12,7 @@ import java.util.List;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class DownloadsTableModel extends AbstractTableModel implements Observer {
+public class DownloadsTableModel extends AbstractTableModel implements DownloadDialogListener {
 
     // These are the names for the table's columns.
     private static final String[] columnNames = {"URL", "Size", "Progress", "Transfer Rate","Status"};
@@ -18,38 +20,37 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
     // These are the classes for each column's values.
     private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class, String.class};
 
-    // The table's list of downloads.
-    // data
-    private List<Download> downloadList = new ArrayList<>();
+    // The table's list of downloadDialogs.
+    private List<DownloadDialog> downloadDialogList = new ArrayList<>();
 
-    public List<Download> getDownloadList() {
-        return downloadList;
+    public List<DownloadDialog> getDownloadDialogList() {
+        return downloadDialogList;
     }
 
     // TODO Maybe used after
-    public void setDownloads(java.util.List<Download> downloads) {
-        this.downloadList = downloads;
+    public void setDownloadDialogs(List<DownloadDialog> downloads) {
+        this.downloadDialogList = downloads;
     }
 
-    // Add a new download to the table.
-    public void addDownload(Download download) {
+    // Add a new DownloadDialog to the table.
+    public void addDownloadDialog(DownloadDialog downloadDialog) {
         // Register to be notified when the download changes.
-        download.addObserver(this);
+        downloadDialog.addDownloadDialogListener(this);
 
-        downloadList.add(download);
+        downloadDialogList.add(downloadDialog); //todo must check first
 
         // Fire table row insertion notification to table.
         fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
     }
 
     // Get a download for the specified row.
-    public Download getDownload(int row) {
-        return (Download) downloadList.get(row);
+    public DownloadDialog getDownloadDialog(int row) {
+        return (DownloadDialog) downloadDialogList.get(row);
     }
 
     // Remove a download from the list.
     public void clearDownload(int row) {
-        downloadList.remove(row);
+        downloadDialogList.remove(row);
 
         // Fire table row deletion notification to table.
         fireTableRowsDeleted(row, row);
@@ -74,13 +75,13 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
     // Get table's row count.
     @Override
     public int getRowCount() {
-        return downloadList.size();
+        return downloadDialogList.size();
     }
 
     // Get value for a specific row and column combination.
     @Override
     public Object getValueAt(int row, int col) {
-        Download download = downloadList.get(row);
+        Download download = downloadDialogList.get(row).getDownload();
         switch (col) {
             case 0: // URL
                 return download.getUrl();
@@ -89,7 +90,7 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
                 return (size.equals("-1")) ? "" : size;
             case 2: // Progress
                 return new Float(download.getProgress());
-            case 3: // Transfer Rate ////////////////////////////////////////
+            case 3: // Transfer Rate
                 return download.getTransferRate();
             case 4: // Status
                 return download.getStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
@@ -99,11 +100,16 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
 
     /* Update is called when a Download notifies its
        observers of any changes */
-    public void update(Observable o, Object arg) {
-        int index = downloadList.indexOf(o);
+ //   public void update(Observable o, Object arg) {
+  //      int index = downloadList.indexOf(o);
+        // Fire table row update notification to table.
+  //      fireTableRowsUpdated(index, index);
+ //   }
+
+    @Override
+    public void downloadStatusChanged(DownloadDialog downloadDialog) { //// TODO ???????????????? use Event
+        int index = downloadDialogList.indexOf(downloadDialog);
         // Fire table row update notification to table.
         fireTableRowsUpdated(index, index);
     }
-
-
 }

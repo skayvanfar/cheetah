@@ -37,15 +37,30 @@ public class DownloadManagerGUI extends JFrame {
     public DownloadManagerGUI(String name) {
         super(name);
         try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
-                if ("Windows".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                } else if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                }
-            }
-          //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+       //     for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+      //          System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
+      //          if ("Windows".equals(info.getName())) {
+      //              UIManager.setLookAndFeel(info.getClassName());
+      //          } else if ("Nimbus".equals(info.getName())) {
+      //              UIManager.setLookAndFeel(info.getClassName());
+      //          }
+     //       }
+
+            // setTheme(String themeName, String licenseKey, String logoString)
+          //  com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "INSERT YOUR LICENSE KEY HERE", "my company");
+
+            // select Look and Feel
+       //     UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
+       //     UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
+
+
+       //     UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
+            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
+
+            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
+
+
+            //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {

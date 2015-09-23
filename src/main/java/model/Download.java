@@ -285,10 +285,10 @@ public class Download extends Observable implements Observer , Runnable{
         /////////////////////////////////////////////// save previous progress
     //    previousProgress = getProgress();
 
-     //   downloadInfoListener.downloadInfoChanged();
+        downloadInfoListener.downloadInfoChanged();
 
-        setChanged();
-        notifyObservers();
+     //   setChanged();
+     //   notifyObservers();
     }
 
     // event that come from DownloadRange TODO may be synchrinized

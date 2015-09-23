@@ -1,5 +1,6 @@
 package gui.Download;
 
+import enums.DownloadStatus;
 import gui.listener.DownloadDialogListener;
 import gui.listener.DownloadInfoListener;
 import model.Download;
@@ -18,9 +19,13 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
     private DownloadPropertiesPanel downloadPropertiesPanel;
     private JTabbedPane tabbedPane;
 
-    private Download download; // TODO may not needed hear
+    private Download download;////**********
 
- //   private Vector<DownloadDialogListener> downloadDialogListenerList;
+    private Vector<DownloadDialogListener> downloadDialogListenerList; ////**********
+
+    public Download getDownload() {
+        return download;
+    }
 
     /**
      * Adds an DownloadDialogListener to the set of downloadDialogListenerList for this object, provided
@@ -31,27 +36,29 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
      * @param   downloadDialogListener   an DownloadDialogListener to be added.
      * @throws NullPointerException   if the parameter o is null.
      */
-  //  public synchronized void addDownloadDialogListener(DownloadDialogListener downloadDialogListener) {
-  //      if (downloadDialogListener == null)
-  //          throw new NullPointerException();
-  //      if (!downloadDialogListenerList.contains(downloadDialogListener)) {
-  //          downloadDialogListenerList.addElement(downloadDialogListener);
-  //      }
-  //  }
+    public synchronized void addDownloadDialogListener(DownloadDialogListener downloadDialogListener) {
+        if (downloadDialogListener == null)
+            throw new NullPointerException();
+        if (!downloadDialogListenerList.contains(downloadDialogListener)) {
+            downloadDialogListenerList.addElement(downloadDialogListener);
+        }
+    }
 
     /**
      * Deletes an DownloadDialogListener from the set of downloadDialogListenerList of this object.
      * Passing <CODE>null</CODE> to this method will have no effect.
-  //   * @param   downloadDialogListener   the DownloadDialogListener to be deleted.
+     * @param   downloadDialogListener   the DownloadDialogListener to be deleted.
      */
-  //  public synchronized void deleteDownloadDialogListener(DownloadDialogListener downloadDialogListener) {
-    //    downloadDialogListenerList.removeElement(downloadDialogListener);
-   // }
+    public synchronized void deleteDownloadDialogListener(DownloadDialogListener downloadDialogListener) {
+        downloadDialogListenerList.removeElement(downloadDialogListener);
+    }
 
     public DownloadDialog(JFrame parent, Download download) {
         super(parent, "Download Dialog", false);
 
         this.download = download;
+
+        downloadDialogListenerList = new Vector<>();
 
         download.setDownloadInfoListener(this);
 
@@ -70,9 +77,39 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
         setLocationRelativeTo(parent);
     }
 
+    // Pause this download.
+    public void pause() {
+        download.pause();
+    }////**********
+
+    // Resume this download.
+    public void resume() {
+        download.resume();
+    }////**********
+
+    // Cancel this download.
+    public void cancel() {
+        download.cancel();
+    }////**********
+
+    public DownloadStatus getStatus() {
+        return download.getStatus();
+    }////**********
+
+
     @Override
     public void newDownloadRangeEventOccured(DownloadRange downloadRange) {
         downloadInfoPanel.addDownloadRange(downloadRange);
+    }
+
+    @Override
+    public void downloadInfoChanged() {////**********
+        for (final DownloadDialogListener downloadDialogListener : downloadDialogListenerList) {
+            SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
+                public void run() {
+                    downloadDialogListener.downloadStatusChanged(DownloadDialog.this);                }
+            });
+        }
     }
 
 }
