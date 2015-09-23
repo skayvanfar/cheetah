@@ -1,7 +1,10 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
 import java.util.Set;
 
 /**
@@ -19,11 +22,25 @@ public class CategoryPanel extends JPanel {
     public CategoryPanel() {
 
         categoryTree = new JTree(initTree());
-   //     categoryTree.setCellRenderer(categotyTreeCellRenderer);
+
+        DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer(); // if defult want use
+        //	treeCellRenderer.setLeafIcon(Utils.createIcon("/udemy/swinglearn/images/Server16.png"));
+        //	treeCellRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
+        //	treeCellRenderer.setClosedIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponentAdd16.png"));
+
+        //     categoryTree.setCellRenderer(categotyTreeCellRenderer);
   //      categoryTree.setCellEditor(treeCellEditor);
         categoryTree.setEditable(true);
 
-        add(new JScrollPane(categoryTree));
+        setLayout(new BorderLayout()); /////**************88
+
+        JScrollPane scrollPane = new JScrollPane(categoryTree);
+        scrollPane.setMinimumSize(new Dimension(150, 400));
+        add(scrollPane, BorderLayout.CENTER);
+
+        Border innerBorder = BorderFactory.createTitledBorder("Category Download");
+        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
+        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
 
     }
 

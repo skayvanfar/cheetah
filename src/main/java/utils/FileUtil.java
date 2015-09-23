@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class FileUtil {
 
-    public static void joinDownloadedParts(List<File> files, String fileType) {
-        File ofile = new File("c://ddd." + fileType);
+    public static void joinDownloadedParts(List<File> files, String fileName) {
+        File ofile = new File("c://" + fileName);
         FileOutputStream fos;
         FileInputStream fis;
         byte[] fileBytes;

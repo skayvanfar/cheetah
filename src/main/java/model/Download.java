@@ -3,6 +3,7 @@ package model;
 import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.SizeType;
+import enums.TimeUnit;
 import gui.listener.DownloadInfoListener;
 import utils.ConnectionUtil;
 import utils.FileUtil;
@@ -31,9 +32,7 @@ public class Download extends Observable implements Observer , Runnable{
 
     private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
-    // if really any thing changed //////////////////////////////////////////////
-    //  private boolean changed = false;
-    private float previousProgress;
+ //   private float previousProgress;
 
     private DownloadInfoListener downloadInfoListener;
 
@@ -130,7 +129,7 @@ public class Download extends Observable implements Observer , Runnable{
                         previousDownloaded = 0;
                     }
                     int newDownloaded = downloaded;
-                    float differenceDownloaded = ConnectionUtil.calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000, "sec"); // in Byte
+                    float differenceDownloaded = ConnectionUtil.calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000, TimeUnit.SEC); // in Byte
 
                     // save new downloaded into threadLocal
                     threadLocal.set(newDownloaded);
@@ -194,8 +193,7 @@ public class Download extends Observable implements Observer , Runnable{
     public void run() {
         try {
             // Open connection to URL.
-            HttpURLConnection connection =
-                    (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range", "bytes=0-");
@@ -224,7 +222,7 @@ public class Download extends Observable implements Observer , Runnable{
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// for 8 connection
             createDownloadRanges(connection, 8);
-
+            connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
             error();
@@ -234,12 +232,9 @@ public class Download extends Observable implements Observer , Runnable{
     }
 
     private void createDownloadRanges(HttpURLConnection connection, int connectionSize) throws IOException {
-        int partSize= ConnectionUtil.getPartSizeOfDownload(size, connectionSize); // like 200
+        int partSize= ConnectionUtil.getPartSizeOfDownload(size, connectionSize);
         int startRange = 0;
-        int endRange = partSize;
-
-        ConnectionUtil.printHttpURLConnectionHeaders(connection);
-
+        int endRange = partSize - 1;
 
         // if connection is able to part download
         if (connection.getResponseCode() == 206) {
@@ -253,15 +248,20 @@ public class Download extends Observable implements Observer , Runnable{
                 }
 
                 startRange = endRange + 1;
-                if (size - startRange > partSize) { /////**************
-                    endRange = startRange + partSize;
-                } else { // last range download
-                    endRange = size;
+                if (i != connectionSize - 2) {
+                    endRange = startRange + partSize - 1;
+                } else {
+                    endRange = 0;
                 }
             }
         } else {
-            DownloadRange downloadRange = new DownloadRange(0, url, startRange, endRange); //TODO for 0
+            DownloadRange downloadRange = new DownloadRange(0, url, startRange, size);
             downloadRangeList.add(downloadRange);
+            downloadRange.addObserver(this);
+
+            if (downloadInfoListener != null) {
+                downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
+            }
         }
     }
 
@@ -274,7 +274,7 @@ public class Download extends Observable implements Observer , Runnable{
 
        // files.sort(new FileComperarto()); TODO must sorted
 
-        FileUtil.joinDownloadedParts(files, ConnectionUtil.getFileExtension(url));
+        FileUtil.joinDownloadedParts(files, ConnectionUtil.getFileName(url));
 
         status = DownloadStatus.COMPLETE;
         stateChanged();
@@ -283,7 +283,9 @@ public class Download extends Observable implements Observer , Runnable{
     // Notify observers that this download's status has changed.
     private void stateChanged() {
         /////////////////////////////////////////////// save previous progress
-        previousProgress = getProgress();
+    //    previousProgress = getProgress();
+
+     //   downloadInfoListener.downloadInfoChanged();
 
         setChanged();
         notifyObservers();
@@ -293,30 +295,15 @@ public class Download extends Observable implements Observer , Runnable{
     @Override
     public void update(Observable o, Object arg) {
         DownloadRange downloadRange = (DownloadRange) o;
-        updateInfo(downloadRange);
+        updateInfo(downloadRange, (int) arg);
         stateChanged();
     }
 
 
 //    private int previousDownloaded = 0;
 //    private long previousTime = 0;
-    private synchronized void updateInfo(DownloadRange downloadRange) {
-        downloaded += downloadRange.getRead();
-
-   //     int currentDownloaded = downloaded;
-    //    int differenceDownloaded = (downloaded - previousDownloaded); // in Byte
-
-   //     long currentTime = System.nanoTime();
-
-    //    int longTime = (int) (currentTime - previousTime);
-    ///    float differenceDownloadedInUnit = calculateTransferRateInUnit(differenceDownloaded, longTime, "sec");
-
-    //    previousDownloaded = downloaded;
-   //     previousTime = currentTime;
-
-        // calculate differenceDownloaded
-   //     transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloadedInUnit, SizeType.BYTE) + "/sec";
-   //     stateChanged();
+    private synchronized void updateInfo(DownloadRange downloadRange, int read) {
+        downloaded += read;
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:
@@ -337,7 +324,10 @@ public class Download extends Observable implements Observer , Runnable{
                 break;
             case COMPLETED:
                 System.out.println("COMPLETED download Range");
-                if (downloaded == size) { // when all parts downloaded ????????????????/////
+                System.out.println("downloaded = " + downloaded + " size = " + size + "  downloadRange = " + downloadRange.getDownloaded() + " startRange= " +
+                    downloadRange.getStartRange() + " end range= " + downloadRange.getEndRange());
+
+                if (downloaded >= size) { // when all parts downloaded
                     endOfDownload();
                 }
                 break;

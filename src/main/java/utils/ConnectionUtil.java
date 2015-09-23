@@ -1,6 +1,7 @@
 package utils;
 
 import enums.SizeType;
+import enums.TimeUnit;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -58,11 +59,23 @@ public class ConnectionUtil {
         return downloadSize /connectionSize;
     }
 
-    public static float calculateTransferRateInUnit(float differenceDownloaded, int longTime, String unit) {
+    public static float calculateTransferRateInUnit(float differenceDownloaded, int longTime, TimeUnit timeUnit) {
 
-        if (unit.equalsIgnoreCase("sec")) {
-            return (differenceDownloaded * 1000) / longTime;
+        int unitTime = 0;
+        switch (timeUnit) {
+            case SEC:
+                unitTime = 1000;
+                break;
+            case MIN:
+                unitTime = 60 * 1000;
+                break;
+            case HOUR:
+                unitTime = 60 * 60 * 1000;
+                break;
+            default:
+                unitTime = 1000;
         }
-        return 0; // TODO for other units
+
+        return (differenceDownloaded * unitTime) / longTime;
     }
 }
