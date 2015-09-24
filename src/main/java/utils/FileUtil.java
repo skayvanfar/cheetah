@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 public class FileUtil {
 
     public static void joinDownloadedParts(List<File> files, String fileName) {
-        File outputFile = outputFile(new File("c://" + fileName));
+        String homeDir = System.getProperty("user.home");
+        File outputFile = outputFile(new File( homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files" + File.separator + fileName));
 
         FileOutputStream fos;
         FileInputStream fis;

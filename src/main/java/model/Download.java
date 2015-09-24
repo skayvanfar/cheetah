@@ -30,6 +30,8 @@ public class Download extends Observable implements Observer , Runnable{
     private DownloadStatus status; // current status of download
     private String transferRate; // rate of transfer
 
+    private int partCount;
+
     private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
  //   private float previousProgress;
@@ -37,11 +39,12 @@ public class Download extends Observable implements Observer , Runnable{
     private DownloadInfoListener downloadInfoListener;
 
     // Constructor for Download.
-    public Download(URL url) {
+    public Download(URL url, int partCount) {
         this.url = url;
         size = -1;
         downloaded = 0;
         status = DownloadStatus.DOWNLOADING;
+        this.partCount = partCount;
 
         // Begin the download.
         download();
@@ -221,7 +224,7 @@ public class Download extends Observable implements Observer , Runnable{
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// for 8 connection
-            createDownloadRanges(connection, 8);
+            createDownloadRanges(connection, partCount);
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
@@ -239,7 +242,7 @@ public class Download extends Observable implements Observer , Runnable{
         // if connection is able to part download
         if (connection.getResponseCode() == 206) {
             for (int i = 0;  i < connectionSize; i++) {
-                DownloadRange downloadRange = new DownloadRange(i, url, startRange, endRange);
+                DownloadRange downloadRange = new DownloadRange(i + 1, url, startRange, endRange);
                 downloadRangeList.add(downloadRange);
                 downloadRange.addObserver(this);
 

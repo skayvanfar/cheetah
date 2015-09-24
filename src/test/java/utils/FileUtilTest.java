@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +18,10 @@ public class FileUtilTest {
 
     @Test
     public void testJoinDownloadedParts() throws Exception {
+        Preferences preferences = Preferences.userRoot().node("db");
+       // preferences.putInt("a", 1);
+        preferences.clear();
+    //    System.out.println(preferences.getInt("a", 11));
      //   List<File> files = new ArrayList<>();
   //      for (int i = 0; i < 9; i++) {
    //         File f = new File("/splitDownloaded/LinuxInstall.pdf.00" + (i + 1));

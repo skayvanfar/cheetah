@@ -7,12 +7,21 @@ import gui.listener.MainToolbarListener;
 import gui.listener.PreferencesListener;
 import gui.preference.PreferenceDialog;
 import model.Download;
+import model.dto.PreferenceConnectionDTO;
+import model.dto.PreferencesDTO;
+import model.dto.PreferencesDirectoryCategoryDTO;
+import model.dto.PreferencesSaveDTO;
+import utils.PrefObj;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.peer.SystemTrayPeer;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.*;
+import java.util.List;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -21,6 +30,8 @@ import java.util.prefs.Preferences;
 
 // implements Observer
 public class DownloadManagerGUI extends JFrame {
+
+    private ResourceBundle bundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
     private MainToolBar mainToolbar;
     private CategoryPanel categoryPanel;
@@ -37,27 +48,29 @@ public class DownloadManagerGUI extends JFrame {
     public DownloadManagerGUI(String name) {
         super(name);
         try {
-       //     for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-      //          System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
       //          if ("Windows".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
       //          } else if ("Nimbus".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
       //          }
-     //       }
+
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                }
+            }
 
             // setTheme(String themeName, String licenseKey, String logoString)
-          //  com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "INSERT YOUR LICENSE KEY HERE", "my company");
+    //        com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "LPG", "Chita");
 
             // select Look and Feel
        //     UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
-       //     UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
+    //        UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
 
 
        //     UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
-            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
-
-            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
+        //    UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
 
 
             //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
@@ -88,13 +101,13 @@ public class DownloadManagerGUI extends JFrame {
 
         preferenceDialog = new PreferenceDialog(this);
 
-        preferences = Preferences.userRoot().node("db"); // must db ===== MainFrame name ?????????????????????????????????
+        preferences = Preferences.userRoot().node("db");
 
         addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
             @Override
             public void newDownloadEventOccured(URL textUrl) {
                 if (textUrl != null) {
-                    downloadPanel.addDownload(new Download(textUrl));
+                    downloadPanel.addDownload(new Download(textUrl, preferences.getInt("maxConnectionNumber", Integer.parseInt(bundle.getString("maxConnectionNumber")))));
                 }
             }
         });
@@ -106,6 +119,7 @@ public class DownloadManagerGUI extends JFrame {
 
         setJMenuBar(initMenuBar());
 
+        createFileHierarchy();
 
         mainToolbar.setMainToolbarListener(new MainToolbarListener() {
             @Override
@@ -147,10 +161,28 @@ public class DownloadManagerGUI extends JFrame {
 
         preferenceDialog.setPreferencesListener(new PreferencesListener() {
             @Override
-            public void preferencesSet(String user, String password, int port) {
-                System.out.println("in listener pref"); // TODO
+            public void preferencesSet(PreferencesDTO preferenceDTO) {
+                try {
+                    setPreferences(preferenceDTO);
+                } catch (BackingStoreException e) {
+                    e.printStackTrace(); //todo use JOptionPane
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+        try {
+            preferenceDialog.setDefaults(getPreferences());
+        } catch (BackingStoreException e) {
+            e.printStackTrace(); // todo
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // Handle window closing events.
         addWindowListener(new WindowAdapter() {
@@ -168,6 +200,101 @@ public class DownloadManagerGUI extends JFrame {
         setSize(740, 480);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
+    }
+
+    private PreferencesDTO getPreferences() throws BackingStoreException, IOException, ClassNotFoundException {
+
+     //   PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+        PreferencesDTO preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
+        PreferenceConnectionDTO dd = preferencesDTO.getPreferenceConnectionDTO();
+        checkAndSetPreferencesDTO(preferencesDTO);
+
+        return preferencesDTO;
+    }
+
+    private void checkAndSetPreferencesDTO(PreferencesDTO preferencesDTO) {
+        // PreferenceConnectionDTO
+        PreferenceConnectionDTO preferenceConnectionDTO = preferencesDTO.getPreferenceConnectionDTO();
+        if (preferenceConnectionDTO == null) {
+            preferenceConnectionDTO = new PreferenceConnectionDTO();
+        }
+        if (preferenceConnectionDTO.getMaxConnectionNumber() == 0) {
+            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(bundle.getString("maxConnectionNumber")));
+        }
+
+        // preferencesSaveDTO
+        PreferencesSaveDTO preferencesSaveDTO = preferencesDTO.getPreferencesSaveDTO();
+        if (preferencesSaveDTO == null) {
+            preferencesSaveDTO = new PreferencesSaveDTO();
+        }
+        if (preferencesSaveDTO.getPreferencesDirectoryCategoryDTOs() == null) { // or empty ????
+            List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs = new ArrayList<>();
+
+            // preferencesCompressedDirCategoryDTO
+            PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesCompressedDirCategoryDTO.setDirectoryName(bundle.getString("compressedDirectoryCategory.directoryName"));
+            preferencesCompressedDirCategoryDTO.setPath(bundle.getString("compressedDirectoryCategory.path"));
+            String [] fileCompressedExtensions = bundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
+
+            preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
+            preferencesDirectoryCategoryDTOs.add(preferencesCompressedDirCategoryDTO);
+
+
+            PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesDocumentDirCategoryDTO.setDirectoryName(bundle.getString("documentDirectoryCategory.directoryName"));
+            preferencesDocumentDirCategoryDTO.setPath(bundle.getString("documentDirectoryCategory.path"));
+            String [] fileDocumentExtensions = bundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
+
+            preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
+            preferencesDirectoryCategoryDTOs.add(preferencesDocumentDirCategoryDTO);
+
+
+            PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesMusicDirCategoryDTO.setDirectoryName(bundle.getString("musicDirectoryCategory.directoryName"));
+            preferencesMusicDirCategoryDTO.setPath(bundle.getString("musicDirectoryCategory.path"));
+            String [] fileMusicExtensions = bundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
+
+            preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
+            preferencesDirectoryCategoryDTOs.add(preferencesMusicDirCategoryDTO);
+
+
+            PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesProgramDirCategoryDTO.setDirectoryName(bundle.getString("programDirectoryCategory.directoryName"));
+            preferencesProgramDirCategoryDTO.setPath(bundle.getString("programDirectoryCategory.path"));
+            String [] fileProgramExtensions = bundle.getString("programDirectoryCategory.fileExtensions").split(" ");
+
+            preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
+            preferencesDirectoryCategoryDTOs.add(preferencesProgramDirCategoryDTO);
+
+
+            PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesVideoDirCategoryDTO.setDirectoryName(bundle.getString("videoDirectoryCategory.directoryName"));
+            preferencesVideoDirCategoryDTO.setPath(bundle.getString("videoDirectoryCategory.path"));
+            String [] fileVideoExtensions = bundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
+
+            preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
+            preferencesDirectoryCategoryDTOs.add(preferencesVideoDirCategoryDTO);
+
+
+            preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
+
+            // todo other needed ... use other method
+        }
+
+
+        // add all Main preferences objects
+        preferencesDTO.setPreferenceConnectionDTO(preferenceConnectionDTO);
+        preferencesDTO.setPreferencesSaveDTO(preferencesSaveDTO);
+    }
+
+    private void setPreferences(PreferencesDTO preferenceDTO) throws BackingStoreException, IOException, ClassNotFoundException {
+ //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferenceConnectionDTO().getMaxConnectionNumber());
+        PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
     }
 
     /* Update each button's state based off of the
@@ -291,5 +418,50 @@ public class DownloadManagerGUI extends JFrame {
         });
 
         return menuBar;
+    }
+
+    private void createFileHierarchy() {
+        String homeDir = System.getProperty("user.home");
+        try {
+            File CompressedFiles = new File(homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files");
+            if (!CompressedFiles.exists()) {
+                CompressedFiles.mkdir();
+            }
+
+            String pathDirectories = homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files";
+
+            File compressedFiles = new File(pathDirectories + File.separator + "Compressed Files");
+            if (!compressedFiles.exists())
+                compressedFiles.mkdir();
+
+            File documentFiles = new File(pathDirectories + File.separator + "Document Files");
+            if (!documentFiles.exists()) {
+                documentFiles.mkdir();
+            }
+            File musicFiles = new File(pathDirectories + File.separator + "Music Files");
+            if (!musicFiles.exists()) {
+                musicFiles.mkdir();
+            }
+            File programFiles = new File(pathDirectories + File.separator + "Program Files");
+            if (!programFiles.exists()) {
+                programFiles.mkdir();
+            }
+            File videoFiles = new File(pathDirectories + File.separator + "Video Files");
+            if (!videoFiles.exists()) {
+                videoFiles.mkdir();
+            }
+            File otherFiles = new File(pathDirectories + File.separator + "Other Files");
+            if (!otherFiles.exists()) {
+                otherFiles.mkdir();
+            }
+            File tempFiles = new File(pathDirectories + File.separator + "Temp Files");
+            if (!tempFiles.exists()) {
+                tempFiles.mkdir();
+            }
+        } catch (SecurityException se){
+            JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Unable to create necessary directories. may be not have write permission, please restart program", "Directories creation problem", JOptionPane.ERROR_MESSAGE);
+        }
+
+
     }
 }
