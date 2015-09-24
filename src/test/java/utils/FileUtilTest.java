@@ -1,9 +1,13 @@
 package utils;
 
 import model.DownloadRange;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,4 +25,18 @@ public class FileUtilTest {
    //     }
   //      FileUtil.joinDownloadedParts(files, "pdf");
     }
+
+    @Test
+    public void testOutputFile() {
+        String expectedValue = "t_1.txt";
+
+        URL url = Thread.currentThread().getContextClassLoader().getResource("t.txt");
+        File file = new File(url.getPath());
+        File newFile = FileUtil.outputFile(file);
+        String actualValue = newFile.getName();
+
+        Assert.assertEquals(expectedValue, actualValue);
+
+    }
+
 }

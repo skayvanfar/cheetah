@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Saeed on 9/15/2015.
@@ -11,13 +13,14 @@ import java.util.List;
 public class FileUtil {
 
     public static void joinDownloadedParts(List<File> files, String fileName) {
-        File ofile = new File("c://" + fileName);
+        File outputFile = outputFile(new File("c://" + fileName));
+
         FileOutputStream fos;
         FileInputStream fis;
         byte[] fileBytes;
         int bytesRead = 0;
         try {
-            fos = new FileOutputStream(ofile,true);
+            fos = new FileOutputStream(outputFile,true);
             for (File file : files) {
                 fis = new FileInputStream(file);
                 fileBytes = new byte[(int) file.length()];
@@ -36,4 +39,23 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+
+    public static File outputFile(File file) {
+        if (!file.exists()) {
+            return file;
+        } else {
+            String filenameAndExtension = file.getName();
+            String fileName = filenameAndExtension.substring(0, filenameAndExtension.lastIndexOf('.'));
+            String extension = filenameAndExtension.substring(filenameAndExtension.lastIndexOf('.') + 1);
+            if (fileName.lastIndexOf('_') != -1) {
+                String firstPartFileName = fileName.substring(0, fileName.lastIndexOf('_'));
+                int lastPartFileName = Integer.parseInt(fileName.substring(fileName.lastIndexOf('_') + 1)) + 1;
+                return outputFile(new File(file.getParent()+ File.separator + firstPartFileName + "_" + lastPartFileName + "." + extension));
+            } else {
+                return outputFile(new File(file.getParent() + File.separator + fileName + "_1" + "." + extension));
+            }
+
+        }
+    }
+
 }
