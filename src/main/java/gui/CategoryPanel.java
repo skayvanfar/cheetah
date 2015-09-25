@@ -1,11 +1,17 @@
 package gui;
 
+import model.dto.PreferencesDTO;
+import model.dto.PreferencesDirectoryCategoryDTO;
+import utils.PrefObj;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by Saeed on 9/10/2015.
@@ -16,12 +22,14 @@ public class CategoryPanel extends JPanel {
     private CategotyTreeCellRenderer categotyTreeCellRenderer;
   //  private ServerTreeCellEditor treeCellEditor;
 
-    private Set<Integer> selectedServers;
+    private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
 
-    public CategoryPanel() {
+    public CategoryPanel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
-        categoryTree = new JTree(initTree());
+        this.preferencesDirectoryCategoryDTOs = preferencesDirectoryCategoryDTOs;
+
+        categoryTree = new JTree(initTree(preferencesDirectoryCategoryDTOs));
 
         categoryTree.setRootVisible(false);
         categoryTree.setShowsRootHandles(true);
@@ -47,65 +55,31 @@ public class CategoryPanel extends JPanel {
 
     }
 
-    private DefaultMutableTreeNode initTree() {
+    private DefaultMutableTreeNode initTree(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
         // Must get data from database
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("category");
 
-        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode("Preferences");
+        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode("All Downloads");
 
-        //     DefaultMutableTreeNode server1 = new DefaultMutableTreeNode(new ServerInfo("New York", 0, selectedServers.contains(0)));
-        //      DefaultMutableTreeNode server2 = new DefaultMutableTreeNode(new ServerInfo("Boston", 1, selectedServers.contains(1)));
-        //      DefaultMutableTreeNode server3 = new DefaultMutableTreeNode(new ServerInfo("Los Angles", 2, selectedServers.contains(2)));
-        DefaultMutableTreeNode compressedLeaf = new DefaultMutableTreeNode("General");
-        DefaultMutableTreeNode documentsLeaf = new DefaultMutableTreeNode("Download");
-        DefaultMutableTreeNode musicsLeaf = new DefaultMutableTreeNode("Save To");
-        DefaultMutableTreeNode programsLeaf = new DefaultMutableTreeNode("File Types");
-        DefaultMutableTreeNode videosLeaf = new DefaultMutableTreeNode("Connection");
-
-        allDownloadsBranch.add(compressedLeaf);
-        allDownloadsBranch.add(documentsLeaf);
-        allDownloadsBranch.add(musicsLeaf);
-        allDownloadsBranch.add(programsLeaf);
-        allDownloadsBranch.add(videosLeaf);
+        for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
+            DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
+            allDownloadsBranch.add(leaf);
+        }
 
 
         DefaultMutableTreeNode unfinishedBranch = new DefaultMutableTreeNode("Unfinished");
-
-        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
-
-        DefaultMutableTreeNode compressedUnfinishedLeaf = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode documentsUnfinishedLeaf = new DefaultMutableTreeNode("Documents");
-        DefaultMutableTreeNode musicsUnfinishedLeaf = new DefaultMutableTreeNode("musics");
-        DefaultMutableTreeNode programsUnfinishedLeaf = new DefaultMutableTreeNode("Programs");
-        DefaultMutableTreeNode videosUnfinishedLeaf = new DefaultMutableTreeNode("Videos");
-
-
-        unfinishedBranch.add(compressedUnfinishedLeaf);
-        unfinishedBranch.add(documentsUnfinishedLeaf);
-        unfinishedBranch.add(musicsUnfinishedLeaf);
-        unfinishedBranch.add(programsUnfinishedLeaf);
-        unfinishedBranch.add(videosUnfinishedLeaf);
+        for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
+            DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
+            unfinishedBranch.add(leaf);
+        }
 
 
         DefaultMutableTreeNode finishedBranch = new DefaultMutableTreeNode("Finished");
-
-        //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
-        //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
-
-        DefaultMutableTreeNode compressedFinishedLeaf = new DefaultMutableTreeNode("Compressed");
-        DefaultMutableTreeNode documentsFinishedLeaf = new DefaultMutableTreeNode("Documents");
-        DefaultMutableTreeNode musicsFinishedLeaf = new DefaultMutableTreeNode("musics");
-        DefaultMutableTreeNode programsFinishedLeaf = new DefaultMutableTreeNode("Programs");
-        DefaultMutableTreeNode videosFinishedLeaf = new DefaultMutableTreeNode("Videos");
-
-
-        finishedBranch.add(compressedFinishedLeaf);
-        finishedBranch.add(documentsFinishedLeaf);
-        finishedBranch.add(musicsFinishedLeaf);
-        finishedBranch.add(programsFinishedLeaf);
-        finishedBranch.add(videosFinishedLeaf);
+        for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
+            DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
+            finishedBranch.add(leaf);
+        }
 
 
 
@@ -120,12 +94,16 @@ public class CategoryPanel extends JPanel {
         queuesBranch.add(mainDownloadQueueLeaf);
         queuesBranch.add(synchronizedQueueLeaf);
 
-
         top.add(allDownloadsBranch);
         top.add(unfinishedBranch);
         top.add(finishedBranch);
         top.add(queuesBranch);
 
         return top;
+    }
+
+    public void setTreeModel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
+        this.preferencesDirectoryCategoryDTOs = preferencesDirectoryCategoryDTOs;
+        categoryTree.setModel(new DefaultTreeModel(initTree(preferencesDirectoryCategoryDTOs), false));
     }
 }

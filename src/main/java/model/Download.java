@@ -1,10 +1,12 @@
 package model;
 
+import com.google.common.io.Files;
 import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.SizeType;
 import enums.TimeUnit;
 import gui.listener.DownloadInfoListener;
+import org.apache.commons.io.FileUtils;
 import utils.ConnectionUtil;
 import utils.FileUtil;
 
@@ -34,17 +36,23 @@ public class Download extends Observable implements Observer , Runnable{
 
     private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
+    private String downloadPath;
+    private String downloadRagePath;
+
  //   private float previousProgress;
 
     private DownloadInfoListener downloadInfoListener;
 
     // Constructor for Download.
-    public Download(URL url, int partCount) {
+    public Download(URL url, int partCount, String downloadPath, String downloadRagePath) {
         this.url = url;
         size = -1;
         downloaded = 0;
         status = DownloadStatus.DOWNLOADING;
         this.partCount = partCount;
+
+        this.downloadPath = downloadPath;
+        this.downloadRagePath = downloadRagePath;
 
         // Begin the download.
         download();
@@ -242,7 +250,7 @@ public class Download extends Observable implements Observer , Runnable{
         // if connection is able to part download
         if (connection.getResponseCode() == 206) {
             for (int i = 0;  i < connectionSize; i++) {
-                DownloadRange downloadRange = new DownloadRange(i + 1, url, startRange, endRange);
+                DownloadRange downloadRange = new DownloadRange(i + 1, url, downloadRagePath, startRange, endRange);
                 downloadRangeList.add(downloadRange);
                 downloadRange.addObserver(this);
 
@@ -258,7 +266,7 @@ public class Download extends Observable implements Observer , Runnable{
                 }
             }
         } else {
-            DownloadRange downloadRange = new DownloadRange(0, url, startRange, size);
+            DownloadRange downloadRange = new DownloadRange(0, url, downloadRagePath, startRange, size);
             downloadRangeList.add(downloadRange);
             downloadRange.addObserver(this);
 
@@ -277,7 +285,13 @@ public class Download extends Observable implements Observer , Runnable{
 
        // files.sort(new FileComperarto()); TODO must sorted
 
-        FileUtil.joinDownloadedParts(files, ConnectionUtil.getFileName(url));
+        FileUtil.joinDownloadedParts(files, downloadPath, ConnectionUtil.getFileName(url));
+        File parentFile = files.get(0).getParentFile();
+        try {
+            FileUtils.forceDelete(parentFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         status = DownloadStatus.COMPLETE;
         stateChanged();
@@ -288,7 +302,7 @@ public class Download extends Observable implements Observer , Runnable{
         /////////////////////////////////////////////// save previous progress
     //    previousProgress = getProgress();
 
-        downloadInfoListener.downloadInfoChanged();
+        downloadInfoListener.downloadInfoChanged(); //todo Exception in thread "Thread-3" java.lang.NullPointerException
 
      //   setChanged();
      //   notifyObservers();

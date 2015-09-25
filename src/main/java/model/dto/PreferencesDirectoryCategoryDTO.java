@@ -2,6 +2,7 @@ package model.dto;
 
 import javax.swing.*;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Created by Saeed on 9/24/2015.
@@ -50,5 +51,9 @@ public class PreferencesDirectoryCategoryDTO implements Serializable {
     @Override
     public String toString() {
         return DirectoryName;
+    }
+
+    public boolean isIncludeFileExtension(String fileExtension) {
+        return Arrays.asList(fileExtensions).contains(fileExtension);
     }
 }

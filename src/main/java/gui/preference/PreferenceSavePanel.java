@@ -32,14 +32,17 @@ public class PreferenceSavePanel extends JPanel {
 
     private JPanel tempDirPanel;
 
-    List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
+    private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
+    private PreferencesSaveDTO preferencesSaveDTO;
 
-    public PreferenceSavePanel() {
+    public PreferenceSavePanel(final PreferencesSaveDTO preferencesSaveDTO) {
         Dimension dim = getPreferredSize();
         dim.width = 250;
         setPreferredSize(dim);
         setMinimumSize(dim);
+
+        this.preferencesSaveDTO = preferencesSaveDTO;
 
         saveToPanel = new JPanel();
         categoryLabel = new JLabel("Category");
@@ -47,11 +50,11 @@ public class PreferenceSavePanel extends JPanel {
         editButton = new JButton("Edit");
         categoryComboBox = new JComboBox<>();
         fileExtensionLabel = new JLabel("File Extensions:");
-        fileExtensionTextField = new JTextField(20);
+        fileExtensionTextField = new JTextField(35);
         pathLabel = new JLabel("Path:");
-        pathTextField = new JTextField(20);
+        pathTextField = new JTextField(35);
         temporaryDirectoryLabel = new JLabel("Temporary Directory:");
-        temporaryDirectoryTextField = new JTextField(20);
+        temporaryDirectoryTextField = new JTextField(35);
         tempDirPanel = new JPanel();
 
         Border innerBorder = BorderFactory.createTitledBorder("Save");
@@ -60,10 +63,14 @@ public class PreferenceSavePanel extends JPanel {
 
         layoutComponents();
 
+        setPreferenceSaveDTO(preferencesSaveDTO);
+
         categoryComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                fileExtensionTextField.setText(concatArray(((PreferencesDirectoryCategoryDTO) e.getItem()).getFileExtensions()));
+                PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) e.getItem();
+                fileExtensionTextField.setText(concatArray(preferencesDirectoryCategoryDTO.getFileExtensions()));
+                pathTextField.setText(preferencesDirectoryCategoryDTO.getPath());
             }
         });
 
@@ -73,6 +80,22 @@ public class PreferenceSavePanel extends JPanel {
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 ((PreferencesDirectoryCategoryDTO) categoryComboBox.getSelectedItem()).setFileExtensions(fileExtensionTextField.getText().split(" "));
+            }
+        });
+
+        pathTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                ((PreferencesDirectoryCategoryDTO) categoryComboBox.getSelectedItem()).setPath(pathTextField.getText());
+            }
+        });
+
+        temporaryDirectoryTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
             }
         });
     }
@@ -199,11 +222,18 @@ public class PreferenceSavePanel extends JPanel {
             directoryCategoryModel.addElement(preferencesDirectoryCategoryDTO);
         }
         categoryComboBox.setModel(directoryCategoryModel);
+        categoryComboBox.setSelectedIndex(0);
+        PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = ((PreferencesDirectoryCategoryDTO) categoryComboBox.getSelectedItem());
+        fileExtensionTextField.setText(concatArray(preferencesDirectoryCategoryDTO.getFileExtensions()));
+        pathTextField.setText(preferencesDirectoryCategoryDTO.getPath());
+
+        temporaryDirectoryTextField.setText(preferenceSaveDTO.getTempDirectory());
     }
 
     public PreferencesSaveDTO getPreferenceSaveDTO() {
-        PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
+ //       PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
         preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
+        preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
         return preferencesSaveDTO;
     }
 }

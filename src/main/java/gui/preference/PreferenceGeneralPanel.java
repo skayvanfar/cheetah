@@ -11,6 +11,11 @@ public class PreferenceGeneralPanel extends JPanel {
     private JCheckBox citizenCheck;
 
     public PreferenceGeneralPanel() {
+
+            JButton jButton = new JButton("PreferenceGeneralPanel");
+            add(jButton);
+
+
         Dimension dim = getPreferredSize();
         dim.width = 250;
         setPreferredSize(dim);

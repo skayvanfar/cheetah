@@ -46,6 +46,8 @@ public class DownloadRange extends Observable implements Runnable {
     // temp amount read
     private int read;
 
+    private String downloadRangePath;
+
     public File getFile() {
         return file;
     }
@@ -54,7 +56,7 @@ public class DownloadRange extends Observable implements Runnable {
         return read;
     }
 
-    public DownloadRange(int number, URL url, int startRange, int endRange) {
+    public DownloadRange(int number, URL url ,String downloadRangePath, int startRange, int endRange) {
         this.number = number;
         this.url = url;
         rangeSize = -1;
@@ -64,6 +66,8 @@ public class DownloadRange extends Observable implements Runnable {
 
         this.startRange = startRange;
         this.endRange = endRange;
+
+        this.downloadRangePath = downloadRangePath;
 
         // Begin the download.
         download();
@@ -163,11 +167,15 @@ public class DownloadRange extends Observable implements Runnable {
                 stateChanged(0);
             }
 
-            String partFileName = ConnectionUtil.getFileName(url) + ".00" + (number + 1);
-            file = new File(partFileName);
+            String fileName = ConnectionUtil.getFileName(url);
+            String partFileName = fileName + ".00" + (number);
+            File downloadRangeDirTemp  = new File(downloadRangePath + File.separator + fileName.substring(0, fileName.lastIndexOf('.')));
+            if (!downloadRangeDirTemp.exists())
+                downloadRangeDirTemp.mkdir();
+            file = new File(downloadRangeDirTemp + File.separator + partFileName);
 
             // Open file and seek to the end of it.
-            randomAccessFile = new RandomAccessFile(partFileName, "rw");
+            randomAccessFile = new RandomAccessFile(file, "rw");
             randomAccessFile.seek(rangeDownloaded);
 
             stream = connection.getInputStream();
@@ -219,6 +227,7 @@ public class DownloadRange extends Observable implements Runnable {
               reached because downloading has finished. */
             if (connectionStatus == ConnectionStatus.RECEIVING_DATA) {
                 connectionStatus = ConnectionStatus.COMPLETED;
+                randomAccessFile.close();
     //            stateChanged();
             }
             stateChanged(0);

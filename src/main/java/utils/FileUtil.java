@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
  */
 public class FileUtil {
 
-    public static void joinDownloadedParts(List<File> files, String fileName) {
-        String homeDir = System.getProperty("user.home");
-        File outputFile = outputFile(new File( homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files" + File.separator + fileName));
+    public static void joinDownloadedParts(List<File> files, String path, String fileName) {
+      //  String homeDir = System.getProperty("user.home");
+        File outputFile = outputFile(new File(path + File.separator + fileName));
 
         FileOutputStream fos;
         FileInputStream fis;
@@ -51,7 +51,7 @@ public class FileUtil {
             if (fileName.lastIndexOf('_') != -1) {
                 String firstPartFileName = fileName.substring(0, fileName.lastIndexOf('_'));
                 int lastPartFileName = Integer.parseInt(fileName.substring(fileName.lastIndexOf('_') + 1)) + 1;
-                return outputFile(new File(file.getParent()+ File.separator + firstPartFileName + "_" + lastPartFileName + "." + extension));
+                return outputFile(new File(file.getParent() + File.separator + firstPartFileName + "_" + lastPartFileName + "." + extension));
             } else {
                 return outputFile(new File(file.getParent() + File.separator + fileName + "_1" + "." + extension));
             }

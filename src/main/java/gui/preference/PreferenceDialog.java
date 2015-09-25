@@ -37,17 +37,21 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
     private PreferencesListener preferencesListener;
 
-    public PreferenceDialog(JFrame parent) {
+    private PreferencesDTO preferencesDTO;
+
+    public PreferenceDialog(JFrame parent, PreferencesDTO preferencesDTO) {
 
         super(parent, "Preferences", false);
 
         setLayout(new BorderLayout());
 
+        this.preferencesDTO = preferencesDTO;
+
         preferenceGeneralPanel = new PreferenceGeneralPanel();
         preferenceFileTypesPanel = new PreferenceFileTypesPanel();
-        preferenceSavePanel = new PreferenceSavePanel();
+        preferenceSavePanel = new PreferenceSavePanel(preferencesDTO.getPreferencesSaveDTO());
         preferenceDownloadPanel = new PreferenceDownloadPanel();
-        preferenceConnectionPanel = new PreferenceConnectionPanel();
+        preferenceConnectionPanel = new PreferenceConnectionPanel(preferencesDTO.getPreferenceConnectionDTO());
         preferenceProxySocksPanel = new PreferenceProxySocksPanel();
         preferenceSitesLoginsPanel = new PreferenceSitesLoginsPanel();
         preferenceDialUpVPN = new PreferenceDialUpVPN();
@@ -90,14 +94,31 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         add(preferenceCards, BorderLayout.CENTER);
         add(confirmationPanel, BorderLayout.SOUTH);
 
+        cardLayout.show(preferenceCards, "General");
+
         setMinimumSize(new Dimension(350,250));
-        setSize(600, 400);
+        setSize(800, 500);
         setLocationRelativeTo(parent);
 
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 okButtonClicked();
+                PreferenceDialog.this.setVisible(false);
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PreferenceDialog.this.setVisible(false);
+            }
+        });
+
+        defaultButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                preferencesListener.preferenceReset();
             }
         });
     }
@@ -111,7 +132,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         }
     }
 
-    public void setDefaults(PreferencesDTO preferencesDTO) {
+    public void setPreferencesDTO(PreferencesDTO preferencesDTO) {
         preferenceConnectionPanel.setPreferenceConnectionDTO(preferencesDTO.getPreferenceConnectionDTO());
         preferenceSavePanel.setPreferenceSaveDTO(preferencesDTO.getPreferencesSaveDTO());
     }

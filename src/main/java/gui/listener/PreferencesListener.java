@@ -7,4 +7,5 @@ import model.dto.PreferencesDTO;
  */
 public interface PreferencesListener {
     public void preferencesSet(PreferencesDTO preferenceDTO);
+    public void preferenceReset();
 }

@@ -11,6 +11,7 @@ import model.dto.PreferenceConnectionDTO;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
 import model.dto.PreferencesSaveDTO;
+import utils.ConnectionUtil;
 import utils.PrefObj;
 
 import javax.swing.*;
@@ -86,8 +87,12 @@ public class DownloadManagerGUI extends JFrame {
 
         setLayout(new BorderLayout());
 
+        preferences = Preferences.userRoot().node("db");
+        final PreferencesDTO preferencesDTO = getPreferences();
+
+
         mainToolbar = new MainToolBar();
-        categoryPanel = new CategoryPanel();
+        categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
         downloadPanel = new DownloadPanel(this);
         messagePanel = new MessagePanel();
         mainTabPane = new JTabbedPane();
@@ -99,15 +104,20 @@ public class DownloadManagerGUI extends JFrame {
         mainTabPane.addTab("Download Panel", downloadPanel);
         mainTabPane.addTab("Messages", messagePanel);
 
-        preferenceDialog = new PreferenceDialog(this);
+        preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
-        preferences = Preferences.userRoot().node("db");
+   //     preferenceDialog.setDefaults(preferencesDTO);
 
         addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
             @Override
             public void newDownloadEventOccured(URL textUrl) {
+
                 if (textUrl != null) {
-                    downloadPanel.addDownload(new Download(textUrl, preferences.getInt("maxConnectionNumber", Integer.parseInt(bundle.getString("maxConnectionNumber")))));
+                    String fileExtension = ConnectionUtil.getFileExtension(textUrl);
+                    String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
+
+                    downloadPanel.addDownload(new Download(textUrl, preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber(),
+                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory())); ///Todo?????
                 }
             }
         });
@@ -118,6 +128,8 @@ public class DownloadManagerGUI extends JFrame {
         add(statusPanel, BorderLayout.PAGE_END);
 
         setJMenuBar(initMenuBar());
+
+
 
         createFileHierarchy();
 
@@ -162,27 +174,17 @@ public class DownloadManagerGUI extends JFrame {
         preferenceDialog.setPreferencesListener(new PreferencesListener() {
             @Override
             public void preferencesSet(PreferencesDTO preferenceDTO) {
-                try {
-                    setPreferences(preferenceDTO);
-                } catch (BackingStoreException e) {
-                    e.printStackTrace(); //todo use JOptionPane
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                setPreferences(preferenceDTO);
+            }
+
+            @Override
+            public void preferenceReset() {
+                PreferencesDTO defaultPreferenceDTO = new PreferencesDTO();
+                checkAndSetPreferencesDTO(defaultPreferenceDTO);
+                preferenceDialog.setPreferencesDTO(defaultPreferenceDTO);
+                categoryPanel.setTreeModel(defaultPreferenceDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
             }
         });
-
-        try {
-            preferenceDialog.setDefaults(getPreferences());
-        } catch (BackingStoreException e) {
-            e.printStackTrace(); // todo
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
         // Handle window closing events.
         addWindowListener(new WindowAdapter() {
@@ -202,17 +204,32 @@ public class DownloadManagerGUI extends JFrame {
         setVisible(true);
     }
 
-    private PreferencesDTO getPreferences() throws BackingStoreException, IOException, ClassNotFoundException {
+    private PreferencesDTO getPreferences() {
 
-     //   PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-        PreferencesDTO preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
-        PreferenceConnectionDTO dd = preferencesDTO.getPreferenceConnectionDTO();
-        checkAndSetPreferencesDTO(preferencesDTO);
+
+        PreferencesDTO preferencesDTO = null;
+        try {
+        //    PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+            preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
+
+            checkAndSetPreferencesDTO(preferencesDTO);
+            setPreferences(preferencesDTO);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return preferencesDTO;
     }
 
     private void checkAndSetPreferencesDTO(PreferencesDTO preferencesDTO) {
+        String homeDir = System.getProperty("user.home");
+
+        String path = homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files" + File.separator;
+
         // PreferenceConnectionDTO
         PreferenceConnectionDTO preferenceConnectionDTO = preferencesDTO.getPreferenceConnectionDTO();
         if (preferenceConnectionDTO == null) {
@@ -234,7 +251,7 @@ public class DownloadManagerGUI extends JFrame {
             PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
             preferencesCompressedDirCategoryDTO.setDirectoryName(bundle.getString("compressedDirectoryCategory.directoryName"));
-            preferencesCompressedDirCategoryDTO.setPath(bundle.getString("compressedDirectoryCategory.path"));
+            preferencesCompressedDirCategoryDTO.setPath(path + bundle.getString("compressedDirectoryCategory.path"));
             String [] fileCompressedExtensions = bundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
 
             preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
@@ -244,7 +261,7 @@ public class DownloadManagerGUI extends JFrame {
             PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
             preferencesDocumentDirCategoryDTO.setDirectoryName(bundle.getString("documentDirectoryCategory.directoryName"));
-            preferencesDocumentDirCategoryDTO.setPath(bundle.getString("documentDirectoryCategory.path"));
+            preferencesDocumentDirCategoryDTO.setPath(path + bundle.getString("documentDirectoryCategory.path"));
             String [] fileDocumentExtensions = bundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
 
             preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
@@ -254,7 +271,7 @@ public class DownloadManagerGUI extends JFrame {
             PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
             preferencesMusicDirCategoryDTO.setDirectoryName(bundle.getString("musicDirectoryCategory.directoryName"));
-            preferencesMusicDirCategoryDTO.setPath(bundle.getString("musicDirectoryCategory.path"));
+            preferencesMusicDirCategoryDTO.setPath(path + bundle.getString("musicDirectoryCategory.path"));
             String [] fileMusicExtensions = bundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
 
             preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
@@ -264,7 +281,7 @@ public class DownloadManagerGUI extends JFrame {
             PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
             preferencesProgramDirCategoryDTO.setDirectoryName(bundle.getString("programDirectoryCategory.directoryName"));
-            preferencesProgramDirCategoryDTO.setPath(bundle.getString("programDirectoryCategory.path"));
+            preferencesProgramDirCategoryDTO.setPath(path + bundle.getString("programDirectoryCategory.path"));
             String [] fileProgramExtensions = bundle.getString("programDirectoryCategory.fileExtensions").split(" ");
 
             preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
@@ -274,7 +291,7 @@ public class DownloadManagerGUI extends JFrame {
             PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
             preferencesVideoDirCategoryDTO.setDirectoryName(bundle.getString("videoDirectoryCategory.directoryName"));
-            preferencesVideoDirCategoryDTO.setPath(bundle.getString("videoDirectoryCategory.path"));
+            preferencesVideoDirCategoryDTO.setPath(path + bundle.getString("videoDirectoryCategory.path"));
             String [] fileVideoExtensions = bundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
 
             preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
@@ -285,6 +302,9 @@ public class DownloadManagerGUI extends JFrame {
 
             // todo other needed ... use other method
         }
+        if (preferencesSaveDTO.getTempDirectory() == null || preferencesSaveDTO.getTempDirectory().equals("")) {
+            preferencesSaveDTO.setTempDirectory(path + bundle.getString("tempDirectory"));
+        }
 
 
         // add all Main preferences objects
@@ -292,9 +312,17 @@ public class DownloadManagerGUI extends JFrame {
         preferencesDTO.setPreferencesSaveDTO(preferencesSaveDTO);
     }
 
-    private void setPreferences(PreferencesDTO preferenceDTO) throws BackingStoreException, IOException, ClassNotFoundException {
+    private void setPreferences(PreferencesDTO preferenceDTO) {
  //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferenceConnectionDTO().getMaxConnectionNumber());
-        PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
+        try {
+            PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /* Update each button's state based off of the
@@ -421,47 +449,28 @@ public class DownloadManagerGUI extends JFrame {
     }
 
     private void createFileHierarchy() {
-        String homeDir = System.getProperty("user.home");
+        PreferencesDTO preferencesDTO = null;
         try {
-            File CompressedFiles = new File(homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files");
-            if (!CompressedFiles.exists()) {
-                CompressedFiles.mkdir();
-            }
+            preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
 
-            String pathDirectories = homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files";
-
-            File compressedFiles = new File(pathDirectories + File.separator + "Compressed Files");
-            if (!compressedFiles.exists())
-                compressedFiles.mkdir();
-
-            File documentFiles = new File(pathDirectories + File.separator + "Document Files");
-            if (!documentFiles.exists()) {
-                documentFiles.mkdir();
+            List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs = preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs();
+            for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
+                File dirFile = new File(preferencesDirectoryCategoryDTO.getPath());
+                if (!dirFile.exists())
+                    dirFile.mkdirs();
             }
-            File musicFiles = new File(pathDirectories + File.separator + "Music Files");
-            if (!musicFiles.exists()) {
-                musicFiles.mkdir();
-            }
-            File programFiles = new File(pathDirectories + File.separator + "Program Files");
-            if (!programFiles.exists()) {
-                programFiles.mkdir();
-            }
-            File videoFiles = new File(pathDirectories + File.separator + "Video Files");
-            if (!videoFiles.exists()) {
-                videoFiles.mkdir();
-            }
-            File otherFiles = new File(pathDirectories + File.separator + "Other Files");
-            if (!otherFiles.exists()) {
-                otherFiles.mkdir();
-            }
-            File tempFiles = new File(pathDirectories + File.separator + "Temp Files");
-            if (!tempFiles.exists()) {
-                tempFiles.mkdir();
-            }
-        } catch (SecurityException se){
+            String tempDirectory = preferencesDTO.getPreferencesSaveDTO().getTempDirectory();
+            File tempDirFile = new File(tempDirectory);
+            if (!tempDirFile.exists())
+                tempDirFile.mkdirs();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SecurityException se) {
             JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Unable to create necessary directories. may be not have write permission, please restart program", "Directories creation problem", JOptionPane.ERROR_MESSAGE);
         }
-
-
     }
 }

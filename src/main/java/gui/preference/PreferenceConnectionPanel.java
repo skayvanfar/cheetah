@@ -17,11 +17,15 @@ public class PreferenceConnectionPanel extends JPanel {
     private JComboBox<Integer> maxConnectionNumberComboBox; /// todo encapsulation ....
  //   private JLabel downloadLimitsLabel;
 
-    public PreferenceConnectionPanel() {
+    private PreferenceConnectionDTO preferenceConnectionDTO;
+
+    public PreferenceConnectionPanel(PreferenceConnectionDTO preferenceConnectionDTO) {
         Dimension dim = getPreferredSize();
         dim.width = 250;
         setPreferredSize(dim);
         setMinimumSize(dim);
+
+        this.preferenceConnectionDTO = preferenceConnectionDTO;
 
         maxConnectionNumberLabel = new JLabel("Max Connections Number:");
         maxConnectionNumberComboBox = new JComboBox<>(new Integer[]{1, 2, 4, 8, 16, 24, 32});
@@ -36,6 +40,8 @@ public class PreferenceConnectionPanel extends JPanel {
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
 
         layoutComponents();
+
+        setPreferenceConnectionDTO(preferenceConnectionDTO);
     }
 
     public void layoutComponents() {
@@ -67,6 +73,7 @@ public class PreferenceConnectionPanel extends JPanel {
     }
 
     public PreferenceConnectionDTO getPreferenceConnectionDTO() {
-        return new PreferenceConnectionDTO((Integer) maxConnectionNumberComboBox.getSelectedItem());
+        preferenceConnectionDTO.setMaxConnectionNumber((Integer) maxConnectionNumberComboBox.getSelectedItem());
+        return preferenceConnectionDTO;
     }
 }
