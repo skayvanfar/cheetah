@@ -24,6 +24,7 @@ public class DownloadRange extends Observable implements Runnable {
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = 1024; // 1024 - 4096
 
+    private int id;
     private URL url; // download URL
     private int number;
     private int rangeSize; // size of download in bytes
@@ -33,6 +34,14 @@ public class DownloadRange extends Observable implements Runnable {
     private int startRange;
     private int endRange;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getStartRange() {
         return startRange;
     }
@@ -41,44 +50,60 @@ public class DownloadRange extends Observable implements Runnable {
         return endRange;
     }
 
-    private File file;
+    public int getRangeSize() {
+        return rangeSize;
+    }
+
+    public void setRangeSize(int rangeSize) {
+        this.rangeSize = rangeSize;
+    }
+
+    public File downloadRangeFile;
 
     // temp amount read
     private int read;
 
-    private String downloadRangePath;
+  //  private String downloadRangePath;
 
-    public File getFile() {
-        return file;
+    // to quick stop thread
+    private boolean stop = false;
+
+    public File getDownloadRangeFile() {
+        return downloadRangeFile;
     }
 
     public int getRead() {
         return read;
     }
 
-    public DownloadRange(int number, URL url ,String downloadRangePath, int startRange, int endRange) {
+    public DownloadRange(int number, URL url ,File downloadRangeFile, int startRange, int endRange) {
+       // this.id = id;
         this.number = number;
         this.url = url;
         rangeSize = -1;
-        rangeDownloaded = 0;
+        rangeDownloaded = 0; //todo for cancel act
         read = 0;
         connectionStatus = ConnectionStatus.CONNECTING;
 
         this.startRange = startRange;
         this.endRange = endRange;
 
-        this.downloadRangePath = downloadRangePath;
-
+   //     this.downloadRangePath = downloadRangePath;
+        this.downloadRangeFile = downloadRangeFile;
         // Begin the download.
-        download();
+//        download();
     }
 
     public int getNumber() {
         return number;
     }
 
-    public String getDownloaded() {
+    public String getRangeDownloaded() {
         return String.valueOf(rangeDownloaded);
+    }
+
+    public void setRangeDownloaded(int rangeDownloaded) {
+        this.rangeDownloaded = rangeDownloaded;
     }
 
     // Get this downloads status.
@@ -86,17 +111,24 @@ public class DownloadRange extends Observable implements Runnable {
         return connectionStatus;
     }
 
+    public void setConnectionStatus(ConnectionStatus connectionStatus) {
+        this.connectionStatus = connectionStatus;
+    }
+
+ //   public String getDownloadRangePath() {
+ //       return downloadRangePath;
+ //   }
+
+ //   public void setDownloadRangePath(String downloadRangePath) {
+  //      this.downloadRangePath = downloadRangePath;
+  //  }
+
     // Pause this download.
     public void disConnect() {
         connectionStatus = ConnectionStatus.DISCONNECTING;
+        stop = true;
         stateChanged(0); // TODO two time call and print "disconnect from download .... "
     }
-
-    // Pause this download.
-  //  public void pause() {
-//        connectionStatus = ConnectionStatus.DISCONNECTED;
-//        stateChanged();
-//    }
 
     // Resume this download.
     public void resume() {
@@ -104,12 +136,6 @@ public class DownloadRange extends Observable implements Runnable {
         stateChanged(0);
         download();
     }
-
-    // Cancel this download.
- //   public void cancel() {
- //       connectionStatus = ConnectionStatus.DISCONNECTED;
- //       stateChanged();
- //   }
 
     // Mark this download as having an error.
     private void error() {
@@ -167,15 +193,15 @@ public class DownloadRange extends Observable implements Runnable {
                 stateChanged(0);
             }
 
-            String fileName = ConnectionUtil.getFileName(url);
-            String partFileName = fileName + ".00" + (number);
-            File downloadRangeDirTemp  = new File(downloadRangePath + File.separator + fileName.substring(0, fileName.lastIndexOf('.')));
-            if (!downloadRangeDirTemp.exists())
+
+      //      File downloadRangeDirTemp  = new File(downloadRangePath + File.separator + fileName.substring(0, fileName.lastIndexOf('.')));
+            File downloadRangeDirTemp = downloadRangeFile.getParentFile();
+            if (!downloadRangeDirTemp.exists()) // todo must not deleted
                 downloadRangeDirTemp.mkdir();
-            file = new File(downloadRangeDirTemp + File.separator + partFileName);
+        //    downloadRangeFile = new File(downloadRangeDirTemp + File.separator + partFileName);
 
             // Open file and seek to the end of it.
-            randomAccessFile = new RandomAccessFile(file, "rw");
+            randomAccessFile = new RandomAccessFile(downloadRangeFile, "rw");
             randomAccessFile.seek(rangeDownloaded);
 
             stream = connection.getInputStream();
@@ -185,6 +211,7 @@ public class DownloadRange extends Observable implements Runnable {
             stateChanged(0);
 
             while (connectionStatus == ConnectionStatus.RECEIVING_DATA) {
+
                 /* Size buffer according to how much of the
                   file is left to download. */
                 byte buffer[];
@@ -194,8 +221,14 @@ public class DownloadRange extends Observable implements Runnable {
                     buffer = new byte[rangeSize - rangeDownloaded];
                 }
 
+                if (stop == true) //todo may be better way for stop thread
+                    break;
+
                 // Read from server into buffer.
                 read = stream.read(buffer);
+
+                if (stop == true)
+                    break;
 
                 if (read == -1) {
                     System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
@@ -218,17 +251,14 @@ public class DownloadRange extends Observable implements Runnable {
 
             }
 
-            if (connectionStatus == ConnectionStatus.DISCONNECTING) {
-                connectionStatus = ConnectionStatus.DISCONNECTED;
-     //           stateChanged();
-            }
-
             /* Change status to complete if this point was
               reached because downloading has finished. */
-            if (connectionStatus == ConnectionStatus.RECEIVING_DATA) {
+            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && stop == false) {
                 connectionStatus = ConnectionStatus.COMPLETED;
                 randomAccessFile.close();
-    //            stateChanged();
+            } else {
+                connectionStatus = ConnectionStatus.DISCONNECTED;
+                randomAccessFile.close();
             }
             stateChanged(0);
         } catch (Exception e) {
@@ -259,4 +289,20 @@ public class DownloadRange extends Observable implements Runnable {
         notifyObservers(read);
     }
 
+    @Override
+    public String toString() {
+        return "DownloadRange{" +
+                "id=" + id +
+                ", url=" + url +
+                ", number=" + number +
+                ", rangeSize=" + rangeSize +
+                ", rangeDownloaded=" + rangeDownloaded +
+                ", connectionStatus=" + connectionStatus +
+                ", startRange=" + startRange +
+                ", endRange=" + endRange +
+                ", read=" + read +
+                ", downloadRangeFile='" + downloadRangeFile + '\'' +
+                ", stop=" + stop +
+                '}';
+    }
 }

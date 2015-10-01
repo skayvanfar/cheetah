@@ -163,6 +163,7 @@ public class PreferenceSavePanel extends JPanel {
         gc.anchor = GridBagConstraints.FIRST_LINE_END;
         saveToPanel.add(fileExtensionLabel, gc);
 
+      //  gc.gridy++;
         gc.gridx = 1;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = noPadding;

@@ -29,8 +29,6 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
     private JButton cancelButton;
     private JButton defaultButton;
 
-  //  private JTabbedPane tabPane;
-
     private PreferenceCategoryPanel preferenceCategoryPanel;
     private CardLayout cardLayout;
     private JPanel preferenceCards;
@@ -41,7 +39,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
     public PreferenceDialog(JFrame parent, PreferencesDTO preferencesDTO) {
 
-        super(parent, "Preferences", false);
+        super(parent, "Preferences", true);
 
         setLayout(new BorderLayout());
 
@@ -56,13 +54,6 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         preferenceSitesLoginsPanel = new PreferenceSitesLoginsPanel();
         preferenceDialUpVPN = new PreferenceDialUpVPN();
         preferenceSoundPanel = new PreferenceSoundPanel();
-    //    tabPane = new JTabbedPane();
-
-  //      tabPane.addTab("General", generalPanel);
-  //      tabPane.addTab("Save To", savePanel);
-  //      tabPane.addTab("Download", downloadPanel);
-
-//        add(tabPane, BorderLayout.CENTER);
 
         preferenceCategoryPanel = new PreferenceCategoryPanel();
         preferenceCategoryPanel.setPreferenceCategoryPanelListener(this);
@@ -95,6 +86,8 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         add(confirmationPanel, BorderLayout.SOUTH);
 
         cardLayout.show(preferenceCards, "General");
+
+    //    setResizable(false);
 
         setMinimumSize(new Dimension(350,250));
         setSize(800, 500);

@@ -10,7 +10,8 @@ public enum DownloadStatus {
     COMPLETE(2, "Complete"), // 2
     CANCELLED(3, "canceled"), // 3
     ERROR(4, "Error"), // 4
-    DISCONNECTING(5, "Disconnecting");
+    DISCONNECTING(5, "Disconnecting"),
+    DISCONNECTED(6, "Disconnected"); // when server not respond
 
     private Integer value;
     private String desc;

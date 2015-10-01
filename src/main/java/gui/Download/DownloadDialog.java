@@ -3,6 +3,7 @@ package gui.Download;
 import enums.DownloadStatus;
 import gui.listener.DownloadDialogListener;
 import gui.listener.DownloadInfoListener;
+import gui.listener.DownloadSaveListener;
 import model.Download;
 import model.DownloadRange;
 
@@ -13,7 +14,7 @@ import java.util.Vector;
 /**
  * Created by Saeed on 9/14/2015.
  */
-public class DownloadDialog extends JDialog implements DownloadInfoListener {
+public class DownloadDialog extends JDialog implements DownloadInfoListener, DownloadSaveListener {
 
     private DownloadInfoPanel downloadInfoPanel;
     private DownloadPropertiesPanel downloadPropertiesPanel;
@@ -22,6 +23,8 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
     private Download download;////**********
 
     private Vector<DownloadDialogListener> downloadDialogListenerList; ////**********
+
+    private DownloadSaveListener downloadSaveListener;
 
     public Download getDownload() {
         return download;
@@ -53,6 +56,10 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
         downloadDialogListenerList.removeElement(downloadDialogListener);
     }
 
+    public void setDownloadSaveListener(DownloadSaveListener downloadSaveListener) {
+        this.downloadSaveListener = downloadSaveListener;
+    }
+
     public DownloadDialog(JFrame parent, Download download) {
         super(parent, "Download Dialog", false);
 
@@ -61,6 +68,8 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
         downloadDialogListenerList = new Vector<>();
 
         download.setDownloadInfoListener(this);
+
+        download.setDownloadSaveListener(this);
 
         setLayout(new BorderLayout());
 
@@ -107,9 +116,16 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener {
         for (final DownloadDialogListener downloadDialogListener : downloadDialogListenerList) {
             SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
                 public void run() {
-                    downloadDialogListener.downloadStatusChanged(DownloadDialog.this);                }
+                    downloadDialogListener.downloadStatusChanged(DownloadDialog.this);
+                }
             });
         }
     }
 
+    @Override
+    public void downloadNeedSaved(Download download) {
+        if (downloadSaveListener != null) {
+            downloadSaveListener.downloadNeedSaved(download);
+        }
+    }
 }

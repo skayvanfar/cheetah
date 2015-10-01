@@ -76,7 +76,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
             case 0: // Number
                 return downloadRange.getNumber();
             case 1: // Downloaded
-                return downloadRange.getDownloaded();
+                return downloadRange.getRangeDownloaded();
             case 2: // Status
                 return downloadRange.getConnectionStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
         }

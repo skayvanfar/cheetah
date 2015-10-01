@@ -28,7 +28,7 @@ public class AddNewDownloadDialog extends JDialog {
 
         newButton = new JButton(bundle.getString("addNewDownloadDialog.newButton.label"));
         newButton.setToolTipText(bundle.getString("addNewDownloadDialog.newButton.toolTip"));
-        newTextField = new JTextField(30);
+        newTextField = new JTextField(44);
 
         add(newButton);
         add(newTextField);
@@ -40,7 +40,7 @@ public class AddNewDownloadDialog extends JDialog {
             }
         });
 
-        setSize(480, 74);
+        setSize(603, 74);
         setLocationRelativeTo(parent);
     }
 

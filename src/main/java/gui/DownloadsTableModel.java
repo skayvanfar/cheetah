@@ -1,5 +1,6 @@
 package gui;
 
+import enums.DownloadStatus;
 import gui.Download.DownloadDialog;
 import gui.listener.DownloadDialogListener;
 import model.Download;
@@ -28,8 +29,16 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadD
     }
 
     // TODO Maybe used after
-    public void setDownloadDialogs(List<DownloadDialog> downloads) {
-        this.downloadDialogList = downloads;
+    public void setDownloadDialogs(List<DownloadDialog> downloadDialogs) {
+        for (DownloadDialog downloadDialog : downloadDialogList) {
+            downloadDialog.deleteDownloadDialogListener(this);
+        }
+        downloadDialogList.clear();
+        this.downloadDialogList = downloadDialogs;
+        for (DownloadDialog downloadDialog : downloadDialogList) {
+            // Register to be notified when the downloadDialog changes.
+            downloadDialog.addDownloadDialogListener(this);
+        }
     }
 
     // Add a new DownloadDialog to the table.
@@ -54,6 +63,19 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadD
 
         // Fire table row deletion notification to table.
         fireTableRowsDeleted(row, row);
+    }
+
+    public void clearAllCompletedDownloads() {
+        Iterator<DownloadDialog> iterator =  downloadDialogList.iterator();
+        for (int i = 0; i < downloadDialogList.size(); i++) {
+            DownloadDialog downloadDialog = downloadDialogList.get(i);
+            if (downloadDialogList.get(i).getStatus() == DownloadStatus.COMPLETE) {
+                downloadDialog.dispose();
+                downloadDialogList.remove(downloadDialog);
+                downloadDialog = null;
+                fireTableRowsDeleted(i, i);
+            }
+        }
     }
 
     // Get table's column count.
@@ -112,4 +134,5 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadD
         // Fire table row update notification to table.
         fireTableRowsUpdated(index, index);
     }
+
 }

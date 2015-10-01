@@ -1,6 +1,7 @@
 package gui.preference;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -20,6 +21,12 @@ public class PreferenceGeneralPanel extends JPanel {
         dim.width = 250;
         setPreferredSize(dim);
         setMinimumSize(dim);
+
+        Border innerBorder = BorderFactory.createTitledBorder("Connection");
+        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
+        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+
+        layoutComponents();
     }
 
     public void layoutComponents() {

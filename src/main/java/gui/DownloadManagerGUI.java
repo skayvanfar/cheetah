@@ -44,6 +44,7 @@ public class DownloadManagerGUI extends JFrame {
     private AddNewDownloadDialog addNewDownloadDialog;
     private PreferenceDialog preferenceDialog;
     private Preferences preferences;
+    private AboutDialog aboutDialog;
 
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
@@ -106,6 +107,8 @@ public class DownloadManagerGUI extends JFrame {
 
         preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
+        aboutDialog = new AboutDialog(this);
+
    //     preferenceDialog.setDefaults(preferencesDTO);
 
         addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
@@ -116,8 +119,8 @@ public class DownloadManagerGUI extends JFrame {
                     String fileExtension = ConnectionUtil.getFileExtension(textUrl);
                     String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
 
-                    downloadPanel.addDownload(new Download(textUrl, preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber(),
-                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory())); ///Todo?????
+                    downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber(),
+                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory())); ///Todo????????????????????????????????? id
                 }
             }
         });
@@ -148,19 +151,29 @@ public class DownloadManagerGUI extends JFrame {
             @Override
             public void resumeEventOccured() {
                 downloadPanel.actionResume();
-          //      updateButtons();
             }
 
             @Override
             public void cancelEventOccured() {
                 downloadPanel.actionCancel();
-           //     updateButtons();
             }
 
             @Override
             public void clearEventOccured() {
                 downloadPanel.actionClear();
-           //     updateButtons();
+            }
+
+            @Override
+            public void clearAllCompletedEventOccured() {
+                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to deleted all completed downloaded?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+                if (action == JOptionPane.OK_OPTION) {
+                    downloadPanel.actionClearAllCompleted();
+                }
+            }
+
+            @Override
+            public void preferencesEventOccured() {
+                preferenceDialog.setVisible(true);
             }
         });
 
@@ -199,18 +212,22 @@ public class DownloadManagerGUI extends JFrame {
 
         setMinimumSize(new Dimension(640, 480));
         // Set window size.
-        setSize(740, 480);
+        setSize(900, 580);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
     }
 
     private PreferencesDTO getPreferences() {
 
-
         PreferencesDTO preferencesDTO = null;
         try {
         //    PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-            preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
+            try {
+                preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
+            } catch(NullPointerException e) {
+                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO()); //todo test on a fresh pc
+            }
+
 
             checkAndSetPreferencesDTO(preferencesDTO);
             setPreferences(preferencesDTO);
@@ -351,6 +368,7 @@ public class DownloadManagerGUI extends JFrame {
     private JMenuBar initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
+        /////////////////////////////////////////////////////////////////////////
         JMenu fileMenu = new JMenu("File");
         JMenuItem exportDataItem = new JMenuItem("Export Data...");
         JMenuItem importDataItem = new JMenuItem("Import Data...");
@@ -363,6 +381,7 @@ public class DownloadManagerGUI extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
 
+        /////////////////////////////////////////////////////////////////////////
         JMenu windowMenu = new JMenu("Window");
         JMenu showMenu = new JMenu("Show");
         JMenuItem prefsItem = new JMenuItem("Preferences...");
@@ -374,8 +393,15 @@ public class DownloadManagerGUI extends JFrame {
         windowMenu.add(showMenu);
         windowMenu.add(prefsItem);
 
+        /////////////////////////////////////////////////////////////////////////
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About...");
+
+        helpMenu.add(aboutItem);
+
         menuBar.add(fileMenu);
         menuBar.add(windowMenu);
+        menuBar.add(helpMenu);
 
         prefsItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -442,6 +468,14 @@ public class DownloadManagerGUI extends JFrame {
                         listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
                     }
                 }
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!aboutDialog.isVisible())
+                    aboutDialog.setVisible(true);
             }
         });
 

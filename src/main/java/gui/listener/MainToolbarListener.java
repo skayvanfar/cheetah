@@ -9,4 +9,6 @@ public interface MainToolbarListener {
     public void resumeEventOccured();
     public void cancelEventOccured();
     public void clearEventOccured();
+    public void clearAllCompletedEventOccured();
+    public void preferencesEventOccured();
 }

@@ -1,10 +1,9 @@
 package gui;
 
+import controller.DatabaseController;
+import controller.DatabaseControllerImpl;
 import gui.Download.DownloadDialog;
-import gui.listener.DownloadDialogListener;
-import gui.listener.DownloadInfoListener;
-import gui.listener.DownloadPanelListener;
-import gui.listener.DownloadStatusListener;
+import gui.listener.*;
 import model.Download;
 import model.DownloadRange;
 import org.apache.log4j.Logger;
@@ -15,16 +14,21 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class DownloadPanel extends JPanel implements DownloadDialogListener {
+public class DownloadPanel extends JPanel implements DownloadDialogListener, DownloadSaveListener {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+
+    // DatabaseController
+    private DatabaseController databaseController;
 
     // Table showing downloads.
     private JTable downloadTable;
@@ -32,9 +36,7 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
     // Download table's data model.
     private DownloadsTableModel downloadsTableModel;
 
-    // Currently selected download.
-  //  private Download selectedDownload;
-
+    // Currently selected downloadDialog.
     private DownloadDialog selectedDownloadDialog;
 
     // Flag for whether or not table selection is being cleared.
@@ -47,6 +49,8 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
     public DownloadPanel(JFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
+
+        databaseController = new DatabaseControllerImpl("org.sqlite.JDBC", "jdbc:sqlite:test.db", 0, "", "");
 
         // Set up Downloads table.
         downloadsTableModel = new DownloadsTableModel();
@@ -83,11 +87,35 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
                         selectedDownloadDialog.setVisible(true);
                     }
                 }
-
             }
         });
 
         add(new JScrollPane(downloadTable), BorderLayout.CENTER);
+
+        List<Download> downloads = null;
+        try {
+            databaseController.connect();
+            downloads = databaseController.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DownloadDialog downloadDialog = null;
+        for (Download download : downloads) {
+            download.setDownloaded(calculateDownloaded(download));
+            downloadDialog = new DownloadDialog(parent, download); //todo may table not show
+            downloadsTableModel.addDownloadDialog(downloadDialog);
+        }
+
+    }
+
+    private int calculateDownloaded(Download download) {
+        int downloaded = 0;
+        for (DownloadRange downloadRange : download.getDownloadRangeList()) {
+            downloaded += downloadRange.getDownloadRangeFile().length();
+        }
+
+        return downloaded;
     }
 
     // TODO Maybe used after
@@ -97,8 +125,21 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
 
     public void addDownload(Download download) {
         selectedDownloadDialog = new DownloadDialog(parent, download);
+        selectedDownloadDialog.setDownloadSaveListener(this);
         downloadsTableModel.addDownloadDialog(selectedDownloadDialog);
+
         selectedDownloadDialog.setVisible(true);
+
+        selectedDownloadDialog.resume();
+    }
+
+    public int getNextDownloadID() {
+        List<DownloadDialog> downloadDialogs = downloadsTableModel.getDownloadDialogList();
+        return downloadDialogs.size() + 1;
+    }
+
+    public int getNextDownloadRangeID() {
+        return 0;
     }
 
     public void refresh() {
@@ -126,6 +167,11 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
         downloadsTableModel.clearDownload(downloadTable.getSelectedRow());
         clearing = false;
         selectedDownloadDialog = null; //todo just this ...
+    }
+
+    // Clear all completed downloads.
+    public void actionClearAllCompleted() {
+        downloadsTableModel.clearAllCompletedDownloads();
     }
 
     // Called when table row selection changes.
@@ -163,4 +209,13 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener {
             downloadPanelListener.stateChangedEventOccured(selectedDownloadDialog.getStatus());
     }
 
+    @Override
+    public void downloadNeedSaved(Download download) {
+        System.out.println("DownloadPanel downloadNeedSaved");
+        try {
+            databaseController.save(download);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
