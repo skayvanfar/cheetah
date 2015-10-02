@@ -7,6 +7,7 @@ import gui.listener.*;
 import model.Download;
 import model.DownloadRange;
 import org.apache.log4j.Logger;
+import utils.Utils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -102,20 +103,21 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
 
         DownloadDialog downloadDialog = null;
         for (Download download : downloads) {
-            download.setDownloaded(calculateDownloaded(download));
+            calculateDownloaded(download);
             downloadDialog = new DownloadDialog(parent, download); //todo may table not show
             downloadsTableModel.addDownloadDialog(downloadDialog);
         }
 
     }
 
-    private int calculateDownloaded(Download download) {
+    private void calculateDownloaded(Download download) {
         int downloaded = 0;
         for (DownloadRange downloadRange : download.getDownloadRangeList()) {
-            downloaded += downloadRange.getDownloadRangeFile().length();
+            long rangeDownloaded = downloadRange.getDownloadRangeFile().length();
+            downloadRange.setRangeDownloaded((int) rangeDownloaded);
+            downloaded += rangeDownloaded;
         }
-
-        return downloaded;
+        download.setDownloaded(downloaded);
     }
 
     // TODO Maybe used after
@@ -138,9 +140,16 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
         return downloadDialogs.size() + 1;
     }
 
-    public int getNextDownloadRangeID() {
-        return 0;
-    }
+ //   public int getNextDownloadRangeID() {
+ //       List<Integer> downloadRangeIds = new ArrayList<>();
+ //       for (DownloadDialog downloadDialog : downloadsTableModel.getDownloadDialogList()) {
+ //           for (DownloadRange downloadRange : downloadDialog.getDownload().getDownloadRangeList()) {
+ //               downloadRangeIds.add(downloadRange.getId());
+ //           }
+ //       }
+ //       Integer [] a = (Integer[]) downloadRangeIds.toArray();
+ //       return Utils.findMissingNumbers(a, 0);
+  //  }
 
     public void refresh() {
         downloadsTableModel.fireTableDataChanged();
@@ -165,6 +174,11 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
     public void actionClear() {
         clearing = true;
         downloadsTableModel.clearDownload(downloadTable.getSelectedRow());
+        try {
+            databaseController.delete(selectedDownloadDialog.getDownload().getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         clearing = false;
         selectedDownloadDialog = null; //todo just this ...
     }

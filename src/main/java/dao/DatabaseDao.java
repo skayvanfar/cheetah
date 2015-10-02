@@ -13,4 +13,5 @@ public interface DatabaseDao {
     public boolean disconnect();
     public void save(Download download) throws SQLException;
     public List<Download> load() throws Exception;
+    public boolean delete(int id) throws SQLException;
 }

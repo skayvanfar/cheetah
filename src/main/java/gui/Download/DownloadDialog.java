@@ -84,6 +84,8 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener, Dow
 
         setSize(530, 230);
         setLocationRelativeTo(parent);
+
+        download.downloadRangeReturned(); ////////////////////////////////////////////////////////////////////////
     }
 
     // Pause this download.

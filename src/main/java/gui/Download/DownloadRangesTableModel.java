@@ -38,13 +38,15 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
 
     // Add a new download to the table.
     public void addDownloadRange(DownloadRange downloadRange) {
-        // Register to be notified when the download changes.downloadRange.addObserver(this);
-        downloadRange.addObserver(this);
+        if (!downloadRangeList.contains(downloadRange)) {
+            // Register to be notified when the download changes.downloadRange.addObserver(this);
+            downloadRange.addObserver(this);
 
-        downloadRangeList.add(downloadRange);
+            downloadRangeList.add(downloadRange);
 
-        // Fire table row insertion notification to table.
-        fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+            // Fire table row insertion notification to table.
+            fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+        }
     }
 
     // Get table's column count.

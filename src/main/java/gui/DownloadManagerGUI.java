@@ -119,7 +119,9 @@ public class DownloadManagerGUI extends JFrame {
                     String fileExtension = ConnectionUtil.getFileExtension(textUrl);
                     String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
 
-                    downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber(),
+                    int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
+
+                    downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, maxNum,
                             downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory())); ///Todo????????????????????????????????? id
                 }
             }

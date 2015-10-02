@@ -37,4 +37,9 @@ public class DatabaseControllerImpl implements DatabaseController {
     public List<Download> load() throws Exception {
         return databaseDao.load();
     }
+
+    @Override
+    public void delete(int id) throws SQLException {
+        databaseDao.delete(id);
+    }
 }

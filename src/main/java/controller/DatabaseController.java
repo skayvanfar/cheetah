@@ -13,4 +13,5 @@ public interface DatabaseController {
     public boolean disconnect();
     public void save(Download download) throws SQLException;
     public List<Download> load() throws SQLException, Exception;
+    public void delete(int id) throws SQLException;
 }

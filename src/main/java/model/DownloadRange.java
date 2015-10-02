@@ -77,7 +77,7 @@ public class DownloadRange extends Observable implements Runnable {
     }
 
     public DownloadRange(int number, URL url ,File downloadRangeFile, int startRange, int endRange) {
-       // this.id = id;
+   //     this.id = id;
         this.number = number;
         this.url = url;
         rangeSize = -1;
@@ -132,7 +132,8 @@ public class DownloadRange extends Observable implements Runnable {
 
     // Resume this download.
     public void resume() {
-        connectionStatus = ConnectionStatus.SEND_GET;
+        stop = false;
+        connectionStatus = ConnectionStatus.SEND_GET; //todo not needed
         stateChanged(0);
         download();
     }

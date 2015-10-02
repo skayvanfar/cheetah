@@ -36,17 +36,17 @@ public class Download extends Observable implements Observer , Runnable{
 
     private int partCount;
 
-    private List<DownloadRange> downloadRangeList = new ArrayList<>();
-
     private String downloadPath;
-    private String downloadRagePath;
+    private String downloadRangePath;
+
+    private List<DownloadRange> downloadRangeList = new ArrayList<>();
 
     private DownloadInfoListener downloadInfoListener;
 
     private DownloadSaveListener downloadSaveListener;
 
     // Constructor for Download.
-    public Download(int id, URL url, int partCount, String downloadPath, String downloadRagePath) {
+    public Download(int id, URL url, int partCount, String downloadPath, String downloadRangePath) {
         this.id = id;
         this.url = url;
         size = -1;
@@ -55,7 +55,7 @@ public class Download extends Observable implements Observer , Runnable{
         this.partCount = partCount;
 
         this.downloadPath = downloadPath;
-        this.downloadRagePath = downloadRagePath;
+        this.downloadRangePath = downloadRangePath;
 
         // Begin the download.
   //      download();
@@ -117,6 +117,22 @@ public class Download extends Observable implements Observer , Runnable{
         return downloadRangeList.size();
     }
 
+    public String getDownloadRangePath() {
+        return downloadRangePath;
+    }
+
+    public void setDownloadRangePath(String downloadRangePath) {
+        this.downloadRangePath = downloadRangePath;
+    }
+
+    public String getDownloadPath() {
+        return downloadPath;
+    }
+
+    public void setDownloadPath(String downloadPath) {
+        this.downloadPath = downloadPath;
+    }
+
     public void setDownloadRangeList(List<DownloadRange> downloadRangeList) {
         this.downloadRangeList = downloadRangeList;
     }
@@ -139,11 +155,30 @@ public class Download extends Observable implements Observer , Runnable{
 
     // Resume this download.
     public void resume() {
-        for (DownloadRange downloadRange : downloadRangeList)
-            downloadRange.resume();
         status = DownloadStatus.DOWNLOADING;
         stateChanged();
-        download();
+        if (!downloadRangeList.isEmpty()) {
+       //     for (DownloadRange downloadRange : downloadRangeList) {
+      //          if (downloadInfoListener != null) {
+     //               downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
+      //          }
+      //      }
+            for (DownloadRange downloadRange : downloadRangeList)
+                downloadRange.resume();
+        } else {
+            download();
+        }
+  //      status = DownloadStatus.DOWNLOADING;
+   //     stateChanged();
+   //     download();
+    }
+
+    public void downloadRangeReturned() { //////////////////////////////////////////////
+        for (DownloadRange downloadRange : downloadRangeList) {
+            if (downloadInfoListener != null) {
+                downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
+            }
+        }
     }
 
     // Cancel this download.
@@ -273,8 +308,8 @@ public class Download extends Observable implements Observer , Runnable{
                 stateChanged();
             }
 
-            if (downloadRangeList.isEmpty()) /// test for befor downloads
-                createDownloadRanges(connection, partCount);
+            createDownloadRanges(connection, partCount);
+
             connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
@@ -296,7 +331,7 @@ public class Download extends Observable implements Observer , Runnable{
             for (int i = 0;  i < connectionSize; i++) {
                 String fileName = ConnectionUtil.getFileName(url);
                 String partFileName = fileName + ".00" + (i + 1);
-                downloadRange = new DownloadRange(i + 1, url, new File(downloadRagePath + partFileName), startRange, endRange); //todo clean needed
+                downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, endRange); //todo clean needed
 
                 addDownloadRange(downloadRange);
 
@@ -312,7 +347,7 @@ public class Download extends Observable implements Observer , Runnable{
         } else {
             String fileName = ConnectionUtil.getFileName(url);
             String partFileName = fileName + ".00" + 1;
-            downloadRange = new DownloadRange(1, url, new File(downloadRagePath + partFileName), startRange, size); //todo clean needed
+            downloadRange = new DownloadRange(1, url, new File(downloadRangePath + partFileName), startRange, size); //todo clean needed
             addDownloadRange(downloadRange);
         }
         ////todo save
@@ -379,11 +414,14 @@ public class Download extends Observable implements Observer , Runnable{
                 if (isDisConnect()) {
                     status = DownloadStatus.PAUSED;
                 }
-
                 System.out.println("disconnect from download .... ");
+                if (downloadSaveListener != null)
+                    downloadSaveListener.downloadNeedSaved(this);
                 break;
             case ERROR:
                 System.out.println("error");
+                if (downloadSaveListener != null)
+                    downloadSaveListener.downloadNeedSaved(this);
                 break;
             case WAITING_RESPONSE:
                 System.out.println("WAITING_RESPONSE");
@@ -424,7 +462,7 @@ public class Download extends Observable implements Observer , Runnable{
                 ", partCount=" + partCount +
                 ", downloadRangeList=" + downloadRangeList +
                 ", downloadPath='" + downloadPath + '\'' +
-                ", downloadRagePath='" + downloadRagePath + '\'' +
+                ", downloadRagePath='" + downloadRangePath + '\'' +
                 ", downloadInfoListener=" + downloadInfoListener +
                 '}';
     }

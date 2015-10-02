@@ -40,6 +40,7 @@ public class DownloadInfoPanel extends JPanel {
     }
 
     public void addDownloadRange(DownloadRange downloadRange) {
+
         downloadRangesTableModel.addDownloadRange(downloadRange);
     }
 

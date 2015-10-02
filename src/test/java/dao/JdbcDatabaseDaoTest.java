@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,12 @@ public class JdbcDatabaseDaoTest {
 
   //      databaseDao.connect();
   //      databaseDao.save(download);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        databaseDao.connect();
+        databaseDao.delete(1);
     }
 
     @Test
