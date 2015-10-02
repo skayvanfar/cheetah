@@ -98,10 +98,10 @@ public class MainToolBar extends JToolBar implements ActionListener {
         this.mainToolbarListener = mainToolbarListener;
     }
 
-    public void setStateOfButtonsControl(boolean pauseButtonState, boolean resumeButtonState, boolean cancelButtonState, boolean clearButtonState) {
-        pauseButton.setEnabled(pauseButtonState);
+    public void setStateOfButtonsControl(boolean pauseButtonState, boolean resumeButtonState, boolean pauseAllButtonState, boolean clearButtonState) {
         resumeButton.setEnabled(resumeButtonState);
-        pauseAllButton.setEnabled(cancelButtonState);
+        pauseButton.setEnabled(pauseButtonState);
+        pauseAllButton.setEnabled(pauseAllButtonState);
         clearButton.setEnabled(clearButtonState);
     }
 

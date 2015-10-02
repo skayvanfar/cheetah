@@ -42,4 +42,9 @@ public class DatabaseControllerImpl implements DatabaseController {
     public void delete(int id) throws SQLException {
         databaseDao.delete(id);
     }
+
+    @Override
+    public void createTablesIfNotExist() throws SQLException {
+        databaseDao.createTablesIfNotExist();
+    }
 }

@@ -91,10 +91,11 @@ public class DownloadManagerGUI extends JFrame {
         preferences = Preferences.userRoot().node("db");
         final PreferencesDTO preferencesDTO = getPreferences();
 
+        createFileHierarchy();
 
         mainToolbar = new MainToolBar();
         categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
-        downloadPanel = new DownloadPanel(this);
+        downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath());
         messagePanel = new MessagePanel();
         mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
@@ -135,9 +136,6 @@ public class DownloadManagerGUI extends JFrame {
         setJMenuBar(initMenuBar());
 
 
-
-        createFileHierarchy();
-
         mainToolbar.setMainToolbarListener(new MainToolbarListener() {
             @Override
             public void newDownloadEventOccured() {
@@ -162,12 +160,15 @@ public class DownloadManagerGUI extends JFrame {
 
             @Override
             public void clearEventOccured() {
-                downloadPanel.actionClear();
+                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+                if (action == JOptionPane.OK_OPTION) {
+                    downloadPanel.actionClear();
+                }
             }
 
             @Override
             public void clearAllCompletedEventOccured() {
-                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to deleted all completed downloaded?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete all completed files?", "Confirm delete all", JOptionPane.OK_CANCEL_OPTION);
                 if (action == JOptionPane.OK_OPTION) {
                     downloadPanel.actionClearAllCompleted();
                 }
@@ -223,7 +224,7 @@ public class DownloadManagerGUI extends JFrame {
 
         PreferencesDTO preferencesDTO = null;
         try {
-        //    PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+            PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
             } catch(NullPointerException e) {
@@ -324,6 +325,9 @@ public class DownloadManagerGUI extends JFrame {
         if (preferencesSaveDTO.getTempDirectory() == null || preferencesSaveDTO.getTempDirectory().equals("")) {
             preferencesSaveDTO.setTempDirectory(path + bundle.getString("tempDirectory"));
         }
+        if (preferencesSaveDTO.getDatabasePath() == null || preferencesSaveDTO.getDatabasePath().equals("")) {
+            preferencesSaveDTO.setDatabasePath(path + bundle.getString("databasePath"));
+        }
 
 
         // add all Main preferences objects
@@ -353,7 +357,7 @@ public class DownloadManagerGUI extends JFrame {
                     mainToolbar.setStateOfButtonsControl(true, false, true, false);
                     break;
                 case PAUSED:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, false);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, true); // last false
                     break;
                 case ERROR:
                     mainToolbar.setStateOfButtonsControl(false, true, false, true);
@@ -499,6 +503,10 @@ public class DownloadManagerGUI extends JFrame {
             File tempDirFile = new File(tempDirectory);
             if (!tempDirFile.exists())
                 tempDirFile.mkdirs();
+            String databasePath = preferencesDTO.getPreferencesSaveDTO().getDatabasePath();
+            File databasePathFile = new File(databasePath);
+            if (!databasePathFile.exists())
+                databasePathFile.mkdirs();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (BackingStoreException e) {

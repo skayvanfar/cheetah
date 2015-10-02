@@ -58,24 +58,34 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadD
     }
 
     // Remove a download from the list.
-    public void clearDownload(int row) {
+    public void clearDownloadDialog(DownloadDialog downloadDialog) {
+        int row = downloadDialogList.indexOf(downloadDialog);
         downloadDialogList.remove(row);
 
         // Fire table row deletion notification to table.
         fireTableRowsDeleted(row, row);
     }
 
-    public void clearAllCompletedDownloads() {
-        Iterator<DownloadDialog> iterator =  downloadDialogList.iterator();
+    public void clearDownloadDialogs(List<DownloadDialog> downloadDialogs) {
+        for (DownloadDialog downloadDialog : downloadDialogs) {
+            int index = downloadDialogList.indexOf(downloadDialog);
+            downloadDialog.dispose();
+            downloadDialogList.remove(downloadDialog);
+            fireTableRowsDeleted(index, index);
+        }
+    }
+
+    public List<DownloadDialog> getDownloadDialogsByStatus(DownloadStatus downloadStatus) {
+        List<DownloadDialog> selectedDownloadDialogs = new ArrayList<>();
+
         for (int i = 0; i < downloadDialogList.size(); i++) {
             DownloadDialog downloadDialog = downloadDialogList.get(i);
-            if (downloadDialogList.get(i).getStatus() == DownloadStatus.COMPLETE) {
-                downloadDialog.dispose();
-                downloadDialogList.remove(downloadDialog);
-                downloadDialog = null;
-                fireTableRowsDeleted(i, i);
+            if (downloadDialogList.get(i).getStatus() == downloadStatus) {
+                selectedDownloadDialogs.add(downloadDialog);
             }
         }
+
+        return selectedDownloadDialogs;
     }
 
     // Get table's column count.

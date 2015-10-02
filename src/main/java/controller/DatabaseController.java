@@ -14,4 +14,5 @@ public interface DatabaseController {
     public void save(Download download) throws SQLException;
     public List<Download> load() throws SQLException, Exception;
     public void delete(int id) throws SQLException;
+    public void createTablesIfNotExist() throws SQLException;
 }

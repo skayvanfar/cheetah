@@ -2,11 +2,14 @@ package gui;
 
 import controller.DatabaseController;
 import controller.DatabaseControllerImpl;
+import enums.DownloadStatus;
 import gui.Download.DownloadDialog;
 import gui.listener.*;
 import model.Download;
 import model.DownloadRange;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import utils.ConnectionUtil;
 import utils.Utils;
 
 import javax.swing.*;
@@ -16,6 +19,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
@@ -47,11 +52,19 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
 
     private JFrame parent;
 
-    public DownloadPanel(JFrame parent) {
+    public DownloadPanel(JFrame parent, String databasePath) {
         this.parent = parent;
         setLayout(new BorderLayout());
 
-        databaseController = new DatabaseControllerImpl("org.sqlite.JDBC", "jdbc:sqlite:test.db", 0, "", "");
+
+        String connectionUrl = "jdbc:sqlite:"+ databasePath + File.separator + "test.db"; // todo must read from preference
+        databaseController = new DatabaseControllerImpl("org.sqlite.JDBC", connectionUrl, 0, "", "");
+
+        try {
+            databaseController.createTablesIfNotExist();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         // Set up Downloads table.
         downloadsTableModel = new DownloadsTableModel();
@@ -95,7 +108,7 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
 
         List<Download> downloads = null;
         try {
-            databaseController.connect();
+     //       databaseController.connect();
             downloads = databaseController.load();
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,20 +185,49 @@ public class DownloadPanel extends JPanel implements DownloadDialogListener, Dow
 
     // Clear the selected download.
     public void actionClear() {
+        if (selectedDownloadDialog == null) return;
+        Download download = selectedDownloadDialog.getDownload();
+
         clearing = true;
-        downloadsTableModel.clearDownload(downloadTable.getSelectedRow());
+        downloadsTableModel.clearDownloadDialog(selectedDownloadDialog);
+        clearing = false;
+
+        selectedDownloadDialog = null;
+
         try {
-            databaseController.delete(selectedDownloadDialog.getDownload().getId());
+            databaseController.delete(download.getId());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        clearing = false;
-        selectedDownloadDialog = null; //todo just this ...
+
+        try {
+             FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + ConnectionUtil.getFileName(new URL(download.getUrl())))); // todo must again
+        } catch (IOException e) {
+             e.printStackTrace();
+        }
     }
 
     // Clear all completed downloads.
     public void actionClearAllCompleted() {
-        downloadsTableModel.clearAllCompletedDownloads();
+
+        List<DownloadDialog> selectedDownloadDialogs = downloadsTableModel.getDownloadDialogsByStatus(DownloadStatus.COMPLETE);
+
+        clearing = true;
+        downloadsTableModel.clearDownloadDialogs(selectedDownloadDialogs);
+        clearing = false;
+
+        try {
+            for (DownloadDialog downloadDialog : selectedDownloadDialogs) {
+                if (selectedDownloadDialog == downloadDialog)
+                    selectedDownloadDialog = null;
+                databaseController.delete(downloadDialog.getDownload().getId());
+                FileUtils.forceDelete(new File(downloadDialog.getDownload().getDownloadRangePath() + File.separator + ConnectionUtil.getFileName(new URL(downloadDialog.getDownload().getUrl())))); // todo must again
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Called when table row selection changes.

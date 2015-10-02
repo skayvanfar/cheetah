@@ -29,6 +29,8 @@ public class PreferenceSavePanel extends JPanel {
     private JTextField pathTextField;
     private JLabel temporaryDirectoryLabel;
     private JTextField temporaryDirectoryTextField;
+    private JLabel databasePathLabel;
+    private JTextField databasePathTextField;
 
     private JPanel tempDirPanel;
 
@@ -55,6 +57,8 @@ public class PreferenceSavePanel extends JPanel {
         pathTextField = new JTextField(35);
         temporaryDirectoryLabel = new JLabel("Temporary Directory:");
         temporaryDirectoryTextField = new JTextField(35);
+        databasePathLabel = new JLabel("Database Directory");
+        databasePathTextField = new JTextField(35);
         tempDirPanel = new JPanel();
 
         Border innerBorder = BorderFactory.createTitledBorder("Save");
@@ -96,6 +100,14 @@ public class PreferenceSavePanel extends JPanel {
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
+            }
+        });
+
+        databasePathTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                preferencesSaveDTO.setDatabasePath(databasePathTextField.getText());
             }
         });
     }
@@ -213,6 +225,23 @@ public class PreferenceSavePanel extends JPanel {
         tempDirPanel.add(temporaryDirectoryTextField, gc);
 
         add(tempDirPanel, BorderLayout.SOUTH);
+
+        ///////////////// Next row ////////////////////////////////////////////
+
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gc.insets = rightPadding;
+        tempDirPanel.add(databasePathLabel, gc);
+
+        gc.gridx = 1;
+      //  gc.gridy = 0;
+        gc.insets = noPadding;
+        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        tempDirPanel.add(databasePathTextField, gc);
+
+        add(tempDirPanel, BorderLayout.SOUTH);
     }
 
     public void setPreferenceSaveDTO(PreferencesSaveDTO preferenceSaveDTO) {
@@ -229,12 +258,14 @@ public class PreferenceSavePanel extends JPanel {
         pathTextField.setText(preferencesDirectoryCategoryDTO.getPath());
 
         temporaryDirectoryTextField.setText(preferenceSaveDTO.getTempDirectory());
+        databasePathTextField.setText(preferenceSaveDTO.getDatabasePath());
     }
 
     public PreferencesSaveDTO getPreferenceSaveDTO() {
  //       PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
         preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
         preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
+        preferencesSaveDTO.setTempDirectory(databasePathTextField.getText());
         return preferencesSaveDTO;
     }
 }
