@@ -91,21 +91,16 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener, Dow
     // Pause this download.
     public void pause() {
         download.pause();
-    }////**********
+    }
 
     // Resume this download.
     public void resume() {
         download.resume();
-    }////**********
-
-    // Cancel this download.
-    public void cancel() {
-        download.cancel();
-    }////**********
+    }
 
     public DownloadStatus getStatus() {
         return download.getStatus();
-    }////**********
+    }
 
 
     @Override
@@ -114,7 +109,7 @@ public class DownloadDialog extends JDialog implements DownloadInfoListener, Dow
     }
 
     @Override
-    public void downloadInfoChanged() {////**********
+    public void downloadInfoChanged() {
         for (final DownloadDialogListener downloadDialogListener : downloadDialogListenerList) {
             SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
                 public void run() {

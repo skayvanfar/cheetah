@@ -60,6 +60,7 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadD
     // Remove a download from the list.
     public void clearDownloadDialog(DownloadDialog downloadDialog) {
         int row = downloadDialogList.indexOf(downloadDialog);
+        downloadDialog.dispose();
         downloadDialogList.remove(row);
 
         // Fire table row deletion notification to table.

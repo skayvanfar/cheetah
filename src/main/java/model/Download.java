@@ -22,10 +22,7 @@ import java.util.Observer;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class Download extends Observable implements Observer , Runnable{
-
-    // Max size of download buffer.
-    private static final int MAX_BUFFER_SIZE = 1024;
+public class Download extends Observable implements Observer , Runnable {
 
     private int id;
     private URL url; // download URL
@@ -56,9 +53,6 @@ public class Download extends Observable implements Observer , Runnable{
 
         this.downloadPath = downloadPath;
         this.downloadRangePath = downloadRangePath;
-
-        // Begin the download.
-  //      download();
     }
 
     public int getId() {
@@ -158,19 +152,11 @@ public class Download extends Observable implements Observer , Runnable{
         status = DownloadStatus.DOWNLOADING;
         stateChanged();
         if (!downloadRangeList.isEmpty()) {
-       //     for (DownloadRange downloadRange : downloadRangeList) {
-      //          if (downloadInfoListener != null) {
-     //               downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
-      //          }
-      //      }
             for (DownloadRange downloadRange : downloadRangeList)
                 downloadRange.resume();
         } else {
             download();
         }
-  //      status = DownloadStatus.DOWNLOADING;
-   //     stateChanged();
-   //     download();
     }
 
     public void downloadRangeReturned() { //////////////////////////////////////////////
@@ -182,28 +168,23 @@ public class Download extends Observable implements Observer , Runnable{
     }
 
     // Cancel this download.
-    public void cancel() {
-        for (DownloadRange downloadRange : downloadRangeList)
-            downloadRange.disConnect();
-        status = DownloadStatus.CANCELLED;
-        stateChanged();
-    }
+  //  public void cancel() {
+ ///       for (DownloadRange downloadRange : downloadRangeList)
+  //          downloadRange.disConnect();
+  //      status = DownloadStatus.CANCELLED;
+  //      stateChanged();
+  //  }
 
     // Mark this download as having an error.
     private void error() {
         status = DownloadStatus.ERROR;
         stateChanged();
-        ////todo save
+
         if (downloadSaveListener != null)
             downloadSaveListener.downloadNeedSaved(this);
     }
 
-    // Start or resume downloading.
-    private void download() {
-        Thread thread = new Thread(this);
-        thread.start();
-
-
+    private void startTransferRate() {
         new Thread(new Runnable() {
             ///////////////////////////////////////////////////////////////////////////////////// Download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
@@ -233,6 +214,14 @@ public class Download extends Observable implements Observer , Runnable{
                 }
             }
         }).start();
+    }
+
+    // Start or resume downloading.
+    private void download() {
+        Thread thread = new Thread(this);
+        thread.start();
+
+        startTransferRate();
 
      //   run();
 
@@ -308,9 +297,9 @@ public class Download extends Observable implements Observer , Runnable{
                 stateChanged();
             }
 
-            createDownloadRanges(connection, partCount);
-
             connection.disconnect();
+
+            createDownloadRanges(connection, partCount);
         } catch (IOException e) {
             e.printStackTrace();
             error();
@@ -331,7 +320,7 @@ public class Download extends Observable implements Observer , Runnable{
             for (int i = 0;  i < connectionSize; i++) {
                 String fileName = ConnectionUtil.getFileName(url);
                 String partFileName = fileName + ".00" + (i + 1);
-                downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, endRange); //todo clean needed
+                downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, endRange);
 
                 addDownloadRange(downloadRange);
 
@@ -347,10 +336,10 @@ public class Download extends Observable implements Observer , Runnable{
         } else {
             String fileName = ConnectionUtil.getFileName(url);
             String partFileName = fileName + ".00" + 1;
-            downloadRange = new DownloadRange(1, url, new File(downloadRangePath + partFileName), startRange, size); //todo clean needed
+            downloadRange = new DownloadRange(1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, size);
             addDownloadRange(downloadRange);
+            downloadRange.resume();
         }
-        ////todo save
         if (downloadSaveListener != null)
             downloadSaveListener.downloadNeedSaved(this);
     }
@@ -374,21 +363,14 @@ public class Download extends Observable implements Observer , Runnable{
             files.add(downloadRange.getDownloadRangeFile());
         }
 
-       // files.sort(new FileComperarto()); TODO must sorted
+       // files.sort(new FileComperarto());
 
         FileUtil.joinDownloadedParts(files, downloadPath, ConnectionUtil.getFileName(url));
-        File parentFile = files.get(0).getParentFile();
-   //     try {
-   //         FileUtils.forceDelete(parentFile);TODO must returned
-    //    } catch (IOException e) {
-   //         e.printStackTrace();
-    //    }
 
         status = DownloadStatus.COMPLETE;
         stateChanged();
         if (downloadSaveListener != null)
             downloadSaveListener.downloadNeedSaved(this);
-        ////todo save
     }
 
     // Notify observers that this download's status has changed.
@@ -413,13 +395,17 @@ public class Download extends Observable implements Observer , Runnable{
             case DISCONNECTED:
                 if (isDisConnect()) {
                     status = DownloadStatus.PAUSED;
+                    if (downloadSaveListener != null)
+                        downloadSaveListener.downloadNeedSaved(this);
                 }
                 System.out.println("disconnect from download .... ");
-                if (downloadSaveListener != null)
-                    downloadSaveListener.downloadNeedSaved(this);
+          //      if (isLastDownloadRange(ConnectionStatus.DISCONNECTED)) {
+
+          //      }
                 break;
             case ERROR:
                 System.out.println("error");
+                status = DownloadStatus.ERROR;
                 if (downloadSaveListener != null)
                     downloadSaveListener.downloadNeedSaved(this);
                 break;
@@ -442,7 +428,7 @@ public class Download extends Observable implements Observer , Runnable{
     private boolean isDisConnect() {
         boolean state = true;
         for (DownloadRange downloadRange : downloadRangeList) {
-            if (downloadRange.getConnectionStatus() != ConnectionStatus.DISCONNECTED) {
+            if (downloadRange.getConnectionStatus() != ConnectionStatus.DISCONNECTED && downloadRange.getConnectionStatus() != ConnectionStatus.COMPLETED) {
                 state = false;
                 break;
             }
@@ -450,20 +436,28 @@ public class Download extends Observable implements Observer , Runnable{
         return state;
     }
 
+    private boolean isLastDownloadRange(ConnectionStatus connectionStatus) {
+        boolean result = true;
+        for (DownloadRange downloadRange : downloadRangeList) {
+            if (downloadRange.getConnectionStatus() != connectionStatus) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return "Download{" +
-                "id=" + id +
-                ", url=" + url +
-                ", size=" + size +
+                "downloadRangePath='" + downloadRangePath + '\'' +
                 ", downloaded=" + downloaded +
                 ", status=" + status +
                 ", transferRate='" + transferRate + '\'' +
                 ", partCount=" + partCount +
-                ", downloadRangeList=" + downloadRangeList +
                 ", downloadPath='" + downloadPath + '\'' +
-                ", downloadRagePath='" + downloadRangePath + '\'' +
-                ", downloadInfoListener=" + downloadInfoListener +
+                ", size=" + size +
+                ", url=" + url +
+                ", id=" + id +
                 '}';
     }
 }

@@ -7,7 +7,7 @@ public interface MainToolbarListener {
     public void newDownloadEventOccured();
     public void pauseEventOccured();
     public void resumeEventOccured();
-    public void cancelEventOccured();
+    public void pauseAllEventOccured();
     public void clearEventOccured();
     public void clearAllCompletedEventOccured();
     public void preferencesEventOccured();

@@ -18,11 +18,4 @@ public class UtilsTest {
 
     }
 
-    @Test
-    public void testFindMissingNumbers() {
-        Integer[] a = {1,3,4,5,8};
-
-        int s = Utils.findMissingNumbers(a, 0);
-        System.out.println(s);
-    }
 }

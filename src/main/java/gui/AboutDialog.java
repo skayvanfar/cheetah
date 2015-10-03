@@ -20,6 +20,7 @@ public class AboutDialog extends JDialog {
 
         setMinimumSize(new Dimension(350,250));
         setSize(550, 200);
+        setResizable(false);
         setLocationRelativeTo(parent);
     }
 

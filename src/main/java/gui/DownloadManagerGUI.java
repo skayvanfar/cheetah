@@ -123,7 +123,7 @@ public class DownloadManagerGUI extends JFrame {
                     int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
 
                     downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, maxNum,
-                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory())); ///Todo????????????????????????????????? id
+                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory()));
                 }
             }
         });
@@ -145,7 +145,7 @@ public class DownloadManagerGUI extends JFrame {
             @Override
             public void pauseEventOccured() {
                 downloadPanel.actionPause();
-                mainToolbar.setStateOfButtonsControl(false, false, false, false); // canceled
+                mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
             }
 
             @Override
@@ -154,8 +154,11 @@ public class DownloadManagerGUI extends JFrame {
             }
 
             @Override
-            public void cancelEventOccured() {
-                downloadPanel.actionCancel();
+            public void pauseAllEventOccured() {
+                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
+                if (action == JOptionPane.OK_OPTION) {
+                    downloadPanel.actionPauseAll();
+                }
             }
 
             @Override
@@ -207,7 +210,7 @@ public class DownloadManagerGUI extends JFrame {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 System.out.println("Window Closing");
-                downloadPanel.cancelAllDownload();
+                downloadPanel.actionPauseAll();
                 dispose();
                 System.gc();
             }
@@ -224,11 +227,11 @@ public class DownloadManagerGUI extends JFrame {
 
         PreferencesDTO preferencesDTO = null;
         try {
-            PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+    //        PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
             } catch(NullPointerException e) {
-                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO()); //todo test on a fresh pc
+                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             }
 
 
@@ -354,20 +357,20 @@ public class DownloadManagerGUI extends JFrame {
         if (state != null) {
             switch (state) {
                 case DOWNLOADING:
-                    mainToolbar.setStateOfButtonsControl(true, false, true, false);
+                    mainToolbar.setStateOfButtonsControl(true, false, false);
                     break;
                 case PAUSED:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, true); // last false
+                    mainToolbar.setStateOfButtonsControl(false, true, true); // last false
                     break;
                 case ERROR:
-                    mainToolbar.setStateOfButtonsControl(false, true, false, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true);
                     break;
                 default: // COMPLETE or CANCELLED
-                    mainToolbar.setStateOfButtonsControl(false, false, false, true);
+                    mainToolbar.setStateOfButtonsControl(false, false, true);
             }
         } else {
             // No download is selected in table.
-            mainToolbar.setStateOfButtonsControl(false, false, false, false);
+            mainToolbar.setStateOfButtonsControl(false, false, false);
         }
     }
 

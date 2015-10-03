@@ -52,13 +52,13 @@ public class PreferenceSavePanel extends JPanel {
         editButton = new JButton("Edit");
         categoryComboBox = new JComboBox<>();
         fileExtensionLabel = new JLabel("File Extensions:");
-        fileExtensionTextField = new JTextField(35);
+        fileExtensionTextField = new JTextField(45);
         pathLabel = new JLabel("Path:");
-        pathTextField = new JTextField(35);
+        pathTextField = new JTextField(45);
         temporaryDirectoryLabel = new JLabel("Temporary Directory:");
-        temporaryDirectoryTextField = new JTextField(35);
-        databasePathLabel = new JLabel("Database Directory");
-        databasePathTextField = new JTextField(35);
+        temporaryDirectoryTextField = new JTextField(45);
+        databasePathLabel = new JLabel("Database Directory:");
+        databasePathTextField = new JTextField(45);
         tempDirPanel = new JPanel();
 
         Border innerBorder = BorderFactory.createTitledBorder("Save");
@@ -144,14 +144,14 @@ public class PreferenceSavePanel extends JPanel {
         gc.gridy = 0;
         gc.gridx = 0;
         gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START; // LINE_END
         gc.insets = rightPadding;
         saveToPanel.add(categoryLabel, gc);
 
         gc.gridx = 1;
         gc.gridy = 0;
         gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.LINE_START;
+        gc.anchor = GridBagConstraints.LINE_START; // LINE_START
         saveToPanel.add(newButton, gc);
 
         ////////////Next row ////////////////////////////
@@ -159,7 +159,7 @@ public class PreferenceSavePanel extends JPanel {
 
         gc.gridx = 0;
         gc.insets = rightPadding;
-        gc.anchor = GridBagConstraints.LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         saveToPanel.add(categoryComboBox, gc);
 
         gc.gridx = 1;
@@ -172,24 +172,28 @@ public class PreferenceSavePanel extends JPanel {
         gc.gridy++;
         gc.gridx = 0;
         gc.insets = rightPadding;
-        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START; // FIRST_LINE_END
         saveToPanel.add(fileExtensionLabel, gc);
 
-      //  gc.gridy++;
-        gc.gridx = 1;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.gridwidth = 2;
+        gc.anchor = GridBagConstraints.LINE_START; // FIRST_LINE_START
         gc.insets = noPadding;
         saveToPanel.add(fileExtensionTextField, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
         gc.gridy++;
         gc.gridx = 0;
+        gc.gridwidth = 1;
         gc.insets = rightPadding;
-        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         saveToPanel.add(pathLabel, gc);
 
-        gc.gridx = 1;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.gridwidth = 2;
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = noPadding;
         saveToPanel.add(pathTextField, gc);
 
@@ -198,7 +202,7 @@ public class PreferenceSavePanel extends JPanel {
 
     private void layoutComponentsOfTempDirPanel() {
 
-        tempDirPanel.setBorder(new TitledBorder("Temporary Directory"));
+        tempDirPanel.setBorder(new TitledBorder("Temporary Directories"));
 
         tempDirPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -214,12 +218,12 @@ public class PreferenceSavePanel extends JPanel {
 
         gc.gridx = 0;
         gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = rightPadding;
         tempDirPanel.add(temporaryDirectoryLabel, gc);
 
-        gc.gridx = 1;
-        gc.gridy = 0;
+        gc.gridx = 0;
+        gc.gridy++;
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
         tempDirPanel.add(temporaryDirectoryTextField, gc);
@@ -231,14 +235,14 @@ public class PreferenceSavePanel extends JPanel {
         gc.gridy++;
         gc.gridx = 0;
         gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = rightPadding;
         tempDirPanel.add(databasePathLabel, gc);
 
-        gc.gridx = 1;
-      //  gc.gridy = 0;
+        gc.gridy++;
+        gc.gridx = 0;
         gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         tempDirPanel.add(databasePathTextField, gc);
 
         add(tempDirPanel, BorderLayout.SOUTH);

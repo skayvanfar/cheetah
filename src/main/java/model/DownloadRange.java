@@ -88,10 +88,7 @@ public class DownloadRange extends Observable implements Runnable {
         this.startRange = startRange;
         this.endRange = endRange;
 
-   //     this.downloadRangePath = downloadRangePath;
         this.downloadRangeFile = downloadRangeFile;
-        // Begin the download.
-//        download();
     }
 
     public int getNumber() {
@@ -115,27 +112,21 @@ public class DownloadRange extends Observable implements Runnable {
         this.connectionStatus = connectionStatus;
     }
 
- //   public String getDownloadRangePath() {
- //       return downloadRangePath;
- //   }
-
- //   public void setDownloadRangePath(String downloadRangePath) {
-  //      this.downloadRangePath = downloadRangePath;
-  //  }
-
     // Pause this download.
     public void disConnect() {
-        connectionStatus = ConnectionStatus.DISCONNECTING;
+        if (connectionStatus == ConnectionStatus.CONNECTING || connectionStatus == ConnectionStatus.SEND_GET || connectionStatus == ConnectionStatus.RECEIVING_DATA )
+            connectionStatus = ConnectionStatus.DISCONNECTING;
         stop = true;
+        thread.interrupt();
         stateChanged(0); // TODO two time call and print "disconnect from download .... "
     }
 
     // Resume this download.
     public void resume() {
-        stop = false;
-        connectionStatus = ConnectionStatus.SEND_GET; //todo not needed
-        stateChanged(0);
-        download();
+        if (connectionStatus != ConnectionStatus.COMPLETED) {
+            stop = false;
+            download();
+        }
     }
 
     // Mark this download as having an error.
@@ -144,8 +135,10 @@ public class DownloadRange extends Observable implements Runnable {
         stateChanged(0);
     }
 
+    Thread thread = null;
+
     private void download() {
-        Thread thread = new Thread(this);
+        thread = new Thread(this);
         thread.start();
     }
 
@@ -194,12 +187,9 @@ public class DownloadRange extends Observable implements Runnable {
                 stateChanged(0);
             }
 
-
-      //      File downloadRangeDirTemp  = new File(downloadRangePath + File.separator + fileName.substring(0, fileName.lastIndexOf('.')));
             File downloadRangeDirTemp = downloadRangeFile.getParentFile();
             if (!downloadRangeDirTemp.exists()) // todo must not deleted
                 downloadRangeDirTemp.mkdir();
-        //    downloadRangeFile = new File(downloadRangeDirTemp + File.separator + partFileName);
 
             // Open file and seek to the end of it.
             randomAccessFile = new RandomAccessFile(downloadRangeFile, "rw");

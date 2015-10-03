@@ -90,18 +90,19 @@ public class MainToolBar extends JToolBar implements ActionListener {
 
         resumeButton.setEnabled(false);
         pauseButton.setEnabled(false);
-        pauseAllButton.setEnabled(false);
+        pauseAllButton.setEnabled(true);
         clearButton.setEnabled(false);
+        clearAllCompletedButton.setEnabled(true);
+        preferencesButton.setEnabled(true);
     }
 
     public void setMainToolbarListener(MainToolbarListener mainToolbarListener) {
         this.mainToolbarListener = mainToolbarListener;
     }
 
-    public void setStateOfButtonsControl(boolean pauseButtonState, boolean resumeButtonState, boolean pauseAllButtonState, boolean clearButtonState) {
+    public void setStateOfButtonsControl(boolean pauseButtonState, boolean resumeButtonState, boolean clearButtonState) {
         resumeButton.setEnabled(resumeButtonState);
         pauseButton.setEnabled(pauseButtonState);
-        pauseAllButton.setEnabled(pauseAllButtonState);
         clearButton.setEnabled(clearButtonState);
     }
 
@@ -117,7 +118,7 @@ public class MainToolBar extends JToolBar implements ActionListener {
             } else if (clicked == pauseButton) {
                 mainToolbarListener.pauseEventOccured();
             }  else if (clicked == pauseAllButton) {
-                mainToolbarListener.cancelEventOccured();
+                mainToolbarListener.pauseAllEventOccured();
             } else if (clicked == clearButton) {
                 mainToolbarListener.clearEventOccured();
             } else if (clicked == clearAllCompletedButton) {

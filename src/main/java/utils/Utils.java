@@ -54,22 +54,4 @@ public class Utils {
         return font;
     }
 
-    public static int findMissingNumbers(Integer arr[], int position) {
-
-        int count = 1;
-
-        if (position == arr.length - 1)
-            return -1;
-
-        for (; position < arr[arr.length - 1]; position++) {
-
-            if ((arr[position] - count) != position) {
-                return position + count;
-        //        count++;
-        //        break;
-            }
-        }
-        return -1;
-
-    }
 }

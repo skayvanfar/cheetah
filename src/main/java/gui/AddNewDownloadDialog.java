@@ -3,9 +3,12 @@ package gui;
 import gui.listener.AddNewDownloadListener;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.URL;
 
 /**
@@ -16,6 +19,14 @@ public class AddNewDownloadDialog extends JDialog {
     // Add download text field.
     private JTextField newTextField;
     private JButton newButton;
+
+    private JPanel useAuthorizationPanel;
+    private JLabel useAuthorizationLabel;
+    private JCheckBox useAuthorizationCheckBox;
+    private JLabel userIDLabel;
+    private JTextField userIDTextField;
+    private JLabel passwordLabel;
+    private JPasswordField passwordField;
 
     private AddNewDownloadListener addNewDownloadListener;
 
@@ -30,8 +41,21 @@ public class AddNewDownloadDialog extends JDialog {
         newButton.setToolTipText(bundle.getString("addNewDownloadDialog.newButton.toolTip"));
         newTextField = new JTextField(44);
 
-        add(newButton);
-        add(newTextField);
+        useAuthorizationPanel = new JPanel();
+        useAuthorizationLabel = new JLabel("Use Authorization:");
+        useAuthorizationCheckBox = new JCheckBox();
+        userIDLabel = new JLabel("User Id:");
+        userIDTextField = new JTextField(8);
+        userIDTextField.setEnabled(false);
+        passwordLabel = new JLabel("Password:");
+        passwordField = new JPasswordField(8);
+        passwordField.setEnabled(false);
+
+        Border innerBorder = BorderFactory.createTitledBorder("Use Authorization");
+        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
+        useAuthorizationPanel.setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+
+        layoutControls();
 
         // can use ActionListener for class and use that
         newButton.addActionListener(new ActionListener() {
@@ -40,13 +64,38 @@ public class AddNewDownloadDialog extends JDialog {
             }
         });
 
-        setSize(603, 74);
+        useAuthorizationCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                JCheckBox checkBox = (JCheckBox) e.getItem();
+                if (checkBox.isSelected()) {
+                    userIDTextField.setEnabled(true);
+                    passwordField.setEnabled(true);
+                } else {
+                    userIDTextField.setEnabled(false);
+                    passwordField.setEnabled(false);
+                }
+            }
+        });
+
+        setSize(603, 156);
+        setResizable(false);
         setLocationRelativeTo(parent);
     }
 
     // TODO for controls set
     private void layoutControls() {
+        add(newButton);
+        add(newTextField);
 
+        add(useAuthorizationLabel);
+        add(useAuthorizationCheckBox);
+        useAuthorizationPanel.add(userIDLabel); // todo may use GridBagLayout
+        useAuthorizationPanel.add(userIDTextField);
+        useAuthorizationPanel.add(passwordLabel);
+        useAuthorizationPanel.add(passwordField);
+
+        add(useAuthorizationPanel);
     }
 
     public void setAddNewDownloadListener(AddNewDownloadListener addNewDownloadListener) {

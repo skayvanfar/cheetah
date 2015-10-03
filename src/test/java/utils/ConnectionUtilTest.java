@@ -2,12 +2,14 @@ package utils;
 
 import enums.SizeType;
 import enums.TimeUnit;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
@@ -53,5 +55,33 @@ public class ConnectionUtilTest {
         float expectedValue = 6227.5f;
         float actualValue = ConnectionUtil.calculateTransferRateInUnit(12455, 2000, TimeUnit.SEC);
         Assert.assertEquals("testCalculateTransferRateInUnit", expectedValue, actualValue, 0.01);
+    }
+
+    @Test
+    public void testUrl() throws Exception {
+        url = new URL("http://btn-ict.ir/request.php?718");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        String raw = conn.getHeaderField("Content-Disposition");
+        // raw = "attachment; filename=abc.jpg"
+        if(raw != null && raw.indexOf("=") != -1) {
+            String fileName = raw.split("=")[1]; //getting value after '='
+            System.out.println("http://btn-ict.ir/request.php :" + fileName);
+        } else {
+            // fall back to random generated file name?
+        }
+
+        url.getContent();
+        System.out.println( url.getContent());
+        System.out.println(ConnectionUtil.getFileName(url));
+
+        String url2 = "http://www.example.com/some/path/to/a/file.xml";
+
+        String name = FilenameUtils.getName(url.getFile());
+        String baseName = FilenameUtils.getBaseName(url.getFile());
+        String extension = FilenameUtils.getExtension(url.getFile());
+
+        System.out.println("names : " + name);
+        System.out.println("Basename : " + baseName);
+        System.out.println("extension : " + extension);
     }
 }
