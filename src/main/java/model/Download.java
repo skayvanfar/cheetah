@@ -1,23 +1,19 @@
 package model;
 
-import com.google.common.io.Files;
 import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.SizeType;
 import enums.TimeUnit;
 import gui.listener.DownloadInfoListener;
-import gui.listener.DownloadSaveListener;
-import org.apache.commons.io.FileUtils;
+import gui.listener.DownloadStatusListener;
 import utils.ConnectionUtil;
 import utils.FileUtil;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * Created by Saeed on 9/10/2015.
@@ -40,7 +36,33 @@ public class Download extends Observable implements Observer , Runnable {
 
     private DownloadInfoListener downloadInfoListener;
 
-    private DownloadSaveListener downloadSaveListener;
+    private Vector<DownloadStatusListener> downloadStatusListeners;
+
+    /**
+     * Adds an DownloadStatusListener to the set of downloadStatusListeners for this object, provided
+     * that it is not the same as some DownloadStatusListener already in the set.
+     * The order in which notifications will be delivered to multiple
+     * DownloadDialogListeners is not specified. See the class comment.
+     *
+     * @param   downloadStatusListener   an DownloadStatusListener to be added.
+     * @throws NullPointerException   if the parameter o is null.
+     */
+    public synchronized void addDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
+        if (downloadStatusListener == null)
+            throw new NullPointerException();
+        if (!downloadStatusListeners.contains(downloadStatusListener)) {
+            downloadStatusListeners.addElement(downloadStatusListener);
+        }
+    }
+
+    /**
+     * Deletes an DownloadStatusListener from the set of downloadStatusListeners of this object.
+     * Passing <CODE>null</CODE> to this method will have no effect.
+     * @param   downloadStatusListener   the DownloadStatusListener to be deleted.
+     */
+    public synchronized void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
+        downloadStatusListeners.removeElement(downloadStatusListener);
+    }
 
     // Constructor for Download.
     public Download(int id, URL url, int partCount, String downloadPath, String downloadRangePath) {
@@ -53,6 +75,8 @@ public class Download extends Observable implements Observer , Runnable {
 
         this.downloadPath = downloadPath;
         this.downloadRangePath = downloadRangePath;
+
+        downloadStatusListeners = new Vector<>();
     }
 
     public int getId() {
@@ -135,10 +159,6 @@ public class Download extends Observable implements Observer , Runnable {
         this.downloadInfoListener = downloadInfoListener;
     }
 
-    public void setDownloadSaveListener(DownloadSaveListener downloadSaveListener) {
-        this.downloadSaveListener = downloadSaveListener;
-    }
-
     // Pause this download.
     public void pause() {
         for (DownloadRange downloadRange : downloadRangeList)
@@ -159,29 +179,13 @@ public class Download extends Observable implements Observer , Runnable {
         }
     }
 
-    public void downloadRangeReturned() { //////////////////////////////////////////////
-        for (DownloadRange downloadRange : downloadRangeList) {
-            if (downloadInfoListener != null) {
-                downloadInfoListener.newDownloadRangeEventOccured(downloadRange);
-            }
-        }
-    }
-
-    // Cancel this download.
-  //  public void cancel() {
- ///       for (DownloadRange downloadRange : downloadRangeList)
-  //          downloadRange.disConnect();
-  //      status = DownloadStatus.CANCELLED;
-  //      stateChanged();
-  //  }
-
     // Mark this download as having an error.
     private void error() {
         status = DownloadStatus.ERROR;
         stateChanged();
 
-        if (downloadSaveListener != null)
-            downloadSaveListener.downloadNeedSaved(this);
+        if (downloadInfoListener != null)
+            downloadInfoListener.downloadNeedSaved(this);
     }
 
     private void startTransferRate() {
@@ -340,8 +344,8 @@ public class Download extends Observable implements Observer , Runnable {
             addDownloadRange(downloadRange);
             downloadRange.resume();
         }
-        if (downloadSaveListener != null)
-            downloadSaveListener.downloadNeedSaved(this);
+        if (downloadInfoListener != null)
+            downloadInfoListener.downloadNeedSaved(this);
     }
 
     // add a new downloadRange if not in downloadRangeList
@@ -369,15 +373,18 @@ public class Download extends Observable implements Observer , Runnable {
 
         status = DownloadStatus.COMPLETE;
         stateChanged();
-        if (downloadSaveListener != null)
-            downloadSaveListener.downloadNeedSaved(this);
+        if (downloadInfoListener != null)
+            downloadInfoListener.downloadNeedSaved(this);
     }
 
     // Notify observers that this download's status has changed.
     private void stateChanged() {
-        if (downloadInfoListener != null)
-            downloadInfoListener.downloadInfoChanged();
-
+        for (final DownloadStatusListener downloadStatusListener : downloadStatusListeners)
+            SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
+                public void run() {
+                    downloadStatusListener.downloadStatusChanged(Download.this);
+                }
+            });
     }
 
     // event that come from DownloadRange TODO may be synchrinized
@@ -395,8 +402,8 @@ public class Download extends Observable implements Observer , Runnable {
             case DISCONNECTED:
                 if (isDisConnect()) {
                     status = DownloadStatus.PAUSED;
-                    if (downloadSaveListener != null)
-                        downloadSaveListener.downloadNeedSaved(this);
+                    if (downloadInfoListener != null)
+                        downloadInfoListener.downloadNeedSaved(this);
                 }
                 System.out.println("disconnect from download .... ");
           //      if (isLastDownloadRange(ConnectionStatus.DISCONNECTED)) {
@@ -406,8 +413,8 @@ public class Download extends Observable implements Observer , Runnable {
             case ERROR:
                 System.out.println("error");
                 status = DownloadStatus.ERROR;
-                if (downloadSaveListener != null)
-                    downloadSaveListener.downloadNeedSaved(this);
+                if (downloadInfoListener != null)
+                    downloadInfoListener.downloadNeedSaved(this);
                 break;
             case WAITING_RESPONSE:
                 System.out.println("WAITING_RESPONSE");
@@ -436,15 +443,15 @@ public class Download extends Observable implements Observer , Runnable {
         return state;
     }
 
-    private boolean isLastDownloadRange(ConnectionStatus connectionStatus) {
-        boolean result = true;
-        for (DownloadRange downloadRange : downloadRangeList) {
-            if (downloadRange.getConnectionStatus() != connectionStatus) {
-                result = false;
-            }
-        }
-        return result;
-    }
+ //   private boolean isLastDownloadRange(ConnectionStatus connectionStatus) {
+//        boolean result = true;
+ //       for (DownloadRange downloadRange : downloadRangeList) {
+ //           if (downloadRange.getConnectionStatus() != connectionStatus) {
+ ////               result = false;
+ ///           }
+  //      }
+  //      return result;
+  //  }
 
     @Override
     public String toString() {

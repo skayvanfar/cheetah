@@ -8,6 +8,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
 
 /**
  * Created by Saeed on 9/14/2015.
@@ -42,6 +43,10 @@ public class DownloadInfoPanel extends JPanel {
     public void addDownloadRange(DownloadRange downloadRange) {
 
         downloadRangesTableModel.addDownloadRange(downloadRange);
+    }
+
+    public void setDownloadRanges(java.util.List<DownloadRange> downloadRanges) {
+        downloadRangesTableModel.setDownloadRanges(downloadRanges);
     }
 
     private void setColumnWidths(){
