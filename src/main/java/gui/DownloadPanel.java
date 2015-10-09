@@ -230,7 +230,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         }
 
         try {
-             FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + ConnectionUtil.getFileName(new URL(selectedDownload.getUrl())))); // todo must again
+             FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadNameFile())); // todo must again
         } catch (IOException e) {
              e.printStackTrace();
         }
@@ -257,7 +257,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                     downloadDialog.dispose();
                     download = null;
                 databaseController.delete(download.getId());
-                FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + ConnectionUtil.getFileName(new URL(download.getUrl())))); // todo must again
+                FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + selectedDownload.getDownloadNameFile())); // todo must again
             }
         } catch (SQLException e) {
             e.printStackTrace();

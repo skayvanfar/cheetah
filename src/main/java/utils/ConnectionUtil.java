@@ -3,8 +3,11 @@ package utils;
 import enums.SizeType;
 import enums.TimeUnit;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +30,25 @@ public class ConnectionUtil {
     public static String getFileName(URL url) {
         String fileName = url.getFile();
         return fileName.substring(fileName.lastIndexOf('/') + 1);
+    }
+
+    public static File getRealFile(URL url) throws IOException {
+        File file = null;
+        URLConnection conn = (URLConnection) url.openConnection();
+        String raw = conn.getHeaderField("Content-Disposition");
+        // raw = "attachment; filename=abc.jpg"
+        if(raw != null && raw.indexOf("=") != -1) {
+            file = new File(raw.split("=")[1]); //getting value after '='
+        } else {
+            // fall back to random generated file name?
+            String fileName = url.getFile();
+            if (fileName.lastIndexOf('?') != -1) {
+                file = new File(fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('?')));
+            } else {
+                file = new File(fileName.substring(fileName.lastIndexOf('/') + 1));
+            }
+        }
+        return file;
     }
 
     // Get file extension portion of file of URL.

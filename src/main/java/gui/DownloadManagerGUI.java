@@ -11,12 +11,14 @@ import model.dto.PreferenceConnectionDTO;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
 import model.dto.PreferencesSaveDTO;
+import org.apache.commons.io.FilenameUtils;
 import utils.ConnectionUtil;
 import utils.PrefObj;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -115,15 +117,21 @@ public class DownloadManagerGUI extends JFrame {
         addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
             @Override
             public void newDownloadEventOccured(URL textUrl) {
-
                 if (textUrl != null) {
-                    String fileExtension = ConnectionUtil.getFileExtension(textUrl);
-                    String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
+                    try {
+                        File downloadNameFile = ConnectionUtil.getRealFile(textUrl);
+                        String fileExtension =  FilenameUtils.getExtension(downloadNameFile.getName());
+                        String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
 
-                    int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
+                        int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
 
-                    downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, maxNum,
-                            downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory()));
+                        downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, downloadNameFile, maxNum,
+                                downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });
@@ -227,10 +235,10 @@ public class DownloadManagerGUI extends JFrame {
 
         PreferencesDTO preferencesDTO = null;
         try {
-    //        PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+       //     PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
-                preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
-            } catch(NullPointerException e) {
+                preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
+            } catch(NullPointerException | EOFException e) {
                 PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             }
 

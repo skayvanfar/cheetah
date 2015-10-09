@@ -1,6 +1,7 @@
 package gui;
 
 import gui.listener.AddNewDownloadListener;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,12 +10,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * Created by Saeed on 9/10/2015.
  */
 public class AddNewDownloadDialog extends JDialog {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     // Add download text field.
     private JTextField newTextField;
@@ -131,7 +136,8 @@ public class AddNewDownloadDialog extends JDialog {
         URL verifiedUrl = null;
         try {
             verifiedUrl = new URL(url);
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
+            System.out.println(e);
             return null;
         }
 

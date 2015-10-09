@@ -22,6 +22,7 @@ public class Download extends Observable implements Observer , Runnable {
 
     private int id;
     private URL url; // download URL
+    private File downloadNameFile;
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
     private DownloadStatus status; // current status of download
@@ -65,9 +66,10 @@ public class Download extends Observable implements Observer , Runnable {
     }
 
     // Constructor for Download.
-    public Download(int id, URL url, int partCount, String downloadPath, String downloadRangePath) {
+    public Download(int id, URL url, File downloadNameFile, int partCount, String downloadPath, String downloadRangePath) {
         this.id = id;
         this.url = url;
+        this.downloadNameFile = downloadNameFile;
         size = -1;
         downloaded = 0;
         status = DownloadStatus.DOWNLOADING;
@@ -90,6 +92,14 @@ public class Download extends Observable implements Observer , Runnable {
     // Get this download's URL.
     public String getUrl() {
         return url.toString();
+    }
+
+    public File getDownloadNameFile() {
+        return downloadNameFile;
+    }
+
+    public void setDownloadNameFile(File downloadNameFile) {
+        this.downloadNameFile = downloadNameFile;
     }
 
     // Get this download's size.
@@ -322,9 +332,9 @@ public class Download extends Observable implements Observer , Runnable {
         // if connection is able to part download
         if (connection.getResponseCode() == 206) {
             for (int i = 0;  i < connectionSize; i++) {
-                String fileName = ConnectionUtil.getFileName(url);
-                String partFileName = fileName + ".00" + (i + 1);
-                downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, endRange);
+             //   String fileName = ConnectionUtil.getFileName(url);
+                String partFileName = downloadNameFile + ".00" + (i + 1);
+                downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadNameFile + File.separator + partFileName), startRange, endRange);
 
                 addDownloadRange(downloadRange);
 
@@ -338,9 +348,9 @@ public class Download extends Observable implements Observer , Runnable {
                 }
             }
         } else {
-            String fileName = ConnectionUtil.getFileName(url);
-            String partFileName = fileName + ".00" + 1;
-            downloadRange = new DownloadRange(1, url, new File(downloadRangePath + File.separator + fileName + File.separator + partFileName), startRange, size);
+       //     String fileName = ConnectionUtil.getFileName(url);
+            String partFileName = downloadNameFile + ".00" + 1;
+            downloadRange = new DownloadRange(1, url, new File(downloadRangePath + File.separator + downloadNameFile + File.separator + partFileName), startRange, size);
             addDownloadRange(downloadRange);
             downloadRange.resume();
         }
@@ -369,7 +379,7 @@ public class Download extends Observable implements Observer , Runnable {
 
        // files.sort(new FileComperarto());
 
-        FileUtil.joinDownloadedParts(files, downloadPath, ConnectionUtil.getFileName(url));
+        FileUtil.joinDownloadedParts(files, downloadPath, downloadNameFile);
 
         status = DownloadStatus.COMPLETE;
         stateChanged();

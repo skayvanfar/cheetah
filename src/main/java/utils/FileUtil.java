@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class FileUtil {
 
-    public static void joinDownloadedParts(List<File> files, String path, String fileName) {
+    public static void joinDownloadedParts(List<File> files, String path, File fileName) {
       //  String homeDir = System.getProperty("user.home");
         File outputFile = outputFile(new File(path + File.separator + fileName));
 
