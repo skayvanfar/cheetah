@@ -37,7 +37,7 @@ public class ConnectionUtil {
         URLConnection conn = (URLConnection) url.openConnection();
         String raw = conn.getHeaderField("Content-Disposition");
         // raw = "attachment; filename=abc.jpg"
-        if(raw != null && raw.indexOf("=") != -1) {
+        if(raw != null && raw.indexOf('=') != -1) {
             file = new File(raw.split("=")[1]); //getting value after '='
         } else {
             // fall back to random generated file name?

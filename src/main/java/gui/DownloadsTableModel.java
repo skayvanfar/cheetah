@@ -15,7 +15,7 @@ import java.util.List;
 public class DownloadsTableModel extends AbstractTableModel implements DownloadStatusListener {
 
     // These are the names for the table's columns.
-    private static final String[] columnNames = {"URL", "Size", "Progress", "Transfer Rate","Status"};
+    private static final String[] columnNames = {"Name", "Size", "Progress", "Transfer Rate","Status"};
 
     // These are the classes for each column's values.
     private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class, String.class};
@@ -116,7 +116,7 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
         Download download = downloadList.get(row);
         switch (col) {
             case 0: // URL
-                return download.getUrl();
+                return download.getDownloadNameFile();
             case 1: // Size
                 String size = download.getSize();
                 return (size.equals("-1")) ? "" : size;

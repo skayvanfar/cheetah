@@ -216,7 +216,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
 
             int col = 1;
             updateDownloadStatement.setString(col++, url);
-            insertDownloadStatement.setString(col++, downloadNameFile);
+            updateDownloadStatement.setString(col++, downloadNameFile);
             updateDownloadStatement.setString(col++, downloadPath);
             updateDownloadStatement.setString(col++, downloadRangePath);
             updateDownloadStatement.setInt(col++, size);

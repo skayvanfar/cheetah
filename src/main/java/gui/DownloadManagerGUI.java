@@ -53,16 +53,20 @@ public class DownloadManagerGUI extends JFrame {
         super(name);
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic
+                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
       //          if ("Windows".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
       //          } else if ("Nimbus".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
       //          }
 
-                if ("Nimbus".equals(info.getName())) {
+                if ("GTK+".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                 }
+
+        //        if ("Nimbus".equals(info.getName())) {
+       //             UIManager.setLookAndFeel(info.getClassName());
+       //         }
             }
 
             // setTheme(String themeName, String licenseKey, String logoString)

@@ -28,6 +28,7 @@ public class Download extends Observable implements Observer , Runnable {
     private DownloadStatus status; // current status of download
     private String transferRate; // rate of transfer
 
+    private int responseCode;
     private int partCount;
 
     private String downloadPath;
@@ -282,9 +283,10 @@ public class Download extends Observable implements Observer , Runnable {
 
     @Override
     public void run() {
+        HttpURLConnection connection = null;
         try {
             // Open connection to URL.
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range", "bytes=0-");
@@ -293,45 +295,56 @@ public class Download extends Observable implements Observer , Runnable {
             connection.setRequestMethod("HEAD");
             connection.connect();
 
+            responseCode = connection.getResponseCode();
+
             // Make sure response code is in the 200 range.
-            if (connection.getResponseCode() / 100 != 2) {
-                error();
+            if (responseCode / 100 != 2) {
+        //        error();
+                status = DownloadStatus.ERROR;
             }
 
             // Check for valid content length.
             int contentLength = connection.getContentLength();
             if (contentLength < 1) {
-                error();
+       //         error();
+                status = DownloadStatus.ERROR;
             }
 
             /* Set the size for this download if it
               hasn't been already set. */
             if (size == -1) {
                 size = contentLength;
-                stateChanged();
+       //         stateChanged();
+                status = DownloadStatus.ERROR;
             }
 
             connection.disconnect();
 
-            createDownloadRanges(connection, partCount);
+   //         createDownloadRanges(connection, partCount);
         } catch (IOException e) {
             e.printStackTrace();
             error();
         } finally {
-
+            if (connection != null) ///???
+                connection.disconnect();
         }
+        SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
+            public void run() {
+                downloadInfoListener.newDownloadInfoGot(Download.this);
+            }
+        });
     }
 
-    private void createDownloadRanges(HttpURLConnection connection, int connectionSize) throws IOException {
-        int partSize= ConnectionUtil.getPartSizeOfDownload(size, connectionSize);
+    public void createDownloadRanges() {
+        int partSize= ConnectionUtil.getPartSizeOfDownload(size, partCount);
         int startRange = 0;
         int endRange = partSize - 1;
 
         DownloadRange downloadRange= null;
 
         // if connection is able to part download
-        if (connection.getResponseCode() == 206) {
-            for (int i = 0;  i < connectionSize; i++) {
+        if (responseCode == 206) {
+            for (int i = 0;  i < partCount; i++) {
              //   String fileName = ConnectionUtil.getFileName(url);
                 String partFileName = downloadNameFile + ".00" + (i + 1);
                 downloadRange = new DownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadNameFile + File.separator + partFileName), startRange, endRange);
@@ -341,7 +354,7 @@ public class Download extends Observable implements Observer , Runnable {
                 downloadRange.resume();
 
                 startRange = endRange + 1;
-                if (i != connectionSize - 2) {
+                if (i != partCount - 2) {
                     endRange = startRange + partSize - 1;
                 } else {
                     endRange = 0;

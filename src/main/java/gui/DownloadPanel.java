@@ -3,6 +3,7 @@ package gui;
 import controller.DatabaseController;
 import controller.DatabaseControllerImpl;
 import enums.DownloadStatus;
+import gui.Download.DownloadAskDialog;
 import gui.Download.DownloadDialog;
 import gui.listener.*;
 import model.Download;
@@ -167,14 +168,16 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     public void addDownload(Download download) {
         download.setDownloadInfoListener(this);
-        download.addDownloadStatusListener(this);///////////////??????? may other where
+
+
+   //     download.addDownloadStatusListener(this);///////////////??????? may other where
         selectedDownload = download;
-        DownloadDialog downloadDialog = new DownloadDialog(parent, download);
-        addDownloadDialog(downloadDialog);
+ //       DownloadDialog downloadDialog = new DownloadDialog(parent, download);
+ //       addDownloadDialog(downloadDialog);
 
-        downloadsTableModel.addDownload(selectedDownload);
+//        downloadsTableModel.addDownload(selectedDownload);
 
-        downloadDialog.setVisible(true);
+ //       downloadDialog.setVisible(true);
 
         selectedDownload.resume();
     }
@@ -308,6 +311,41 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             databaseController.save(download);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void newDownloadInfoGot(final Download download) {
+        if (download.getStatus() != DownloadStatus.DOWNLOADING) {
+            DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
+            downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getSize());
+            downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
+                @Override
+                public void startDownloadEventOccured() {
+                    DownloadDialog downloadDialog = new DownloadDialog(parent, download);
+                    addDownloadDialog(downloadDialog);
+                    downloadsTableModel.addDownload(selectedDownload);
+
+                    downloadDialog.setVisible(true);
+
+                    download.createDownloadRanges();
+                }
+
+                @Override
+                public void cancelDownloadEventOccured() {
+                    selectedDownload = null;
+                }
+
+                @Override
+                public void laterDownloadEventOccured() {
+
+                }
+            });
+            downloadAskDialog.setVisible(true);
+        } else {
+            System.out.println("newDownloadInfoGot with error");
+            DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
+            downloadAskDialog.setVisible(true);
         }
     }
 }
