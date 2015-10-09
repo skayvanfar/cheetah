@@ -1,5 +1,6 @@
 package gui;
 
+import controller.DialogAuthenticator;
 import enums.DownloadStatus;
 import gui.listener.AddNewDownloadListener;
 import gui.listener.DownloadPanelListener;
@@ -21,6 +22,7 @@ import java.awt.event.*;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -227,6 +229,8 @@ public class DownloadManagerGUI extends JFrame {
                 System.gc();
             }
         });
+
+        Authenticator.setDefault(new DialogAuthenticator());
 
         setMinimumSize(new Dimension(640, 480));
         // Set window size.
