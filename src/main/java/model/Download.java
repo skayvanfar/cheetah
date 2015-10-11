@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -321,6 +322,9 @@ public class Download extends Observable implements Observer , Runnable {
             connection.disconnect();
 
    //         createDownloadRanges(connection, partCount);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            error();
         } catch (IOException e) {
             e.printStackTrace();
             error();

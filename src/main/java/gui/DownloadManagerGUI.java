@@ -230,7 +230,7 @@ public class DownloadManagerGUI extends JFrame {
             }
         });
 
-        Authenticator.setDefault(new DialogAuthenticator());
+        Authenticator.setDefault(new DialogAuthenticator(this));
 
         setMinimumSize(new Dimension(640, 480));
         // Set window size.
