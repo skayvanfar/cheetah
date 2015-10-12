@@ -49,6 +49,8 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     // List of DownloadDialogs
     private List<DownloadDialog> downloadDialogs;
 
+    private DownloadAskDialog downloadAskDialog;
+
   //  private DownloadDialog selectedDownloadDialog;
 
     public void addDownloadDialog(DownloadDialog downloadDialog) {
@@ -166,7 +168,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         download.setDownloaded(downloaded);
     }
 
-    public void addDownload(Download download) {
+    public void addDownload(final Download download) {
         download.setDownloadInfoListener(this);
 
 
@@ -179,6 +181,31 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
  //       downloadDialog.setVisible(true);
 
+        downloadAskDialog = new DownloadAskDialog(parent);
+        downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getDownloadPath(), "");
+        downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
+            @Override
+            public void startDownloadEventOccured() {
+                DownloadDialog downloadDialog = new DownloadDialog(parent, download);
+                addDownloadDialog(downloadDialog);
+                downloadsTableModel.addDownload(selectedDownload);
+
+                downloadDialog.setVisible(true);
+
+                download.createDownloadRanges();
+            }
+
+            @Override
+            public void cancelDownloadEventOccured() {
+                selectedDownload = null;
+            }
+
+            @Override
+            public void laterDownloadEventOccured() {
+
+            }
+        });
+        downloadAskDialog.setVisible(true);
         selectedDownload.resume();
     }
 
@@ -317,31 +344,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     @Override
     public void newDownloadInfoGot(final Download download) {
         if (download.getStatus() == DownloadStatus.DOWNLOADING) {
-            DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
             downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getSize());
-            downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
-                @Override
-                public void startDownloadEventOccured() {
-                    DownloadDialog downloadDialog = new DownloadDialog(parent, download);
-                    addDownloadDialog(downloadDialog);
-                    downloadsTableModel.addDownload(selectedDownload);
-
-                    downloadDialog.setVisible(true);
-
-                    download.createDownloadRanges();
-                }
-
-                @Override
-                public void cancelDownloadEventOccured() {
-                    selectedDownload = null;
-                }
-
-                @Override
-                public void laterDownloadEventOccured() {
-
-                }
-            });
-            downloadAskDialog.setVisible(true);
         } else {
             System.out.println("newDownloadInfoGot with error");
             DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);

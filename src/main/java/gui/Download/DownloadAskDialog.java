@@ -56,7 +56,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
 
         layoutControls();
 
-        setSize(490, 210);
+        setSize(620, 210);
         setLocationRelativeTo(parent);
     }
 
@@ -176,16 +176,18 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton clicked= (JButton) e.getSource();
-        if (downloadAskDialogListener != null) {
-            if (clicked == startDownloadButton) {
-                downloadAskDialogListener.startDownloadEventOccured();
-            } else if (clicked == cancelDownloadButton) {
-                downloadAskDialogListener.cancelDownloadEventOccured();
-            } else if (clicked == laterDownloadButton) {
-                downloadAskDialogListener.laterDownloadEventOccured();
+        if (!sizeTextField.getText().equals("")) {
+            JButton clicked= (JButton) e.getSource();
+            if (downloadAskDialogListener != null) {
+                if (clicked == startDownloadButton) {
+                    downloadAskDialogListener.startDownloadEventOccured();
+                } else if (clicked == cancelDownloadButton) {
+                    downloadAskDialogListener.cancelDownloadEventOccured();
+                } else if (clicked == laterDownloadButton) {
+                    downloadAskDialogListener.laterDownloadEventOccured();
+                }
             }
+            dispose();
         }
-        dispose();
     }
 }
