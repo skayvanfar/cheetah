@@ -223,10 +223,15 @@ public class DownloadManagerGUI extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                System.out.println("Window Closing");
-                downloadPanel.actionPauseAll();
-                dispose();
-                System.gc();
+                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this,
+                        "Do you realy want to exit the application?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+
+                if (action == JOptionPane.OK_OPTION) {
+                    System.out.println("Window Closing");
+                    downloadPanel.actionPauseAll();
+                    dispose();
+                    System.gc();
+                }
             }
         });
 
@@ -482,16 +487,10 @@ public class DownloadManagerGUI extends JFrame {
 
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                WindowListener[]  listeners = getWindowListeners();
 
-                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this,
-                        "Do you realy want to exit the application?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
-
-                if (action == JOptionPane.OK_OPTION) {
-                    WindowListener[]  listeners = getWindowListeners();
-
-                    for (WindowListener listener : listeners) {
-                        listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
-                    }
+                for (WindowListener listener : listeners) {
+                    listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
                 }
             }
         });

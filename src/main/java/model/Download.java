@@ -189,6 +189,7 @@ public class Download extends Observable implements Observer , Runnable {
         } else {
             download();
         }
+        startTransferRate();
     }
 
     // Mark this download as having an error.
@@ -316,10 +317,11 @@ public class Download extends Observable implements Observer , Runnable {
             if (size == -1) {
                 size = contentLength;
        //         stateChanged();
-                status = DownloadStatus.ERROR;
+        //        status = DownloadStatus.ERROR;
             }
 
             connection.disconnect();
+            stateChanged();
 
    //         createDownloadRanges(connection, partCount);
         } catch (UnknownHostException e) {

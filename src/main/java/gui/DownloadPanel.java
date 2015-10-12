@@ -316,7 +316,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     @Override
     public void newDownloadInfoGot(final Download download) {
-        if (download.getStatus() != DownloadStatus.DOWNLOADING) {
+        if (download.getStatus() == DownloadStatus.DOWNLOADING) {
             DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
             downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getSize());
             downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
