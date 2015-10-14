@@ -1,11 +1,9 @@
 package gui;
 
 import controller.DialogAuthenticator;
+import enums.DownloadCategory;
 import enums.DownloadStatus;
-import gui.listener.AddNewDownloadListener;
-import gui.listener.DownloadPanelListener;
-import gui.listener.MainToolbarListener;
-import gui.listener.PreferencesListener;
+import gui.listener.*;
 import gui.preference.PreferenceDialog;
 import model.Download;
 import model.dto.PreferenceConnectionDTO;
@@ -56,11 +54,11 @@ public class DownloadManagerGUI extends JFrame {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
-      //          if ("Windows".equals(info.getName())) {
-      //              UIManager.setLookAndFeel(info.getClassName());
+                if ("Windows".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
       //          } else if ("Nimbus".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
-      //          }
+                }
 
                 if ("GTK+".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
@@ -117,6 +115,13 @@ public class DownloadManagerGUI extends JFrame {
         preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
         aboutDialog = new AboutDialog(this);
+
+        categoryPanel.setCategoryPanelListener(new CategoryPanelListener() {
+            @Override
+            public void categoryNodeSelected(List<String> fileExtensions, DownloadCategory downloadCategory) {
+                downloadPanel.setDownloadsByDownloadPath(fileExtensions, downloadCategory);
+            }
+        });
 
    //     preferenceDialog.setDefaults(preferencesDTO);
 

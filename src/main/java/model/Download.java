@@ -433,6 +433,8 @@ public class Download extends Observable implements Observer , Runnable {
                     status = DownloadStatus.PAUSED;
                     if (downloadInfoListener != null)
                         downloadInfoListener.downloadNeedSaved(this);
+                } else {
+                    status = DownloadStatus.DISCONNECTING;
                 }
                 System.out.println("disconnect from download .... ");
           //      if (isLastDownloadRange(ConnectionStatus.DISCONNECTED)) {

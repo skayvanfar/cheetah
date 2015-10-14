@@ -1,11 +1,15 @@
 package gui;
 
+import enums.DownloadCategory;
+import gui.listener.CategoryPanelListener;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
 import utils.PrefObj;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -24,6 +28,7 @@ public class CategoryPanel extends JPanel {
 
     private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
+    private CategoryPanelListener categoryPanelListener;
 
     public CategoryPanel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
@@ -42,6 +47,30 @@ public class CategoryPanel extends JPanel {
         //     categoryTree.setCellRenderer(categotyTreeCellRenderer);
   //      categoryTree.setCellEditor(treeCellEditor);
         categoryTree.setEditable(false);
+
+        categoryTree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                //Returns the last path element of the selection.
+                //This method is useful only when the selection model allows a single selection.
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) categoryTree.getLastSelectedPathComponent();
+
+                if (node == null)
+                    //Nothing is selected.
+                    return;
+
+                Object nodeInfo = node.getUserObject();
+
+                if (node.isLeaf()) {
+                    PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) nodeInfo;
+                    categoryPanelListener.categoryNodeSelected(Arrays.asList(preferencesDirectoryCategoryDTO.getFileExtensions()),
+                            DownloadCategory.valueOfByDesc(node.getParent().toString()));
+                } else {
+                    categoryPanelListener.categoryNodeSelected(null,
+                            DownloadCategory.valueOfByDesc(node.toString()));
+                }
+            }
+        });
 
         setLayout(new BorderLayout()); /////**************88
 
@@ -105,5 +134,9 @@ public class CategoryPanel extends JPanel {
     public void setTreeModel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
         this.preferencesDirectoryCategoryDTOs = preferencesDirectoryCategoryDTOs;
         categoryTree.setModel(new DefaultTreeModel(initTree(preferencesDirectoryCategoryDTOs), false));
+    }
+
+    public void setCategoryPanelListener(CategoryPanelListener categoryPanelListener) {
+        this.categoryPanelListener = categoryPanelListener;
     }
 }

@@ -38,6 +38,7 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
             // Register to be notified when the downloadDialog changes.
             download.addDownloadStatusListener(this);
         }
+        fireTableDataChanged();
     }
 
     // Add a new DownloadDialog to the table.
