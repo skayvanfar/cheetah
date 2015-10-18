@@ -29,25 +29,31 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
 
     private DownloadAskDialogListener downloadAskDialogListener;
 
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
     public DownloadAskDialog(JFrame parent) {
         super(parent, "Download File", false);
 
-        urlLabel = new JLabel("URL:");
+        urlLabel = new JLabel(bundle.getString("downloadAskDialog.urlLabel.label"));
         urlTextField = new JTextField(50);
         urlTextField.setEditable(false);
-        downloadNameLabel = new JLabel("Name: ");
+        downloadNameLabel = new JLabel(bundle.getString("downloadAskDialog.downloadNameLabel.label"));
         downloadNameField = new JTextField(25);
         downloadNameField.setEditable(false);
-        pathLabel = new JLabel("Save To: ");
+        pathLabel = new JLabel(bundle.getString("downloadAskDialog.pathLabel.label"));
         pathTextField = new JTextField(35);
-        pathButton = new JButton("...");
+        pathButton = new JButton(bundle.getString("downloadAskDialog.pathButton.label"));
+        pathButton.setToolTipText(bundle.getString("downloadAskDialog.pathButton.toolTip"));
         pathFileChooser = new JFileChooser();
-        sizeLabel = new JLabel("Size:");
+        sizeLabel = new JLabel(bundle.getString("downloadAskDialog.sizeLabel.label"));
         sizeTextField = new JTextField(10);
         sizeTextField.setEditable(false);
-        startDownloadButton = new JButton("Start Download");
-        cancelDownloadButton = new JButton("Cancel Download");
-        laterDownloadButton = new JButton("Download Later");
+        startDownloadButton = new JButton(bundle.getString("downloadAskDialog.startDownloadButton.label"));
+        startDownloadButton.setToolTipText(bundle.getString("downloadAskDialog.startDownloadButton.toolTip"));
+        cancelDownloadButton = new JButton(bundle.getString("downloadAskDialog.cancelDownloadButton.label"));
+        cancelDownloadButton.setToolTipText(bundle.getString("downloadAskDialog.cancelDownloadButton.toolTip"));
+        laterDownloadButton = new JButton(bundle.getString("downloadAskDialog.laterDownloadButton.label"));
+        laterDownloadButton.setToolTipText(bundle.getString("downloadAskDialog.laterDownloadButton.toolTip"));
 
         startDownloadButton.addActionListener(this);
         cancelDownloadButton.addActionListener(this);

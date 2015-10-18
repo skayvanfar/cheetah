@@ -8,14 +8,16 @@ import java.awt.*;
  */
 public class AboutPanel extends JPanel {
 
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
     public void paintComponent(Graphics g) {
         g.setColor(getForeground());
         g.setFont(new Font("Edwardian Script ITC", Font.BOLD, 28));
-        g.drawString("Chita. A Free Fast Downloader", 20, 80);
+        g.drawString(bundle.getString("aboutPanel.program.name"), 20, 80);
         g.drawLine(20, 90, 450, 90);
         g.setFont(new Font("Dialog", Font.PLAIN, 12));
-        g.drawString("This Program producted by:", 40, 120);
+        g.drawString(bundle.getString("aboutPanel.program.productionMessage"), 40, 120);
         g.setFont(new Font("Dialog", Font.BOLD, 14));
-        g.drawString("Saeed Kayvanfar", 40, 140);
+        g.drawString(bundle.getString("aboutPanel.program.producer"), 40, 140);
     }
 }

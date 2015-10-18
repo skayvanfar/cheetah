@@ -30,11 +30,16 @@ public class CategoryPanel extends JPanel {
 
     private CategoryPanelListener categoryPanelListener;
 
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
     public CategoryPanel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
         this.preferencesDirectoryCategoryDTOs = preferencesDirectoryCategoryDTOs;
 
         categoryTree = new JTree(initTree(preferencesDirectoryCategoryDTOs));
+
+        categoryTree.setBackground(new Color(238, 238, 244));
+        categoryTree.setOpaque(true);
 
         categoryTree.setRootVisible(false);
         categoryTree.setShowsRootHandles(true);
@@ -78,7 +83,7 @@ public class CategoryPanel extends JPanel {
         scrollPane.setMinimumSize(new Dimension(150, 400));
         add(scrollPane, BorderLayout.CENTER);
 
-        Border innerBorder = BorderFactory.createTitledBorder("Category Download");
+        Border innerBorder = BorderFactory.createTitledBorder(bundle.getString("categoryPanel.label"));
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
 
@@ -87,9 +92,10 @@ public class CategoryPanel extends JPanel {
     private DefaultMutableTreeNode initTree(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
         // Must get data from database
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("category");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode();
 
-        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode("All Downloads");
+        DefaultMutableTreeNode allDownloadsBranch = new DefaultMutableTreeNode(bundle.getString("categoryPanel.allDownloadsBranch"));
+   //     allDownloadsBranch.
 
         for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
             DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
@@ -97,14 +103,14 @@ public class CategoryPanel extends JPanel {
         }
 
 
-        DefaultMutableTreeNode unfinishedBranch = new DefaultMutableTreeNode("Unfinished");
+        DefaultMutableTreeNode unfinishedBranch = new DefaultMutableTreeNode(bundle.getString("categoryPanel.unfinishedBranch"));
         for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
             DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
             unfinishedBranch.add(leaf);
         }
 
 
-        DefaultMutableTreeNode finishedBranch = new DefaultMutableTreeNode("Finished");
+        DefaultMutableTreeNode finishedBranch = new DefaultMutableTreeNode(bundle.getString("categoryPanel.finishedBranch"));
         for (PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO : preferencesDirectoryCategoryDTOs) {
             DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(preferencesDirectoryCategoryDTO);
             finishedBranch.add(leaf);
@@ -112,13 +118,13 @@ public class CategoryPanel extends JPanel {
 
 
 
-        DefaultMutableTreeNode queuesBranch = new DefaultMutableTreeNode("Queues");
+        DefaultMutableTreeNode queuesBranch = new DefaultMutableTreeNode(bundle.getString("categoryPanel.queuesBranch"));
 
         //      DefaultMutableTreeNode server4 = new DefaultMutableTreeNode(new ServerInfo("London", 3, selectedServers.contains(3)));
         //      DefaultMutableTreeNode server5 = new DefaultMutableTreeNode(new ServerInfo("Edinburgh", 4, selectedServers.contains(4)));
 
-        DefaultMutableTreeNode mainDownloadQueueLeaf = new DefaultMutableTreeNode("Main Download Queue");
-        DefaultMutableTreeNode synchronizedQueueLeaf = new DefaultMutableTreeNode("Synchronized Queue");
+        DefaultMutableTreeNode mainDownloadQueueLeaf = new DefaultMutableTreeNode(bundle.getString("categoryPanel.mainDownloadQueueLeaf"));
+        DefaultMutableTreeNode synchronizedQueueLeaf = new DefaultMutableTreeNode(bundle.getString("categoryPanel.synchronizedQueueLeaf"));
 
         queuesBranch.add(mainDownloadQueueLeaf);
         queuesBranch.add(synchronizedQueueLeaf);

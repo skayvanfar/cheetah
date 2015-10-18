@@ -18,6 +18,8 @@ public class DownloadDialog extends JDialog {
 
     private Download download;////**********
 
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
     public Download getDownload() {
         return download;
     }
@@ -33,8 +35,8 @@ public class DownloadDialog extends JDialog {
         downloadPropertiesPanel = new DownloadPropertiesPanel();
         tabbedPane = new JTabbedPane();
 
-        tabbedPane.addTab("Download Info", downloadInfoPanel);
-        tabbedPane.addTab("Download Properties", downloadPropertiesPanel);
+        tabbedPane.addTab(bundle.getString("downloadDialog.tabbedPane.downloadInfoPanel"), downloadInfoPanel);
+        tabbedPane.addTab(bundle.getString("downloadDialog.tabbedPane.downloadPropertiesPanel"), downloadPropertiesPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
 

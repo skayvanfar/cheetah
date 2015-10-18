@@ -27,6 +27,10 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
         return downloadList;
     }
 
+    public DownloadsTableModel() {
+
+    }
+
     // TODO Maybe used after
     public void setDownloads(List<Download> downloads) {
         for (Download download : downloadList) {

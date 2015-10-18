@@ -6,10 +6,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -47,16 +44,22 @@ public class AddNewDownloadDialog extends JDialog {
         newTextField = new JTextField(44);
 
         useAuthorizationPanel = new JPanel();
-        useAuthorizationLabel = new JLabel("Use Authorization:");
+        useAuthorizationLabel = new JLabel(bundle.getString("addNewDownloadDialog.useAuthorizationLabel.label"));
         useAuthorizationCheckBox = new JCheckBox();
-        userIDLabel = new JLabel("User Id:");
+        userIDLabel = new JLabel(bundle.getString("addNewDownloadDialog.userIDLabel.label"));
         userIDTextField = new JTextField(8);
         userIDTextField.setEnabled(false);
-        passwordLabel = new JLabel("Password:");
+        passwordLabel = new JLabel(bundle.getString("addNewDownloadDialog.passwordLabel.label"));
         passwordField = new JPasswordField(8);
         passwordField.setEnabled(false);
 
-        Border innerBorder = BorderFactory.createTitledBorder("Use Authorization");
+        // Set up menmomics
+        newButton.setMnemonic(KeyEvent.VK_O);
+
+        useAuthorizationLabel.setDisplayedMnemonic(KeyEvent.VK_N);
+        useAuthorizationLabel.setLabelFor(useAuthorizationCheckBox);
+
+        Border innerBorder = BorderFactory.createTitledBorder(bundle.getString("addNewDownloadDialog.useAuthorizationPanel.label"));
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         useAuthorizationPanel.setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
 

@@ -35,7 +35,7 @@ import java.util.prefs.Preferences;
 // implements Observer
 public class DownloadManagerGUI extends JFrame {
 
-    private ResourceBundle bundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
+    private ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     private MainToolBar mainToolbar;
     private CategoryPanel categoryPanel;
@@ -110,8 +110,8 @@ public class DownloadManagerGUI extends JFrame {
         statusPanel = new StatusPanel();
         addNewDownloadDialog = new AddNewDownloadDialog(this);
 
-        mainTabPane.addTab("Download Panel", downloadPanel);
-        mainTabPane.addTab("Messages", messagePanel);
+        mainTabPane.addTab(bundle.getString("downloadManagerGUI.mainTabPane.downloadPanel"), downloadPanel);
+        mainTabPane.addTab(bundle.getString("downloadManagerGUI.mainTabPane.messagePanel"), messagePanel);
 
         preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
