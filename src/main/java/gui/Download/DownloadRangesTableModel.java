@@ -1,6 +1,6 @@
 package gui.Download;
 
-import enums.ConnectionStatus;
+import gui.listener.DownloadRangeStatusListener;
 import model.DownloadRange;
 
 import javax.swing.table.AbstractTableModel;
@@ -12,7 +12,7 @@ import java.util.Observer;
 /**
  * Created by Saeed on 9/14/2015.
  */
-public class DownloadRangesTableModel extends AbstractTableModel implements Observer {
+public class DownloadRangesTableModel extends AbstractTableModel implements DownloadRangeStatusListener {
 
     // These are the names for the table's columns.
     private static final String[] columnNames = {"Number", "Downloaded", "Status"};
@@ -26,13 +26,13 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
     // TODO Maybe used after
     public void setDownloadRanges(java.util.List<DownloadRange> downloadRanges) {
         for (DownloadRange downloadRange : downloadRangeList) {
-            downloadRange.deleteObserver(this);
+            downloadRange.deleteDownloadRangeStatusListener(this);
         }
         downloadRangeList.clear();
         this.downloadRangeList = downloadRanges;
         for (DownloadRange downloadRange : downloadRangeList) {
             // Register to be notified when the download changes.
-            downloadRange.addObserver(this);
+            downloadRange.addDownloadRangeStatusListener(this);
         }
     }
 
@@ -40,7 +40,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
     public void addDownloadRange(DownloadRange downloadRange) {
         if (!downloadRangeList.contains(downloadRange)) {
             // Register to be notified when the download changes.downloadRange.addObserver(this);
-            downloadRange.addObserver(this);
+            downloadRange.addDownloadRangeStatusListener(this);
 
             downloadRangeList.add(downloadRange);
 
@@ -92,15 +92,14 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Obse
         return false;
     }
 
-    /* Update is called when a Download notifies its
-       observers of any changes */
+
+    /* is called when a DownloadRange notifies its
+      listeners of any changes */
     @Override
-    public void update(Observable o, Object arg) {
-        int index = downloadRangeList.indexOf(o);
+    public void downloadStatusChanged(DownloadRange downloadRange) {
+        int index = downloadRangeList.indexOf(downloadRange);
 
         // Fire table row update notification to table.
         fireTableRowsUpdated(index, index);
     }
-
-
 }

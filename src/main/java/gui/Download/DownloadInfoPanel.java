@@ -4,11 +4,7 @@ import model.Download;
 import model.DownloadRange;
 
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.*;
 
 /**
  * Created by Saeed on 9/14/2015.

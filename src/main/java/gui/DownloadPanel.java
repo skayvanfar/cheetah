@@ -12,7 +12,6 @@ import model.DownloadRange;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import utils.ConnectionUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +21,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +54,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     private DownloadAskDialog downloadAskDialog;
 
     private List<String> fileExtensions;
-    private DownloadCategory downloadCategory;
+    private DownloadCategory downloadCategory = DownloadCategory.ALL;
 
     public void addDownloadDialog(DownloadDialog downloadDialog) {
         if (downloadDialog == null)
@@ -103,11 +101,11 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         downloadTable = new JTable(downloadsTableModel);
 
         downloadTable.getSelectionModel().addListSelectionListener(new
-        ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                tableSelectionChanged();
-            }
-        });
+                                                                           ListSelectionListener() {
+                                                                               public void valueChanged(ListSelectionEvent e) {
+                                                                                   tableSelectionChanged();
+                                                                               }
+                                                                           });
         // Allow only one row at a time to be selected.
         downloadTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -174,7 +172,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         selectedDownload = download;
 
         downloadAskDialog = new DownloadAskDialog(parent);
-        downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getDownloadPath(), "");
+        downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), "");
         downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
             @Override
             public void startDownloadEventOccured() {
@@ -236,7 +234,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     // Clear the selected download.
     public void actionClear() {
         if (selectedDownload == null) return;
-   //     Download download = selectedDownloadDialog.getDownload();
+        //     Download download = selectedDownloadDialog.getDownload();
 
         clearing = true;
         downloadsTableModel.clearDownload(selectedDownload);
@@ -244,7 +242,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             downloadList.remove(selectedDownload);
         clearing = false;
 
-    //    selectedDownloadDialog = null;
+        //    selectedDownloadDialog = null;
         DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
         downloadDialogs.remove(downloadDialog);
         downloadDialog.dispose();
@@ -258,9 +256,9 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         }
 
         try {
-             FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadNameFile())); // todo must again
+            FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadNameFile())); // todo must again
         } catch (IOException e) {
-             e.printStackTrace();
+            e.printStackTrace();
         }
 
         selectedDownload = null;
@@ -342,7 +340,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     @Override
     public void newDownloadInfoGot(final Download download) {
         if (download.getStatus() == DownloadStatus.DOWNLOADING) {
-            downloadAskDialog.setInfo(download.getUrl(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getSize());
+            downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getFormattedSize());
         } else {
             System.out.println("newDownloadInfoGot with error");
             DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);

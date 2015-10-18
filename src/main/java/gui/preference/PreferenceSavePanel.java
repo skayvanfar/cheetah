@@ -39,10 +39,10 @@ public class PreferenceSavePanel extends JPanel {
     private PreferencesSaveDTO preferencesSaveDTO;
 
     public PreferenceSavePanel(final PreferencesSaveDTO preferencesSaveDTO) {
-        Dimension dim = getPreferredSize();
-        dim.width = 250;
-        setPreferredSize(dim);
-        setMinimumSize(dim);
+    //    Dimension dim = getPreferredSize();
+    //    dim.width = 250;
+    //    setPreferredSize(dim);
+    //    setMinimumSize(dim);
 
         this.preferencesSaveDTO = preferencesSaveDTO;
 

@@ -1,18 +1,11 @@
 package utils;
 
-import model.DownloadRange;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.prefs.Preferences;
-
-import static org.junit.Assert.*;
 
 public class FileUtilTest {
 

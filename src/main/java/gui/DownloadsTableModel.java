@@ -54,13 +54,13 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
 
     // Get a download for the specified row.
     public Download getDownload(int row) {
-        return (Download) downloadList.get(row);
+        return downloadList.get(row);
     }
 
     // Remove a download from the list.
     public void clearDownload(Download download) {
         int row = downloadList.indexOf(download);
-     //   download.dispose();
+        //   download.dispose();
         downloadList.remove(row);
 
         // Fire table row deletion notification to table.
@@ -70,7 +70,7 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
     public void clearDownloads(List<Download> downloads) {
         for (Download download : downloads) {
             int index = downloadList.indexOf(download);
-        //    downloadDialog.dispose();
+            //    downloadDialog.dispose();
             downloadList.remove(download);
             fireTableRowsDeleted(index, index);
         }
@@ -79,9 +79,8 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
     public List<Download> getDownloadsByStatus(DownloadStatus downloadStatus) {
         List<Download> selectedDownloads = new ArrayList<>();
 
-        for (int i = 0; i < downloadList.size(); i++) {
-            Download download = downloadList.get(i);
-            if (downloadList.get(i).getStatus() == downloadStatus) {
+        for (Download download : downloadList) {
+            if (download.getStatus() == downloadStatus) {
                 selectedDownloads.add(download);
             }
         }
@@ -119,10 +118,10 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
             case 0: // URL
                 return download.getDownloadNameFile();
             case 1: // Size
-                String size = download.getSize();
+                String size = String.valueOf(download.getSize());
                 return (size.equals("-1")) ? "" : size;
             case 2: // Progress
-                return new Float(download.getProgress());
+                return download.getProgress();
             case 3: // Transfer Rate
                 return download.getTransferRate();
             case 4: // Status
@@ -133,11 +132,11 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
 
     /* Update is called when a Download notifies its
        observers of any changes */
- //   public void update(Observable o, Object arg) {
-  //      int index = downloadList.indexOf(o);
-        // Fire table row update notification to table.
-  //      fireTableRowsUpdated(index, index);
- //   }
+    //   public void update(Observable o, Object arg) {
+    //      int index = downloadList.indexOf(o);
+    // Fire table row update notification to table.
+    //      fireTableRowsUpdated(index, index);
+    //   }
 
     @Override
     public void downloadStatusChanged(Download download) { //// TODO ???????????????? use Event

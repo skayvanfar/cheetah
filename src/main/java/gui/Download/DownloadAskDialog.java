@@ -3,10 +3,10 @@ package gui.Download;
 import gui.listener.DownloadAskDialogListener;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 /**
  * Created by Saeed on 10/3/2015.
@@ -33,13 +33,13 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         super(parent, "Download File", false);
 
         urlLabel = new JLabel("URL:");
-        urlTextField = new JTextField(35);
+        urlTextField = new JTextField(50);
         urlTextField.setEditable(false);
         downloadNameLabel = new JLabel("Name: ");
-        downloadNameField = new JTextField(20);
+        downloadNameField = new JTextField(25);
         downloadNameField.setEditable(false);
         pathLabel = new JLabel("Save To: ");
-        pathTextField = new JTextField(30);
+        pathTextField = new JTextField(35);
         pathButton = new JButton("...");
         pathFileChooser = new JFileChooser();
         sizeLabel = new JLabel("Size:");
@@ -55,112 +55,128 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         pathButton.addActionListener(this);
 
         layoutControls();
-
-        setSize(620, 210);
+        pack();
+        //  setSize(510, 210);
+        setResizable(true);
         setLocationRelativeTo(parent);
     }
 
     private void layoutControls() {
-        setLayout(new GridBagLayout());
+
+        JPanel panel = new JPanel();
+
+        panel.setLayout(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();
 
+        //   Insets panelPadding = new Insets(10, 10, 10, 10);
         Insets rightPadding = new Insets(0, 0, 0, 15);
         Insets noPadding = new Insets(0, 0, 0, 0);
+
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         ///////////////// First row ////////////////////////////////////////////
         gc.weightx = 1;
-        gc.weighty = 1;
+        gc.weighty = 0.25;
 
         gc.gridy = 0;
         gc.gridx = 0;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.LINE_END;
         gc.insets = rightPadding;
-        add(urlLabel, gc);
+        panel.add(urlLabel, gc);
 
         gc.gridwidth = 3;
         gc.gridx = 1;
         gc.gridy = 0;
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
-        add(urlTextField, gc);
+        panel.add(urlTextField, gc);
 ////////////Next row ////////////////////////////
         gc.gridy++;
 
+        //     gc.weighty= 10;
         gc.gridwidth = 1;
         gc.gridx = 0;
         gc.insets = rightPadding;
         gc.anchor = GridBagConstraints.LINE_END;
-        add(downloadNameLabel, gc);
+        panel.add(downloadNameLabel, gc);
 
         gc.gridwidth = 3;
         gc.gridx = 1;
         // gc.gridy = 1;
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
-        add(downloadNameField, gc);
+        panel.add(downloadNameField, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
         ////////////Next row ////////////////////////////
         gc.gridy++;
 
+        //     gc.weighty= 10;
         gc.gridwidth = 1;
         gc.gridx = 0;
         gc.insets = rightPadding;
         gc.anchor = GridBagConstraints.LINE_END;
-        add(pathLabel, gc);
+        panel.add(pathLabel, gc);
 
+
+        //  gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridwidth = 2;
         gc.gridx = 1;
         // gc.gridy = 1;
         gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.LINE_START;
-        add(pathTextField, gc);
+        gc.anchor = GridBagConstraints.WEST;
+        panel.add(pathTextField, gc);
 
+        gc.fill = GridBagConstraints.NONE;
         gc.gridwidth = 1;
-        gc.gridx = 2;
+        gc.gridx = 3;
         // gc.gridy = 1;
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_END;
-        add(pathButton, gc);
+        panel.add(pathButton, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
         ////////////Next row ////////////////////////////
         gc.gridy++;
 
+        //   gc.weighty= 10;
         gc.gridwidth = 1;
         gc.gridx = 0;
         gc.insets = rightPadding;
         gc.anchor = GridBagConstraints.LINE_END;
-        add(sizeLabel, gc);
+        panel.add(sizeLabel, gc);
 
         gc.gridwidth = 3;
         gc.gridx = 1;
         //    gc.gridy = 1;
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
-        add(sizeTextField, gc);
+        panel.add(sizeTextField, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
+        //    gc.weighty= 10;
         gc.gridwidth = 1;
         gc.gridy++;
         gc.gridx = 1;
         gc.insets = noPadding;
         //    gc.anchor = GridBagConstraints.LINE_START; // FIRST_LINE_END
-        add(startDownloadButton, gc);
+        panel.add(startDownloadButton, gc);
 
         //  gc.gridy++;
         gc.gridx = 2;
         //    gc.gridy = 1;
         //   gc.anchor = GridBagConstraints.CENTER; // FIRST_LINE_START
         gc.insets = noPadding;
-        add(cancelDownloadButton, gc);
+        panel.add(cancelDownloadButton, gc);
 
         gc.gridx = 3;
         //    gc.gridy = 1;
         //    gc.anchor = GridBagConstraints.LINE_END; // FIRST_LINE_START
         gc.insets = noPadding;
-        add(laterDownloadButton, gc);
+        panel.add(laterDownloadButton, gc);
+
+        add(panel);
     }
 
     public void setDownloadAskDialogListener(DownloadAskDialogListener downloadAskDialogListener) {

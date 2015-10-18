@@ -3,13 +3,14 @@ package gui;
 import controller.DialogAuthenticator;
 import enums.DownloadCategory;
 import enums.DownloadStatus;
+import enums.ProtocolType;
 import gui.listener.*;
 import gui.preference.PreferenceDialog;
-import model.Download;
 import model.dto.PreferenceConnectionDTO;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
 import model.dto.PreferencesSaveDTO;
+import model.htmlImpl.HttpDownload;
 import org.apache.commons.io.FilenameUtils;
 import utils.ConnectionUtil;
 import utils.PrefObj;
@@ -136,8 +137,9 @@ public class DownloadManagerGUI extends JFrame {
 
                         int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
 
-                        downloadPanel.addDownload(new Download(downloadPanel.getNextDownloadID(), textUrl, downloadNameFile, maxNum,
-                                downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory()));
+                        // todo must set stretegy pattern
+                        downloadPanel.addDownload(new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadNameFile, maxNum,
+                                downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory(), ProtocolType.HTTP));
                     } catch (IOException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
