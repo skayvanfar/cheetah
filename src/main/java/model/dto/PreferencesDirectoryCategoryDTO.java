@@ -12,16 +12,17 @@ public class PreferencesDirectoryCategoryDTO implements Serializable {
     private String DirectoryName;
     private String path;
     private String[] fileExtensions;
-  //  private Icon icon; Todo for future
+    private String iconPath;
 
     public PreferencesDirectoryCategoryDTO() {
 
     }
 
-    public PreferencesDirectoryCategoryDTO(String directoryName, String path, String[] fileExtensions) {
+    public PreferencesDirectoryCategoryDTO(String directoryName, String path, String[] fileExtensions, String iconPath) {
         DirectoryName = directoryName;
         this.path = path;
         this.fileExtensions = fileExtensions;
+        this.iconPath = iconPath;
     }
 
     public String getPath() {
@@ -46,6 +47,14 @@ public class PreferencesDirectoryCategoryDTO implements Serializable {
 
     public void setFileExtensions(String[] fileExtensions) {
         this.fileExtensions = fileExtensions;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
     }
 
     @Override

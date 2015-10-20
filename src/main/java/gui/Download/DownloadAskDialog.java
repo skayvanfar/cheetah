@@ -23,6 +23,8 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
     private JFileChooser pathFileChooser;
     private JLabel sizeLabel;
     private JTextField sizeTextField;
+    private JLabel resumeCapabilityLabel;
+    private JLabel resumeCapabilityResult;
     private JButton startDownloadButton;
     private JButton cancelDownloadButton;
     private JButton laterDownloadButton;
@@ -48,6 +50,9 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         sizeLabel = new JLabel(bundle.getString("downloadAskDialog.sizeLabel.label"));
         sizeTextField = new JTextField(10);
         sizeTextField.setEditable(false);
+        resumeCapabilityLabel = new JLabel(bundle.getString("downloadAskDialog.resumeCapabilityLabel.label"));
+        resumeCapabilityResult = new JLabel();
+
         startDownloadButton = new JButton(bundle.getString("downloadAskDialog.startDownloadButton.label"));
         startDownloadButton.setToolTipText(bundle.getString("downloadAskDialog.startDownloadButton.toolTip"));
         cancelDownloadButton = new JButton(bundle.getString("downloadAskDialog.cancelDownloadButton.label"));
@@ -61,8 +66,8 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         pathButton.addActionListener(this);
 
         layoutControls();
-        pack();
-        //  setSize(510, 210);
+      //  pack();
+        setSize(650, 210);
         setResizable(true);
         setLocationRelativeTo(parent);
     }
@@ -79,7 +84,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         Insets rightPadding = new Insets(0, 0, 0, 15);
         Insets noPadding = new Insets(0, 0, 0, 0);
 
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.setBorder(new EmptyBorder(10, 10, 10, 80));
         ///////////////// First row ////////////////////////////////////////////
         gc.weightx = 1;
         gc.weighty = 0.25;
@@ -97,7 +102,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
         panel.add(urlTextField, gc);
-////////////Next row ////////////////////////////
+        ////////////Next row ////////////////////////////
         gc.gridy++;
 
         //     gc.weighty= 10;
@@ -139,7 +144,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         gc.gridx = 3;
         // gc.gridy = 1;
         gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.LINE_END;
+        gc.anchor = GridBagConstraints.LINE_START;
         panel.add(pathButton, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
@@ -160,6 +165,22 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         gc.anchor = GridBagConstraints.LINE_START;
         panel.add(sizeTextField, gc);
 
+        ////////////Next row ////////////////////////////
+        gc.gridy++;
+
+        //   gc.weighty= 10;
+        gc.gridwidth = 1;
+        gc.gridx = 0;
+        gc.insets = rightPadding;
+        gc.anchor = GridBagConstraints.LINE_END;
+        panel.add(resumeCapabilityLabel, gc);
+
+        gc.gridwidth = 3;
+        gc.gridx = 1;
+        //    gc.gridy = 1;
+        gc.insets = noPadding;
+        gc.anchor = GridBagConstraints.LINE_START;
+        panel.add(resumeCapabilityResult, gc);
         ///////////////// Next row ////////////////////////////////////////////
         //    gc.weighty= 10;
         gc.gridwidth = 1;
@@ -189,11 +210,24 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         this.downloadAskDialogListener = downloadAskDialogListener;
     }
 
-    public void setInfo(String url, String downloadNameFile, String path, String size) {
+    public void setInfo(String url, String downloadNameFile, String path) {
+        urlTextField.setText(url);
+        downloadNameField.setText(downloadNameFile);
+        pathTextField.setText(path);
+    }
+
+    public void setInfo(String url, String downloadNameFile, String path, String size, boolean resumeCapability) {
         urlTextField.setText(url);
         downloadNameField.setText(downloadNameFile);
         pathTextField.setText(path);
         sizeTextField.setText(size);
+        if (resumeCapability) {
+            resumeCapabilityResult.setForeground(Color.GREEN);
+            resumeCapabilityResult.setText(bundle.getString("downloadAskDialog.resumeCapabilityResult.label.yes"));
+        } else {
+            resumeCapabilityResult.setForeground(Color.RED);
+            resumeCapabilityResult.setText(bundle.getString("downloadAskDialog.resumeCapabilityResult.label.no"));
+        }
     }
 
     @Override

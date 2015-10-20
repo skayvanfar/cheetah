@@ -17,9 +17,18 @@ import java.net.UnknownHostException;
  */
 public class HttpDownload extends AbstractDownload implements model.Download {
 
+    private boolean resumeCapability;
+
     public HttpDownload(int id, URL url, File downloadNameFile, int partCount, String downloadPath, String downloadRangePath, ProtocolType protocolType) {
         super(id, url, downloadNameFile, partCount, downloadPath, downloadRangePath, protocolType);
+        resumeCapability = false;
     }
+
+    @Override
+    public boolean isResumeCapability() {
+        return resumeCapability;
+    }
+
 
     @Override
     public void run() {
@@ -56,6 +65,12 @@ public class HttpDownload extends AbstractDownload implements model.Download {
                 size = contentLength;
                 //         stateChanged();
                 //        status = DownloadStatus.ERROR;
+            }
+
+            if (responseCode == 206) {
+                resumeCapability = true;
+            } else {
+                resumeCapability = false;
             }
 
             connection.disconnect();

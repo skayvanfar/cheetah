@@ -44,13 +44,14 @@ public class CategoryPanel extends JPanel {
         categoryTree.setRootVisible(false);
         categoryTree.setShowsRootHandles(true);
 
-        DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer(); // if defult want use
+     //   DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer(); // if defult want use
         //	treeCellRenderer.setLeafIcon(Utils.createIcon("/udemy/swinglearn/images/Server16.png"));
         //	treeCellRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
         //	treeCellRenderer.setClosedIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponentAdd16.png"));
 
-        //     categoryTree.setCellRenderer(categotyTreeCellRenderer);
-  //      categoryTree.setCellEditor(treeCellEditor);
+        categotyTreeCellRenderer = new CategotyTreeCellRenderer();
+        categoryTree.setCellRenderer(categotyTreeCellRenderer);
+
         categoryTree.setEditable(false);
 
         categoryTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -66,7 +67,7 @@ public class CategoryPanel extends JPanel {
 
                 Object nodeInfo = node.getUserObject();
 
-                if (node.isLeaf()) {
+                if (nodeInfo instanceof PreferencesDirectoryCategoryDTO) {
                     PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) nodeInfo;
                     categoryPanelListener.categoryNodeSelected(Arrays.asList(preferencesDirectoryCategoryDTO.getFileExtensions()),
                             DownloadCategory.valueOfByDesc(node.getParent().toString()));
@@ -76,6 +77,8 @@ public class CategoryPanel extends JPanel {
                 }
             }
         });
+
+        expandAllNodes(categoryTree, 0, categoryTree.getRowCount());
 
         setLayout(new BorderLayout()); /////**************88
 
@@ -144,5 +147,15 @@ public class CategoryPanel extends JPanel {
 
     public void setCategoryPanelListener(CategoryPanelListener categoryPanelListener) {
         this.categoryPanelListener = categoryPanelListener;
+    }
+
+    private void expandAllNodes(JTree tree, int startingIndex, int rowCount) {
+        for (int i = startingIndex; i < rowCount; ++i) {
+            tree.expandRow(i);
+        }
+
+        if(tree.getRowCount() != rowCount) {
+            expandAllNodes(tree, rowCount, tree.getRowCount());
+        }
     }
 }

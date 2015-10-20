@@ -122,7 +122,7 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
             case 0: // URL
                 return download.getDownloadNameFile();
             case 1: // Size
-                String size = String.valueOf(download.getSize());
+                String size = String.valueOf(download.getFormattedSize());
                 return (size.equals("-1")) ? "" : size;
             case 2: // Progress
                 return download.getProgress();

@@ -54,6 +54,8 @@ public interface Download {
 
     public int getResponseCode();
 
+    public boolean isResumeCapability();
+
     // Get this download's size.
     public String getFormattedSize();
 

@@ -87,7 +87,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
         downloadDialogs = new ArrayList<>();
 
-        String connectionUrl = "jdbc:sqlite:"+ databasePath + File.separator + "test.db";
+        String connectionUrl = "jdbc:sqlite:"+ databasePath + File.separator + "chita.db";
         databaseController = new DatabaseControllerImpl("org.sqlite.JDBC", connectionUrl, 0, "", "");
 
         try {
@@ -172,7 +172,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         selectedDownload = download;
 
         downloadAskDialog = new DownloadAskDialog(parent);
-        downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), "");
+        downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath());
         downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
             @Override
             public void startDownloadEventOccured() {
@@ -340,11 +340,10 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     @Override
     public void newDownloadInfoGot(final Download download) {
         if (download.getStatus() == DownloadStatus.DOWNLOADING) {
-            downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getFormattedSize());
+            downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getFormattedSize(), download.isResumeCapability());
         } else {
             System.out.println("newDownloadInfoGot with error");
             DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
-            downloadAskDialog.setVisible(true);
         }
     }
 

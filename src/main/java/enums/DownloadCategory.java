@@ -39,7 +39,7 @@ public enum DownloadCategory {
     // static factory method
     public static DownloadCategory valueOfByDesc(String desc) {
         for (DownloadCategory code : DownloadCategory.values()) {
-            if (desc == code.getDesc()) {
+            if (desc.equals(code.getDesc())) {
                 return code;
             }
         }

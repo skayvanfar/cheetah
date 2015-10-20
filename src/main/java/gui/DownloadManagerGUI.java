@@ -21,6 +21,7 @@ import java.awt.event.*;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.net.Authenticator;
 import java.net.URL;
 import java.util.*;
@@ -35,7 +36,8 @@ import java.util.prefs.Preferences;
 // implements Observer
 public class DownloadManagerGUI extends JFrame {
 
-    private ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
     private MainToolBar mainToolbar;
     private CategoryPanel categoryPanel;
@@ -110,8 +112,8 @@ public class DownloadManagerGUI extends JFrame {
         statusPanel = new StatusPanel();
         addNewDownloadDialog = new AddNewDownloadDialog(this);
 
-        mainTabPane.addTab(bundle.getString("downloadManagerGUI.mainTabPane.downloadPanel"), downloadPanel);
-        mainTabPane.addTab(bundle.getString("downloadManagerGUI.mainTabPane.messagePanel"), messagePanel);
+        mainTabPane.addTab(defaultPreferencesBundle.getString("downloadManagerGUI.mainTabPane.downloadPanel"), downloadPanel);
+        mainTabPane.addTab(defaultPreferencesBundle.getString("downloadManagerGUI.mainTabPane.messagePanel"), messagePanel);
 
         preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
@@ -255,7 +257,7 @@ public class DownloadManagerGUI extends JFrame {
 
         PreferencesDTO preferencesDTO = null;
         try {
-       //     PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+      //      PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
             } catch(NullPointerException | EOFException e) {
@@ -287,7 +289,7 @@ public class DownloadManagerGUI extends JFrame {
             preferenceConnectionDTO = new PreferenceConnectionDTO();
         }
         if (preferenceConnectionDTO.getMaxConnectionNumber() == 0) {
-            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(bundle.getString("maxConnectionNumber")));
+            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(messagesBundle.getString("maxConnectionNumber")));
         }
 
         // preferencesSaveDTO
@@ -301,51 +303,51 @@ public class DownloadManagerGUI extends JFrame {
             // preferencesCompressedDirCategoryDTO
             PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesCompressedDirCategoryDTO.setDirectoryName(bundle.getString("compressedDirectoryCategory.directoryName"));
-            preferencesCompressedDirCategoryDTO.setPath(path + bundle.getString("compressedDirectoryCategory.path"));
-            String [] fileCompressedExtensions = bundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
-
+            preferencesCompressedDirCategoryDTO.setDirectoryName(messagesBundle.getString("compressedDirectoryCategory.directoryName"));
+            preferencesCompressedDirCategoryDTO.setPath(path + messagesBundle.getString("compressedDirectoryCategory.path"));
+            String [] fileCompressedExtensions = messagesBundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
             preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
+            preferencesCompressedDirCategoryDTO.setIconPath(messagesBundle.getString("compressedDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesCompressedDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesDocumentDirCategoryDTO.setDirectoryName(bundle.getString("documentDirectoryCategory.directoryName"));
-            preferencesDocumentDirCategoryDTO.setPath(path + bundle.getString("documentDirectoryCategory.path"));
-            String [] fileDocumentExtensions = bundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
-
+            preferencesDocumentDirCategoryDTO.setDirectoryName(messagesBundle.getString("documentDirectoryCategory.directoryName"));
+            preferencesDocumentDirCategoryDTO.setPath(path + messagesBundle.getString("documentDirectoryCategory.path"));
+            String [] fileDocumentExtensions = messagesBundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
             preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
+            preferencesDocumentDirCategoryDTO.setIconPath(messagesBundle.getString("documentDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesDocumentDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesMusicDirCategoryDTO.setDirectoryName(bundle.getString("musicDirectoryCategory.directoryName"));
-            preferencesMusicDirCategoryDTO.setPath(path + bundle.getString("musicDirectoryCategory.path"));
-            String [] fileMusicExtensions = bundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
-
+            preferencesMusicDirCategoryDTO.setDirectoryName(messagesBundle.getString("musicDirectoryCategory.directoryName"));
+            preferencesMusicDirCategoryDTO.setPath(path + messagesBundle.getString("musicDirectoryCategory.path"));
+            String [] fileMusicExtensions = messagesBundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
             preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
+            preferencesMusicDirCategoryDTO.setIconPath(messagesBundle.getString("musicDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesMusicDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesProgramDirCategoryDTO.setDirectoryName(bundle.getString("programDirectoryCategory.directoryName"));
-            preferencesProgramDirCategoryDTO.setPath(path + bundle.getString("programDirectoryCategory.path"));
-            String [] fileProgramExtensions = bundle.getString("programDirectoryCategory.fileExtensions").split(" ");
-
+            preferencesProgramDirCategoryDTO.setDirectoryName(messagesBundle.getString("programDirectoryCategory.directoryName"));
+            preferencesProgramDirCategoryDTO.setPath(path + messagesBundle.getString("programDirectoryCategory.path"));
+            String [] fileProgramExtensions = messagesBundle.getString("programDirectoryCategory.fileExtensions").split(" ");
             preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
+            preferencesProgramDirCategoryDTO.setIconPath(messagesBundle.getString("programDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesProgramDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesVideoDirCategoryDTO.setDirectoryName(bundle.getString("videoDirectoryCategory.directoryName"));
-            preferencesVideoDirCategoryDTO.setPath(path + bundle.getString("videoDirectoryCategory.path"));
-            String [] fileVideoExtensions = bundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
-
+            preferencesVideoDirCategoryDTO.setDirectoryName(messagesBundle.getString("videoDirectoryCategory.directoryName"));
+            preferencesVideoDirCategoryDTO.setPath(path + messagesBundle.getString("videoDirectoryCategory.path"));
+            String [] fileVideoExtensions = messagesBundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
             preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
+            preferencesVideoDirCategoryDTO.setIconPath(messagesBundle.getString("videoDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesVideoDirCategoryDTO);
 
 
@@ -354,10 +356,10 @@ public class DownloadManagerGUI extends JFrame {
             // todo other needed ... use other method
         }
         if (preferencesSaveDTO.getTempDirectory() == null || preferencesSaveDTO.getTempDirectory().equals("")) {
-            preferencesSaveDTO.setTempDirectory(path + bundle.getString("tempDirectory"));
+            preferencesSaveDTO.setTempDirectory(path + messagesBundle.getString("tempDirectory"));
         }
         if (preferencesSaveDTO.getDatabasePath() == null || preferencesSaveDTO.getDatabasePath().equals("")) {
-            preferencesSaveDTO.setDatabasePath(path + bundle.getString("databasePath"));
+            preferencesSaveDTO.setDatabasePath(path + messagesBundle.getString("databasePath"));
         }
 
 
@@ -532,6 +534,17 @@ public class DownloadManagerGUI extends JFrame {
             File databasePathFile = new File(databasePath);
             if (!databasePathFile.exists())
                 databasePathFile.mkdirs();
+        } catch (InvalidClassException e) {
+            try {
+                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (BackingStoreException e1) {
+                e1.printStackTrace();
+            } catch (ClassNotFoundException e1) {
+                e1.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Please run program again", "Just one time", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (BackingStoreException e) {

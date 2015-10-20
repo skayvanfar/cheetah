@@ -161,6 +161,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         return responseCode;
     }
 
+    @Override
+    public abstract boolean isResumeCapability();
+
     // Get this download's size.
     @Override
     public String getFormattedSize() {

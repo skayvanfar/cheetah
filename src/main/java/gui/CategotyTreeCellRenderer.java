@@ -1,5 +1,6 @@
 package gui;
 
+import model.dto.PreferencesDirectoryCategoryDTO;
 import utils.Utils;
 
 import javax.swing.*;
@@ -7,27 +8,32 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
+import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/11/2015.
  */
 public class CategotyTreeCellRenderer implements TreeCellRenderer {
 
-    private JCheckBox leafRenderer;
-    private DefaultTreeCellRenderer nonLeafRenderer;
+    private JLabel leafRenderer;
+ //   private DefaultTreeCellRenderer nonLeafRenderer;
 
     private Color textForeground;
     private Color textBackground;
     private Color selectionForeground;
     private Color selectionBackground;
 
-    public CategotyTreeCellRenderer() {
-        leafRenderer = new JCheckBox();
-        nonLeafRenderer = new DefaultTreeCellRenderer();
+    private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
-        nonLeafRenderer.setLeafIcon(Utils.createIcon("/images/primo48/images/Server16.png"));
-        nonLeafRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
-        nonLeafRenderer.setClosedIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponentAdd16.png"));
+    public CategotyTreeCellRenderer() {
+
+        //     leafRenderer = new JCheckBox();
+        leafRenderer = new JLabel();
+//        nonLeafRenderer = new DefaultTreeCellRenderer();
+//
+//        nonLeafRenderer.setLeafIcon(Utils.createIcon("/images/primo48/others/all_download.png"));
+//        nonLeafRenderer.setOpenIcon(Utils.createIcon("/images/primo48/others/unfinished.png"));
+//        nonLeafRenderer.setClosedIcon(Utils.createIcon("/images/primo48/others/finished.png"));
 
         textForeground = UIManager.getColor("Tree.textForeground");
         textBackground = UIManager.getColor("Tree.textBackground");
@@ -38,15 +44,22 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                   boolean selected, boolean expanded, boolean leaf,
                                                   int row, boolean hasFocus) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+        Object nodeInfo = node.getUserObject();
+        if (nodeInfo instanceof PreferencesDirectoryCategoryDTO) {
+            PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) nodeInfo;
+            String iconPath = preferencesDirectoryCategoryDTO.getIconPath();
 
-        if (leaf) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-       //     ServerInfo nodeInfo = (ServerInfo) node.getUserObject();
-            String nodeInfo = (String) node.getUserObject();
+            if (iconPath != null) {
+                leafRenderer.setIcon(Utils.createIcon(iconPath));
+            } else {
+                leafRenderer.setIcon(Utils.createIcon("/images/primo48/others/unknown.png"));
+            }
+
 
             if (selected) {
-                leafRenderer.setForeground(selectionForeground);
-           //     leafRenderer.setBackground(selectionBackground);
+                leafRenderer.setForeground(Color.blue); // selectionForeground
+                //     leafRenderer.setBackground(selectionBackground);
             }
             else {
                 leafRenderer.setForeground(textForeground);
@@ -54,12 +67,37 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
             }
 
             leafRenderer.setText(nodeInfo.toString());
-           // leafRenderer.setSelected(nodeInfo.isChecked());
-            return leafRenderer;
         }
         else {
-            return nonLeafRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+            if (nodeInfo != null) {
+                String nodeName = (String)nodeInfo;
+                switch (nodeName) {
+                    case "All Downloads":
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.allDownload")));
+                        break;
+                    case "Unfinished":
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.unfinished")));
+                        break;
+                    case "Finished":
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.finished")));
+                        break;
+                    case "Queues":
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.queues")));
+                        break;
+                }
+                leafRenderer.setText(nodeInfo.toString());
+
+                if (selected) {
+                    leafRenderer.setForeground(Color.blue); // selectionForeground
+                    //     leafRenderer.setBackground(selectionBackground);
+                }
+                else {
+                    leafRenderer.setForeground(textForeground);
+                    leafRenderer.setBackground(textBackground);
+                }
+            }
         }
+        return leafRenderer;
     }
 
 }
