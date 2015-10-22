@@ -59,6 +59,7 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
 
             if (selected) {
                 leafRenderer.setForeground(Color.blue); // selectionForeground
+          //      leafRenderer.setBackground(Color.magenta);
                 //     leafRenderer.setBackground(selectionBackground);
             }
             else {
@@ -89,6 +90,7 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
 
                 if (selected) {
                     leafRenderer.setForeground(Color.blue); // selectionForeground
+                //    leafRenderer.setBackground(Color.magenta);
                     //     leafRenderer.setBackground(selectionBackground);
                 }
                 else {

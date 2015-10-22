@@ -3,6 +3,8 @@ package utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +59,15 @@ public class FileUtil {
             }
 
         }
+    }
+    public static File outputFile(List<File> files) {
+        List<File> outputFiles = new ArrayList<>();
+        for (File file : files) {
+            File outputFile = outputFile(file);
+            outputFiles.add(outputFile);
+        }
+       // File file = Collections.max(outputFiles, new FileNameComparator());
+        return Collections.max(outputFiles);
     }
 
     // Get file name portion of URL.

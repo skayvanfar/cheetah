@@ -174,9 +174,20 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
         downloadAskDialog = new DownloadAskDialog(parent);
 
-        File path = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
-        String downloadPath = download.getDownloadPath() + File.separator + FileUtil.getFileName(path);
-        downloadAskDialog.setInfo(download.getUrl().toString(), downloadPath);
+        File downloadPath = FileUtil.outputFile(new File(download.getDownloadPath() + File.separator + download.getDownloadName()));
+        File downloadRangePath = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
+
+        List<File> outPutfiles = new ArrayList<>();
+        outPutfiles.add(downloadPath);
+        outPutfiles.add(downloadRangePath);
+
+        File path = FileUtil.outputFile(outPutfiles);
+        System.out.println(path);
+
+
+        String downloadPathName = download.getDownloadPath() + File.separator + FileUtil.getFileName(path);
+
+        downloadAskDialog.setInfo(download.getUrl().toString(), downloadPathName);
         downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
             @Override
             public void startDownloadEventOccured(String path) {

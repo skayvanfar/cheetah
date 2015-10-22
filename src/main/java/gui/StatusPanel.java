@@ -5,14 +5,17 @@ import gui.listener.MainToolbarListener;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/10/2015.
  */
 public class StatusPanel extends JPanel implements ActionListener {
 
+    private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
     // Add download text field.
- //   private JTextField addTextField;
+    private JLabel chitaLabel;
  //   private JButton addButton;
 
  //   private MainToolbarListener mainToolbarListener;
@@ -21,9 +24,10 @@ public class StatusPanel extends JPanel implements ActionListener {
 
   //      setBorder(BorderFactory.createEtchedBorder());
 
-  //      addButton = new JButton("New Download");
+        chitaLabel = new JLabel(defaultPreferencesBundle.getString("aboutPanel.program.name"));
   //      addTextField = new JTextField(30);
 
+        add(chitaLabel);
   //      add(addButton);
  //       add(addTextField);
     }
