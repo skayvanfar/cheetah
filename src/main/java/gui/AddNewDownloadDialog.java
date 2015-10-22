@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.MalformedURLException;
@@ -34,8 +35,6 @@ public class AddNewDownloadDialog extends JDialog {
 
     public AddNewDownloadDialog(JFrame parent) {
         super(parent, "Add New Download", false);
-
-        setLayout(new FlowLayout(FlowLayout.LEFT));
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
@@ -86,24 +85,71 @@ public class AddNewDownloadDialog extends JDialog {
             }
         });
 
-        setSize(603, 156);
-        setResizable(false);
+        setSize(540, 150);
+        setResizable(true);
         setLocationRelativeTo(parent);
     }
 
     // TODO for controls set
     private void layoutControls() {
-        add(newButton);
-        add(newTextField);
 
-        add(useAuthorizationLabel);
-        add(useAuthorizationCheckBox);
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints gc = new GridBagConstraints();
+
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        Insets rightPadding = new Insets(0, 0, 0, 15);
+        Insets noPadding = new Insets(0, 0, 0, 0);
+
+        ///////////////// First row ////////////////////////////////////////////
+        gc.weightx = 1;
+        gc.weighty = 1;
+
+        gc.gridy = 0;
+        gc.gridx = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.insets = rightPadding;
+        panel.add(newButton, gc);
+
+        gc.gridwidth = 3;
+        gc.gridx = 1;
+        gc.gridy = 0;
+        gc.insets = noPadding;
+        gc.anchor = GridBagConstraints.LINE_START;
+        panel.add(newTextField, gc);
+        ////////////Next row ////////////////////////////
+        gc.gridy++;
+
+        //     gc.weighty= 10;
+        gc.gridwidth = 1;
+        gc.gridx = 0;
+        gc.insets = rightPadding;
+        gc.anchor = GridBagConstraints.LINE_END;
+        panel.add(useAuthorizationLabel, gc);
+
+        gc.gridwidth = 2;
+        gc.gridx = 1;
+        // gc.gridy = 1;
+        gc.insets = noPadding;
+        gc.anchor = GridBagConstraints.LINE_START;
+        panel.add(useAuthorizationCheckBox, gc);
+
         useAuthorizationPanel.add(userIDLabel); // todo may use GridBagLayout
         useAuthorizationPanel.add(userIDTextField);
         useAuthorizationPanel.add(passwordLabel);
         useAuthorizationPanel.add(passwordField);
 
-        add(useAuthorizationPanel);
+
+        gc.gridwidth = 2;
+        gc.gridx = 2;
+        gc.insets = rightPadding;
+        gc.anchor = GridBagConstraints.LINE_END;
+        panel.add(useAuthorizationPanel, gc);
+
+        add(panel);
     }
 
     public void setAddNewDownloadListener(AddNewDownloadListener addNewDownloadListener) {

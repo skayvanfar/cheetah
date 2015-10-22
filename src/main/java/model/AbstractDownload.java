@@ -21,7 +21,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     protected int id;
     protected URL url; // download URL
-    protected File downloadNameFile;
+    protected String downloadName;
     protected int size; // size of download in bytes
     protected DownloadStatus status; // current status of download
     protected String transferRate; // rate of transfer
@@ -32,8 +32,8 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected int responseCode;
     protected int partCount;
 
-    protected String downloadPath;
-    protected String downloadRangePath;
+    protected File downloadPath;
+    protected File downloadRangePath;
 
     protected List<DownloadRange> downloadRangeList;
 
@@ -42,10 +42,10 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected Vector<DownloadStatusListener> downloadStatusListeners;
 
     // Constructor for Download.
-    public AbstractDownload(int id, URL url, File downloadNameFile, int partCount, String downloadPath, String downloadRangePath, ProtocolType protocolType) {
+    public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
         this.id = id;
         this.url = url;
-        this.downloadNameFile = downloadNameFile;
+        this.downloadName = downloadName;
         size = -1;
         downloaded = 0;
         status = DownloadStatus.DOWNLOADING;
@@ -82,13 +82,13 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     @Override
-    public File getDownloadNameFile() {
-        return downloadNameFile;
+    public String getDownloadName() {
+        return downloadName;
     }
 
     @Override
-    public void setDownloadNameFile(File downloadNameFile) {
-        this.downloadNameFile = downloadNameFile;
+    public void setDownloadName(String downloadName) {
+        this.downloadName = downloadName;
     }
 
     @Override
@@ -137,22 +137,22 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     @Override
-    public String getDownloadPath() {
+    public File getDownloadPath() {
         return downloadPath;
     }
 
     @Override
-    public void setDownloadPath(String downloadPath) {
+    public void setDownloadPath(File downloadPath) {
         this.downloadPath = downloadPath;
     }
 
     @Override
-    public String getDownloadRangePath() {
+    public File getDownloadRangePath() {
         return downloadRangePath;
     }
 
     @Override
-    public void setDownloadRangePath(String downloadRangePath) {
+    public void setDownloadRangePath(File downloadRangePath) {
         this.downloadRangePath = downloadRangePath;
     }
 
@@ -367,7 +367,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
         // files.sort(new FileComperarto());
 
-        FileUtil.joinDownloadedParts(files, downloadPath, downloadNameFile);
+        FileUtil.joinDownloadedParts(files, downloadPath, downloadName);
 
         status = DownloadStatus.COMPLETE;
         stateChanged();
@@ -379,21 +379,21 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected void stateChanged() {
         for (final DownloadStatusListener downloadStatusListener : downloadStatusListeners)
             SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
-                public void run() { // todo must got to class that listen this class
-                    downloadStatusListener.downloadStatusChanged(AbstractDownload.this); // todo dDOwnload maybe
-                }
-            });
+            public void run() { // todo must got to class that listen this class
+                downloadStatusListener.downloadStatusChanged(AbstractDownload.this); // todo dDOwnload maybe
+            }
+        });
     }
 
-    public void downloadStatusChanged(DownloadRange downloadRange) {
-        updateInfo(downloadRange);
+    public void downloadStatusChanged(DownloadRange downloadRange, int readed) {
+        updateInfo(downloadRange, readed);
         stateChanged();
     }
 
 
 
-    private synchronized void updateInfo(DownloadRange downloadRange) {
-        downloaded += downloadRange.getRead();
+    private synchronized void updateInfo(DownloadRange downloadRange, int readed) {
+        downloaded += readed;
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:

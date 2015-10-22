@@ -150,9 +150,9 @@ public class JDBCDatabaseDao implements DatabaseDao {
         // download info
         int id = download.getId();
         String url = download.getUrl().toString();
-        String downloadNameFile = download.getDownloadNameFile().getName();
-        String downloadPath = download.getDownloadPath();
-        String downloadRangePath = download.getDownloadRangePath();
+        String downloadNameFile = download.getDownloadName();
+        File downloadPath = download.getDownloadPath();
+        File downloadRangePath = download.getDownloadRangePath();
         int size = download.getSize();
         DownloadStatus downloadStatus = download.getStatus();
         ProtocolType protocolType = download.getProtocolType();
@@ -176,8 +176,8 @@ public class JDBCDatabaseDao implements DatabaseDao {
             insertDownloadStatement.setInt(col++, id);
             insertDownloadStatement.setString(col++, url);
             insertDownloadStatement.setString(col++, downloadNameFile);
-            insertDownloadStatement.setString(col++, downloadPath);
-            insertDownloadStatement.setString(col++, downloadRangePath);
+            insertDownloadStatement.setString(col++, downloadPath.toString());
+            insertDownloadStatement.setString(col++, downloadRangePath.toString());
             insertDownloadStatement.setInt(col++, size);
             insertDownloadStatement.setInt(col++, downloadStatus.getValue());
             insertDownloadStatement.setInt(col++, protocolType.getValue());
@@ -221,8 +221,8 @@ public class JDBCDatabaseDao implements DatabaseDao {
             int col = 1;
             updateDownloadStatement.setString(col++, url);
             updateDownloadStatement.setString(col++, downloadNameFile);
-            updateDownloadStatement.setString(col++, downloadPath);
-            updateDownloadStatement.setString(col++, downloadRangePath);
+            updateDownloadStatement.setString(col++, downloadPath.toString());
+            updateDownloadStatement.setString(col++, downloadRangePath.toString());
             updateDownloadStatement.setInt(col++, size);
             updateDownloadStatement.setInt(col++, downloadStatus.getValue());
             updateDownloadStatement.setInt(col++, protocolType.getValue());
@@ -280,9 +280,9 @@ public class JDBCDatabaseDao implements DatabaseDao {
             PreparedStatement selectDownloadRangeStatement = con.prepareStatement(selectDownloadRangeSql);
             int id = downloadResultSet.getInt("ID");
             String url = downloadResultSet.getString("URL");
-            String downloadNameFile = downloadResultSet.getString("DOWNLOAD_NAME_FILE");
-            String downloadPath = downloadResultSet.getString("DOWNLOAD_PATH");
-            String downloadRangePath = downloadResultSet.getString("DOWNLOAD_RANGE_PATH");
+            String downloadName = downloadResultSet.getString("DOWNLOAD_NAME_FILE");
+            File downloadPath = new File(downloadResultSet.getString("DOWNLOAD_PATH"));
+            File downloadRangePath = new  File(downloadResultSet.getString("DOWNLOAD_RANGE_PATH"));
             int size = downloadResultSet.getInt("SIZE");
             int status = downloadResultSet.getInt("STATUS");
             ProtocolType protocolType = ProtocolType.valueOf(downloadResultSet.getInt("PROTOCOL_TYPE"));
@@ -291,7 +291,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             Download download = null;
             switch (protocolType) {
                 case HTTP:
-                    download = new HttpDownload(id, new URL(url), new File(downloadNameFile), 8, downloadPath, downloadRangePath, protocolType);
+                    download = new HttpDownload(id, new URL(url), downloadName, 8, downloadPath, downloadRangePath, protocolType);
                     break;
                 case FTP:
 

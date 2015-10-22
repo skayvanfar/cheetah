@@ -22,9 +22,9 @@ public interface Download {
 
     public void setUrl(URL url);
 
-    public File getDownloadNameFile();
+    public String getDownloadName();
 
-    public void setDownloadNameFile(File downloadNameFile);
+    public void setDownloadName(String downloadName);
 
     public int getSize();
 
@@ -44,13 +44,13 @@ public interface Download {
 
     public void setDownloaded(int downloaded);
 
-    public String getDownloadPath();
+    public File getDownloadPath();
 
-    public void setDownloadPath(String downloadPath);
+    public void setDownloadPath(File downloadPath);
 
-    public String getDownloadRangePath();
+    public File getDownloadRangePath();
 
-    public void setDownloadRangePath(String downloadRangePath);
+    public void setDownloadRangePath(File downloadRangePath);
 
     public int getResponseCode();
 

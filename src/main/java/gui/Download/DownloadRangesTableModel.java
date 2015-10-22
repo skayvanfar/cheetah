@@ -96,7 +96,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Down
     /* is called when a DownloadRange notifies its
       listeners of any changes */
     @Override
-    public void downloadStatusChanged(DownloadRange downloadRange) {
+    public void downloadStatusChanged(DownloadRange downloadRange, int readed) {
         int index = downloadRangeList.indexOf(downloadRange);
 
         // Fire table row update notification to table.

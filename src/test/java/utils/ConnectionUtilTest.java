@@ -40,16 +40,16 @@ public class ConnectionUtilTest {
     @Test
     public void testGetRealFileByQueryString() throws Exception {
         url = new URL("http://localhost/index.html?2225");
-        File expectedValue = new File("index.html");
-        File actualValue = ConnectionUtil.getRealFile(url);
+        String expectedValue = "index.html";
+        String actualValue = ConnectionUtil.getFileName(url);
         System.out.println("actualValue: " + actualValue);
         Assert.assertEquals(expectedValue, actualValue);
     }
 
     @Test
     public void testGetRealFileWithoutQueryString() throws Exception {
-        File expectedValue = new File("index.html");
-        File actualValue = ConnectionUtil.getRealFile(url);
+        String expectedValue = "index.html";
+        String actualValue = ConnectionUtil.getFileName(url);
         System.out.println("actualValue: " + actualValue);
         Assert.assertEquals(expectedValue, actualValue);
     }

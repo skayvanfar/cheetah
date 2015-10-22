@@ -19,8 +19,8 @@ public class HttpDownload extends AbstractDownload implements model.Download {
 
     private boolean resumeCapability;
 
-    public HttpDownload(int id, URL url, File downloadNameFile, int partCount, String downloadPath, String downloadRangePath, ProtocolType protocolType) {
-        super(id, url, downloadNameFile, partCount, downloadPath, downloadRangePath, protocolType);
+    public HttpDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
+        super(id, url, downloadName, partCount, downloadPath, downloadRangePath, protocolType);
         resumeCapability = false;
     }
 
@@ -105,8 +105,8 @@ public class HttpDownload extends AbstractDownload implements model.Download {
         if (responseCode == 206) {
             for (int i = 0;  i < partCount; i++) {
                 //   String fileName = ConnectionUtil.getFileName(url);
-                String partFileName = downloadNameFile + ".00" + (i + 1);
-                downloadRange = new HttpDownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadNameFile + File.separator + partFileName), startRange, endRange);
+                String partFileName = downloadName + ".00" + (i + 1);
+                downloadRange = new HttpDownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, endRange);
 
                 addDownloadRange(downloadRange);
 
@@ -121,8 +121,8 @@ public class HttpDownload extends AbstractDownload implements model.Download {
             }
         } else {
             //     String fileName = ConnectionUtil.getFileName(url);
-            String partFileName = downloadNameFile + ".00" + 1;
-            downloadRange = new HttpDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadNameFile + File.separator + partFileName), startRange, size);
+            String partFileName = downloadName + ".00" + 1;
+            downloadRange = new HttpDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, size);
             addDownloadRange(downloadRange);
             downloadRange.resume();
         }

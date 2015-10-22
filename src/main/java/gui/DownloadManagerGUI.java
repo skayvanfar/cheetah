@@ -133,15 +133,15 @@ public class DownloadManagerGUI extends JFrame {
             public void newDownloadEventOccured(URL textUrl) {
                 if (textUrl != null) {
                     try {
-                        File downloadNameFile = ConnectionUtil.getRealFile(textUrl);
-                        String fileExtension =  FilenameUtils.getExtension(downloadNameFile.getName());
-                        String downloadPath = preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension);
-
+                        String downloadName = ConnectionUtil.getRealFileName(textUrl);
+                        String fileExtension =  FilenameUtils.getExtension(downloadName);
+                        File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
+                        File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
                         int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
 
                         // todo must set stretegy pattern
-                        downloadPanel.addDownload(new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadNameFile, maxNum,
-                                downloadPath, preferencesDTO.getPreferencesSaveDTO().getTempDirectory(), ProtocolType.HTTP));
+                        downloadPanel.addDownload(new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
+                                downloadPathFile, downloadRangeFile, ProtocolType.HTTP));
                     } catch (IOException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);

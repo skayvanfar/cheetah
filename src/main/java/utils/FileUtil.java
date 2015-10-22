@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class FileUtil {
 
-    public static void joinDownloadedParts(List<File> files, String path, File fileName) {
+    public static void joinDownloadedParts(List<File> files, File path, String fileName) {
       //  String homeDir = System.getProperty("user.home");
         File outputFile = outputFile(new File(path + File.separator + fileName));
 
@@ -57,6 +57,12 @@ public class FileUtil {
             }
 
         }
+    }
+
+    // Get file name portion of URL.
+    public static String getFileName(File file) {
+        String fileName = file.toString();
+        return fileName.substring(fileName.lastIndexOf(File.separator) + 1);
     }
 
 }

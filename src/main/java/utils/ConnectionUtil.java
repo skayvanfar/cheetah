@@ -32,23 +32,23 @@ public class ConnectionUtil {
         return fileName.substring(fileName.lastIndexOf('/') + 1);
     }
 
-    public static File getRealFile(URL url) throws IOException {
-        File file = null;
+    public static String getRealFileName(URL url) throws IOException {
+        String fileName = null;
         URLConnection conn = (URLConnection) url.openConnection();
         String raw = conn.getHeaderField("Content-Disposition");
         // raw = "attachment; filename=abc.jpg"
         if(raw != null && raw.indexOf('=') != -1) {
-            file = new File(raw.split("=")[1]); //getting value after '='
+            fileName = raw.split("=")[1]; //getting value after '='
         } else {
             // fall back to random generated file name?
-            String fileName = url.getFile();
-            if (fileName.lastIndexOf('?') != -1) {
-                file = new File(fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('?')));
+            String fileNameURL = url.getFile();
+            if (fileNameURL.lastIndexOf('?') != -1) {
+                fileName = fileNameURL.substring(fileNameURL.lastIndexOf('/') + 1, fileNameURL.lastIndexOf('?'));
             } else {
-                file = new File(fileName.substring(fileName.lastIndexOf('/') + 1));
+                fileName = fileNameURL.substring(fileNameURL.lastIndexOf('/') + 1);
             }
         }
-        return file;
+        return fileName;
     }
 
     // Get file extension portion of file of URL.

@@ -5,7 +5,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$USER_HOME$/Downloads/Chita Downloaded Files/db/test.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$USER_HOME$/Downloads/Chita Downloaded Files/db/chita.db</jdbc-url>
       <libraries>
         <library>
           <url>file://$USER_HOME$/Desktop/sqlite-jdbc-3.8.11.jar</url>

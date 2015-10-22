@@ -12,6 +12,7 @@ import model.DownloadRange;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import utils.FileUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -172,10 +173,16 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         selectedDownload = download;
 
         downloadAskDialog = new DownloadAskDialog(parent);
-        downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath());
+
+        File path = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
+        String downloadPath = download.getDownloadPath() + File.separator + FileUtil.getFileName(path);
+        downloadAskDialog.setInfo(download.getUrl().toString(), downloadPath);
         downloadAskDialog.setDownloadAskDialogListener(new DownloadAskDialogListener() {
             @Override
-            public void startDownloadEventOccured() {
+            public void startDownloadEventOccured(String path) {
+                File pathFile = new File(path);
+                download.setDownloadPath(pathFile.getParentFile());
+                download.setDownloadName(pathFile.getName());
                 if (!downloadList.contains(download)) {
                     downloadList.add(download);
                     setDownloadsByDownloadPath(fileExtensions, downloadCategory);
@@ -256,7 +263,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         }
 
         try {
-            FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadNameFile())); // todo must again
+            FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -283,7 +290,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 downloadDialogs.remove(downloadDialog);
                 downloadDialog.dispose();
                 databaseController.delete(download.getId());
-                FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadNameFile())); // todo must again
+                FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName())); // todo must again
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -295,14 +302,14 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     // Called when table row selection changes.
     private void tableSelectionChanged() {
-    /* Unregister from receiving notifications
-       from the last selected download. */
+        /* Unregister from receiving notifications
+           from the last selected download. */
         if (selectedDownload != null)
             selectedDownload.deleteDownloadStatusListener(DownloadPanel.this);
 
-    /* If not in the middle of clearing a download,
-       set the selected download and register to
-       receive notifications from it. */
+        /* If not in the middle of clearing a download,
+           set the selected download and register to
+           receive notifications from it. */
         if (!clearing && downloadTable.getSelectedRow() > -1) {
             selectedDownload = downloadsTableModel.getDownload(downloadTable.getSelectedRow());
             selectedDownload.addDownloadStatusListener(DownloadPanel.this);
@@ -339,19 +346,23 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     @Override
     public void newDownloadInfoGot(final Download download) {
-        if (download.getStatus() == DownloadStatus.DOWNLOADING) {
-            downloadAskDialog.setInfo(download.getUrl().toString(), download.getDownloadNameFile().getName(), download.getDownloadPath(), download.getFormattedSize(), download.isResumeCapability());
-        } else {
-            System.out.println("newDownloadInfoGot with error");
-            DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (download.getStatus() == DownloadStatus.DOWNLOADING) {
+                    downloadAskDialog.setInfo(download.getUrl().toString(), download.getFormattedSize(), download.isResumeCapability());
+                } else {
+                    System.out.println("newDownloadInfoGot with error");
+                    DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
+                }
+            }
+        });
     }
 
     public void setDownloadsByDownloadPath(List<String> fileExtensions) {
         List<Download> selectedDownloads = new ArrayList<>();
         for (Download download : downloadList)
             for (String downloadPath : fileExtensions)
-                if (FilenameUtils.getExtension(download.getDownloadNameFile().getName()).equals(downloadPath))
+                if (FilenameUtils.getExtension(download.getDownloadName()).equals(downloadPath))
                     selectedDownloads.add(download);
 
         downloadsTableModel.setDownloads(selectedDownloads);
@@ -366,15 +377,15 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 for (String downloadPath : fileExtensions) {
                     switch (downloadCategory) {
                         case FINISHED:
-                            if (FilenameUtils.getExtension(download.getDownloadNameFile().getName()).equals(downloadPath) && download.getStatus().equals(DownloadStatus.COMPLETE))
+                            if (FilenameUtils.getExtension(download.getDownloadName()).equals(downloadPath) && download.getStatus().equals(DownloadStatus.COMPLETE))
                                 selectedDownloads.add(download);
                             break;
                         case UNFINISHED:
-                            if (FilenameUtils.getExtension(download.getDownloadNameFile().getName()).equals(downloadPath) && !download.getStatus().equals(DownloadStatus.COMPLETE))
+                            if (FilenameUtils.getExtension(download.getDownloadName()).equals(downloadPath) && !download.getStatus().equals(DownloadStatus.COMPLETE))
                                 selectedDownloads.add(download);
                             break;
                         default:
-                            if (FilenameUtils.getExtension(download.getDownloadNameFile().getName()).equals(downloadPath))
+                            if (FilenameUtils.getExtension(download.getDownloadName()).equals(downloadPath))
                                 selectedDownloads.add(download);
                     }
                 }

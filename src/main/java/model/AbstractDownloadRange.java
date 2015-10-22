@@ -210,9 +210,9 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     public abstract void run();
 
     // Notify observers that this download's status has changed.
-    protected void stateChanged(int read) {
+    protected void stateChanged(int readed) {
         for (DownloadRangeStatusListener downloadRangeStatusListener : downloadRangeStatusListeners)
-            downloadRangeStatusListener.downloadStatusChanged(this);
+            downloadRangeStatusListener.downloadStatusChanged(this, readed);
         //     setChanged();
         //     notifyObservers(read);
     }
