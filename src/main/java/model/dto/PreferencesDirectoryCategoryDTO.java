@@ -1,6 +1,5 @@
 package model.dto;
 
-import javax.swing.*;
 import java.io.Serializable;
 import java.util.Arrays;
 

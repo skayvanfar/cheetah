@@ -3,7 +3,6 @@ package utils;
 import enums.SizeType;
 import enums.TimeUnit;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,8 +32,8 @@ public class ConnectionUtil {
     }
 
     public static String getRealFileName(URL url) throws IOException {
-        String fileName = null;
-        URLConnection conn = (URLConnection) url.openConnection();
+        String fileName;
+        URLConnection conn = url.openConnection();
         String raw = conn.getHeaderField("Content-Disposition");
         // raw = "attachment; filename=abc.jpg"
         if(raw != null && raw.indexOf('=') != -1) {
@@ -83,7 +82,7 @@ public class ConnectionUtil {
 
     public static float calculateTransferRateInUnit(float differenceDownloaded, int longTime, TimeUnit timeUnit) {
 
-        int unitTime = 0;
+        int unitTime;
         switch (timeUnit) {
             case SEC:
                 unitTime = 1000;

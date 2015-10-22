@@ -36,12 +36,11 @@ import java.util.prefs.Preferences;
 // implements Observer
 public class DownloadManagerGUI extends JFrame {
 
-    private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
-    private ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
+    private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
     private MainToolBar mainToolbar;
     private CategoryPanel categoryPanel;
-    private JTabbedPane mainTabPane;
     private DownloadPanel downloadPanel;
     private MessagePanel messagePanel;
     private JSplitPane mainSplitPane;
@@ -85,13 +84,7 @@ public class DownloadManagerGUI extends JFrame {
 
 
             //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
 
@@ -106,7 +99,7 @@ public class DownloadManagerGUI extends JFrame {
         categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
         downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath());
         messagePanel = new MessagePanel();
-        mainTabPane = new JTabbedPane();
+        JTabbedPane mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
         mainSplitPane.setOneTouchExpandable(true);
         statusPanel = new StatusPanel();
@@ -267,9 +260,7 @@ public class DownloadManagerGUI extends JFrame {
 
             checkAndSetPreferencesDTO(preferencesDTO);
             setPreferences(preferencesDTO);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BackingStoreException e) {
+        } catch (IOException | BackingStoreException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -372,9 +363,7 @@ public class DownloadManagerGUI extends JFrame {
  //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferenceConnectionDTO().getMaxConnectionNumber());
         try {
             PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BackingStoreException e) {
+        } catch (IOException | BackingStoreException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -516,7 +505,7 @@ public class DownloadManagerGUI extends JFrame {
     }
 
     private void createFileHierarchy() {
-        PreferencesDTO preferencesDTO = null;
+        PreferencesDTO preferencesDTO;
         try {
             preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
 
@@ -537,17 +526,13 @@ public class DownloadManagerGUI extends JFrame {
         } catch (InvalidClassException e) {
             try {
                 PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (BackingStoreException e1) {
+            } catch (IOException | BackingStoreException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e1) {
                 e1.printStackTrace();
             }
             JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Please run program again", "Just one time", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BackingStoreException e) {
+        } catch (IOException | BackingStoreException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

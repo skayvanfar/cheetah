@@ -5,7 +5,6 @@ import utils.Utils;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 import java.util.ResourceBundle;
@@ -13,7 +12,7 @@ import java.util.ResourceBundle;
 /**
  * Created by Saeed on 9/11/2015.
  */
-public class CategotyTreeCellRenderer implements TreeCellRenderer {
+class CategortyTreeCellRenderer implements TreeCellRenderer {
 
     private JLabel leafRenderer;
  //   private DefaultTreeCellRenderer nonLeafRenderer;
@@ -25,7 +24,7 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
 
     private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
-    public CategotyTreeCellRenderer() {
+    public CategortyTreeCellRenderer() {
 
         //     leafRenderer = new JCheckBox();
         leafRenderer = new JLabel();
@@ -74,16 +73,16 @@ public class CategotyTreeCellRenderer implements TreeCellRenderer {
                 String nodeName = (String)nodeInfo;
                 switch (nodeName) {
                     case "All Downloads":
-                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.allDownload")));
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categoryTreeCellRenderer.allDownload")));
                         break;
                     case "Unfinished":
-                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.unfinished")));
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categoryTreeCellRenderer.unfinished")));
                         break;
                     case "Finished":
-                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.finished")));
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categoryTreeCellRenderer.finished")));
                         break;
                     case "Queues":
-                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categotyTreeCellRenderer.queues")));
+                        leafRenderer.setIcon(Utils.createIcon(defaultPreferencesBundle.getString("categoryTreeCellRenderer.queues")));
                         break;
                 }
                 leafRenderer.setText(nodeInfo.toString());

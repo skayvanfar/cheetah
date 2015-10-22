@@ -2,6 +2,7 @@ package controller;
 
 import model.Download;
 
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface DatabaseController {
     public boolean connect() throws Exception;
     public boolean disconnect();
     public void save(Download download) throws SQLException;
-    public List<Download> load() throws SQLException, Exception;
+    public List<Download> load() throws SQLException, MalformedURLException;
     public void delete(int id) throws SQLException;
     public void createTablesIfNotExist() throws SQLException;
 }

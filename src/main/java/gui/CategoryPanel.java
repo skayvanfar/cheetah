@@ -2,16 +2,13 @@ package gui;
 
 import enums.DownloadCategory;
 import gui.listener.CategoryPanelListener;
-import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
-import utils.PrefObj;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.util.*;
@@ -20,17 +17,16 @@ import java.util.List;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class CategoryPanel extends JPanel {
+class CategoryPanel extends JPanel {
 
     private JTree categoryTree;
-    private CategotyTreeCellRenderer categotyTreeCellRenderer;
-  //  private ServerTreeCellEditor treeCellEditor;
+    //  private ServerTreeCellEditor treeCellEditor;
 
     private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
     private CategoryPanelListener categoryPanelListener;
 
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     public CategoryPanel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
 
@@ -49,8 +45,8 @@ public class CategoryPanel extends JPanel {
         //	treeCellRenderer.setOpenIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponent16.png"));
         //	treeCellRenderer.setClosedIcon(Utils.createIcon("/udemy/swinglearn/images/WebComponentAdd16.png"));
 
-        categotyTreeCellRenderer = new CategotyTreeCellRenderer();
-        categoryTree.setCellRenderer(categotyTreeCellRenderer);
+        CategortyTreeCellRenderer categortyTreeCellRenderer = new CategortyTreeCellRenderer();
+        categoryTree.setCellRenderer(categortyTreeCellRenderer);
 
         categoryTree.setEditable(false);
 

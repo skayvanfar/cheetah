@@ -1,5 +1,6 @@
 package gui;
 
+import comparator.FileNameComparator;
 import controller.DatabaseController;
 import controller.DatabaseControllerImpl;
 import enums.DownloadCategory;
@@ -144,7 +145,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             e.printStackTrace();
         }
 
-        DownloadDialog downloadDialog = null;
+        DownloadDialog downloadDialog;
         for (Download download : downloadList) {
             calculateDownloaded(download);
             download.setDownloadInfoListener(this);
@@ -174,14 +175,17 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
         downloadAskDialog = new DownloadAskDialog(parent);
 
-        File downloadPath = FileUtil.outputFile(new File(download.getDownloadPath() + File.separator + download.getDownloadName()));
-        File downloadRangePath = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
+      //  File downloadPath = FileUtil.outputFile(new File(download.getDownloadPath() + File.separator + download.getDownloadName()));
+      //  File downloadRangePath = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
+
+        File downloadPath = new File(download.getDownloadPath() + File.separator + download.getDownloadName());
+          File downloadRangePath = new File(download.getDownloadRangePath() + File.separator + download.getDownloadName());
 
         List<File> outPutfiles = new ArrayList<>();
         outPutfiles.add(downloadPath);
         outPutfiles.add(downloadRangePath);
 
-        File path = FileUtil.outputFile(outPutfiles);
+        File path = FileUtil.outputFile(outPutfiles, new FileNameComparator());
         System.out.println(path);
 
 
@@ -303,9 +307,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 databaseController.delete(download.getId());
                 FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName())); // todo must again
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
         tableSelectionChanged();

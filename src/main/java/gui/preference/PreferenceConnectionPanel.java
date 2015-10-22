@@ -6,12 +6,11 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.prefs.Preferences;
 
 /**
  * Created by Saeed on 9/23/2015.
  */
-public class PreferenceConnectionPanel extends JPanel {
+class PreferenceConnectionPanel extends JPanel {
 
     private JLabel maxConnectionNumberLabel;
     private JComboBox<Integer> maxConnectionNumberComboBox; /// todo encapsulation ....
@@ -44,7 +43,7 @@ public class PreferenceConnectionPanel extends JPanel {
         setPreferenceConnectionDTO(preferenceConnectionDTO);
     }
 
-    public void layoutComponents() {
+    private void layoutComponents() {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();

@@ -49,7 +49,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 error();
             }
 
-            int rangeContentLength = 0;
+            int rangeContentLength;
             rangeContentLength = connection.getContentLength();
 
             if (rangeContentLength < 1) {
@@ -136,7 +136,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
             if (randomAccessFile != null) {
                 try {
                     randomAccessFile.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 
@@ -144,7 +144,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

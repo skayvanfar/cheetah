@@ -348,7 +348,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         return downloads;
     }
 
-    public boolean delete(int id) throws SQLException {
+    public void delete(int id) throws SQLException {
         connect();
         String cascadeSql = "PRAGMA foreign_keys = ON";
         //    con.setAutoCommit(false);
@@ -362,6 +362,5 @@ public class JDBCDatabaseDao implements DatabaseDao {
         deleteStatement.executeUpdate();
         //    con.commit();
         disconnect();
-        return false;
     }
 }

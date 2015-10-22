@@ -1,5 +1,7 @@
 package enums;
 
+import java.util.Objects;
+
 /**
  * Created by Saeed on 9/14/2015.
  */
@@ -35,7 +37,7 @@ public enum ConnectionStatus {
     // static factory method
     public static ConnectionStatus valueOf(Integer type) {
         for (ConnectionStatus code : ConnectionStatus.values()) {
-            if (type == code.getValue()) {
+            if (Objects.equals(type, code.getValue())) {
                 return code;
             }
         }

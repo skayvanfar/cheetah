@@ -1,7 +1,5 @@
 package gui;
 
-import gui.listener.MainToolbarListener;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,9 +8,9 @@ import java.util.ResourceBundle;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class StatusPanel extends JPanel implements ActionListener {
+class StatusPanel extends JPanel implements ActionListener {
 
-    private ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     // Add download text field.
     private JLabel chitaLabel;

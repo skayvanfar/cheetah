@@ -9,19 +9,17 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Saeed on 9/22/2015.
  */
-public class PreferenceCategoryPanel extends JPanel {
+class PreferenceCategoryPanel extends JPanel {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private JTree categoryTree;
-  //  private CategotyTreeCellRenderer categotyTreeCellRenderer;
+  //  private CategortyTreeCellRenderer categotyTreeCellRenderer;
 
     private PreferenceCategoryPanelListener preferenceCategoryPanelListener;
 

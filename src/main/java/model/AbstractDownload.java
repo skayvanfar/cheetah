@@ -242,10 +242,10 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         if (!downloadRangeList.isEmpty()) {
             for (DownloadRange downloadRange : downloadRangeList)
                 downloadRange.resume();
+            startTransferRate();
         } else {
             download();
         }
-        startTransferRate();
     }
 
     // Mark this download as having an error.
@@ -293,10 +293,6 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected void download() {
         Thread thread = new Thread(this);
         thread.start();
-
-        startTransferRate();
-
-        //   run();
 
         /**     Second way that use SwingWorker
          SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {

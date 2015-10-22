@@ -32,7 +32,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
 
     private DownloadAskDialogListener downloadAskDialogListener;
 
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     private JFrame parent;
 

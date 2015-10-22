@@ -14,7 +14,7 @@ import java.net.URL;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class AddNewDownloadDialog extends JDialog {
+class AddNewDownloadDialog extends JDialog {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -182,7 +182,7 @@ public class AddNewDownloadDialog extends JDialog {
             return null;
 
         // Verify format of URL.
-        URL verifiedUrl = null;
+        URL verifiedUrl;
         try {
             verifiedUrl = new URL(url);
         } catch (MalformedURLException e) {

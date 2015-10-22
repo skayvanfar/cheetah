@@ -6,8 +6,6 @@ import model.DownloadRange;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Created by Saeed on 9/14/2015.

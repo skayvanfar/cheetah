@@ -1,5 +1,7 @@
 package enums;
 
+import java.util.Objects;
+
 /**
  * Created by saeed on 10/14/15.
  */
@@ -29,7 +31,7 @@ public enum DownloadCategory {
     // static factory method
     public static DownloadCategory valueOf(Integer type) {
         for (DownloadCategory code : DownloadCategory.values()) {
-            if (type == code.getValue()) {
+            if (Objects.equals(type, code.getValue())) {
                 return code;
             }
         }

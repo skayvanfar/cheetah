@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class MainToolBar extends JToolBar implements ActionListener {
+class MainToolBar extends JToolBar implements ActionListener {
 
     private JButton newDownloadButton;
     private JButton pauseAllButton;

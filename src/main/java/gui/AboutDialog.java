@@ -6,16 +6,14 @@ import java.awt.*;
 /**
  * Created by Saeed on 9/25/2015.
  */
-public class AboutDialog extends JDialog {
-
-    private AboutPanel aboutPanel;
+class AboutDialog extends JDialog {
 
     public AboutDialog(JFrame parent) {
         super(parent, "About...", false);
 
         setLayout(new BorderLayout());
 
-        aboutPanel = new AboutPanel();
+        AboutPanel aboutPanel = new AboutPanel();
         add(aboutPanel, BorderLayout.CENTER);
 
         setMinimumSize(new Dimension(350,250));

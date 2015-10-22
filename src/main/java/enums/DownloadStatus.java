@@ -1,5 +1,7 @@
 package enums;
 
+import java.util.Objects;
+
 /**
  * Created by Saeed on 9/10/2015.
  */
@@ -33,7 +35,7 @@ public enum DownloadStatus {
     // static factory method
     public static DownloadStatus valueOf(Integer type) {
         for (DownloadStatus code : DownloadStatus.values()) {
-            if (type == code.getValue()) {
+            if (Objects.equals(type, code.getValue())) {
                 return code;
             }
         }

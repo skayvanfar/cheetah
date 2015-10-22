@@ -67,11 +67,7 @@ public class HttpDownload extends AbstractDownload implements model.Download {
                 //        status = DownloadStatus.ERROR;
             }
 
-            if (responseCode == 206) {
-                resumeCapability = true;
-            } else {
-                resumeCapability = false;
-            }
+            resumeCapability = responseCode == 206;
 
             connection.disconnect();
             stateChanged();
@@ -128,5 +124,6 @@ public class HttpDownload extends AbstractDownload implements model.Download {
         }
         if (downloadInfoListener != null)
             downloadInfoListener.downloadNeedSaved(this);
+        startTransferRate();
     }
 }

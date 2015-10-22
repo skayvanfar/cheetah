@@ -4,6 +4,7 @@ import dao.DatabaseDao;
 import dao.JDBCDatabaseDao;
 import model.Download;
 
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class DatabaseControllerImpl implements DatabaseController {
     }
 
     @Override
-    public List<Download> load() throws Exception {
+    public List<Download> load() throws SQLException, MalformedURLException {
         return databaseDao.load();
     }
 

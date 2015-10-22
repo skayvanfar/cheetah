@@ -10,9 +10,9 @@ import java.text.NumberFormat;
  */
 
 // This class renders a JProgressBar in a table cell.
-public class ProgressRenderer extends JProgressBar implements TableCellRenderer {
+class ProgressRenderer extends JProgressBar implements TableCellRenderer {
 
-    private NumberFormat percentFormat;
+    private final NumberFormat percentFormat;
 
     // Constructor for ProgressRenderer.
     public ProgressRenderer(int min, int max) {
@@ -31,7 +31,7 @@ public class ProgressRenderer extends JProgressBar implements TableCellRenderer 
     //    setValue((int) ((Float) value).floatValue());
    //     setString(((Float) value).floatValue() + "%");
 
-        setValue((int) (((Float) value).floatValue() * 100) + 1);
+        setValue((int) ((Float) value * 100) + 1);
         setString(percentFormat.format(((Float) value).floatValue()));
 
         return this;

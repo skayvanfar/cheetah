@@ -14,6 +14,6 @@ public interface DatabaseDao {
     public boolean disconnect();
     public void save(Download download) throws SQLException;
     public List<Download> load() throws SQLException, MalformedURLException;
-    public boolean delete(int id) throws SQLException;
+    public void delete(int id) throws SQLException;
     public void createTablesIfNotExist() throws SQLException;
 }

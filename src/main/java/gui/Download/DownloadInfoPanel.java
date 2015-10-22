@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Created by Saeed on 9/14/2015.
  */
-public class DownloadInfoPanel extends JPanel {
+class DownloadInfoPanel extends JPanel {
 
     // Table showing download ranges.
     private JTable downloadRangeTable;
@@ -17,7 +17,7 @@ public class DownloadInfoPanel extends JPanel {
     // Download Range table's data model.
     private DownloadRangesTableModel downloadRangesTableModel;
 
-    private Download download; // TODO must be Interface. may not needed hear
+    private Download download;
 
     public DownloadInfoPanel(Download download) {
 

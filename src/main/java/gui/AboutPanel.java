@@ -6,9 +6,9 @@ import java.awt.*;
 /**
  * Created by Saeed on 9/25/2015.
  */
-public class AboutPanel extends JPanel {
+class AboutPanel extends JPanel {
 
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     public void paintComponent(Graphics g) {
         g.setColor(getForeground());

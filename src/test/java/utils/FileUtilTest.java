@@ -1,5 +1,6 @@
 package utils;
 
+import comparator.FileNameComparator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ public class FileUtilTest {
         String expectedValue = "t_1.txt";
 
         URL url = Thread.currentThread().getContextClassLoader().getResource("t.txt");
+        assert url != null;
         File file = new File(url.getPath());
         File newFile = FileUtil.outputFile(file);
         String actualValue = newFile.getName();
@@ -46,14 +48,15 @@ public class FileUtilTest {
         URL url = Thread.currentThread().getContextClassLoader().getResource("t.txt");
         URL url2 = Thread.currentThread().getContextClassLoader().getResource("t_2.txt");
 
+        assert url != null;
         File file = new File(url.getPath());
-        File file2 = new File(url.getPath());
+        File file2 = new File(url2.getPath());
 
         List<File> files = new ArrayList<>();
         files.add(file);
         files.add(file2);
 
-        File newFile = FileUtil.outputFile(files);
+        File newFile = FileUtil.outputFile(files, new FileNameComparator());
         String actualValue = newFile.getName();
         System.out.println(newFile);
 

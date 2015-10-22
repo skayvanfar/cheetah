@@ -6,17 +6,14 @@ import model.dto.PreferencesSaveDTO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
 
 /**
  * Created by Saeed on 9/13/2015.
  */
-public class PreferenceSavePanel extends JPanel {
+class PreferenceSavePanel extends JPanel {
 
     private JPanel saveToPanel;
     private JLabel categoryLabel;
@@ -120,7 +117,7 @@ public class PreferenceSavePanel extends JPanel {
         return result.toString();
     }
 
-    public void layoutComponents() {
+    private void layoutComponents() {
         setLayout(new BorderLayout());
 
         layoutComponentsOfSaveToPanel();

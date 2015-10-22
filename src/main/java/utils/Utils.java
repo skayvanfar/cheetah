@@ -30,9 +30,7 @@ public class Utils {
             System.out.println("Unable to load image: " + path);
         }
 
-        ImageIcon icon = new ImageIcon(url);
-
-        return icon;
+        return new ImageIcon(url);
     }
 
     public static Font createFont(String path) {

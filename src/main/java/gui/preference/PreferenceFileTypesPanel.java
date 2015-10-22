@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * Created by Saeed on 9/23/2015.
  */
-public class PreferenceFileTypesPanel extends JPanel {
+class PreferenceFileTypesPanel extends JPanel {
 
     public PreferenceFileTypesPanel() {
         JButton jButton = new JButton("PreferenceFileTypesPanel");

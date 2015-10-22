@@ -1,13 +1,13 @@
 package utils;
 
+import comparator.FileNameComparator;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Saeed on 9/15/2015.
@@ -21,7 +21,7 @@ public class FileUtil {
         FileOutputStream fos;
         FileInputStream fis;
         byte[] fileBytes;
-        int bytesRead = 0;
+        int bytesRead;
         try {
             fos = new FileOutputStream(outputFile,true);
             for (File file : files) {
@@ -60,14 +60,14 @@ public class FileUtil {
 
         }
     }
-    public static File outputFile(List<File> files) {
+    public static File outputFile(List<File> files, FileNameComparator fileNameComparator) {
         List<File> outputFiles = new ArrayList<>();
         for (File file : files) {
             File outputFile = outputFile(file);
             outputFiles.add(outputFile);
         }
        // File file = Collections.max(outputFiles, new FileNameComparator());
-        return Collections.max(outputFiles);
+        return Collections.max(outputFiles, fileNameComparator);
     }
 
     // Get file name portion of URL.

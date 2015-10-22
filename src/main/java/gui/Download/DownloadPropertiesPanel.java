@@ -5,5 +5,5 @@ import javax.swing.*;
 /**
  * Created by Saeed on 9/14/2015.
  */
-public class DownloadPropertiesPanel extends JPanel {
+class DownloadPropertiesPanel extends JPanel {
 }

@@ -7,7 +7,6 @@ import model.Download;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by Saeed on 9/10/2015.

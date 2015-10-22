@@ -1,11 +1,8 @@
 package model;
 
 import enums.ConnectionStatus;
-import enums.DownloadStatus;
 import org.apache.log4j.Logger;
-import utils.ConnectionUtil;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -216,7 +213,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
                     buffer = new byte[rangeSize - rangeDownloaded];
                 }
 
-                if (stop == true) //todo may be better way for stop thread
+                if (stop) //todo may be better way for stop thread
                     break;
 
                 // Read from server into buffer.
@@ -264,7 +261,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
             if (randomAccessFile != null) {
                 try {
                     randomAccessFile.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 
@@ -272,7 +269,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -282,7 +279,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
         try {
             /* Change status to complete if this point was
               reached because downloading has finished. */
-            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && stop == false) {
+            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && !stop) {
                 connectionStatus = ConnectionStatus.COMPLETED;
                 randomAccessFile.close();
             } else {
@@ -298,7 +295,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
             if (randomAccessFile != null) {
                 try {
                     randomAccessFile.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 
@@ -306,7 +303,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
