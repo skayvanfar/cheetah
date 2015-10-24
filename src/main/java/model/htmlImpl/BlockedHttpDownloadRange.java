@@ -1,8 +1,7 @@
 package model.htmlImpl;
 
 import enums.ConnectionStatus;
-import model.*;
-
+import model.AbstractDownloadRange;
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -10,11 +9,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Saeed on 10/17/2015.
+ * Created by Saeed on 10/24/2015.
  */
-public class HttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+public class BlockedHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 
-    public HttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
+    public BlockedHttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
     }
 
@@ -91,13 +90,11 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 if (stop) //todo may be better way for stop thread
                     break;
 
-
-                int bytesAvailable = stream.available();
-                byte[] input = new byte[bytesAvailable];
-
                 // Read from server into buffer.
-                // temp amount read
-                int bytesRead = stream.read(input, 0, bytesAvailable);
+                int bytesRead = stream.read(buffer);
+
+                if (stop)
+                    break;
 
                 if (bytesRead == -1) {
                     System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
@@ -117,7 +114,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                     System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
-                Thread.sleep(100);
+
             }
 
             /* Change status to complete if this point was

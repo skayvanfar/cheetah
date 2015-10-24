@@ -27,13 +27,10 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
 
     protected File downloadRangeFile;
 
-    // temp amount read
-    protected int read;
-
     // to quick stop thread
     protected boolean stop = false;
 
-    private Thread thread = null;
+    protected Thread thread = null;
 
     private Vector<DownloadRangeStatusListener> downloadRangeStatusListeners;
 
@@ -43,7 +40,6 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         this.url = url;
         rangeSize = -1;
         rangeDownloaded = 0; //todo for cancel act
-        read = 0;
         connectionStatus = ConnectionStatus.CONNECTING;
 
         this.startRange = startRange;
@@ -144,11 +140,6 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         this.downloadRangeFile = downloadRangeFile;
     }
 
-    @Override
-    public int getRead() {
-        return read;
-    }
-
     /**
      * Adds an DownloadRangeStatusListener to the set of downloadRangeStatusListeners for this object, provided
      * that it is not the same as some DownloadRangeStatusListener already in the set.
@@ -182,7 +173,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         if (connectionStatus == ConnectionStatus.CONNECTING || connectionStatus == ConnectionStatus.SEND_GET || connectionStatus == ConnectionStatus.RECEIVING_DATA )
             connectionStatus = ConnectionStatus.DISCONNECTING;
         stop = true;
-        thread.interrupt();
+   //     thread.interrupt();
         stateChanged(0); // TODO two time call and print "disconnect from download .... "
     }
 
@@ -213,7 +204,5 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     protected void stateChanged(int readed) {
         for (DownloadRangeStatusListener downloadRangeStatusListener : downloadRangeStatusListeners)
             downloadRangeStatusListener.downloadStatusChanged(this, readed);
-        //     setChanged();
-        //     notifyObservers(read);
     }
 }

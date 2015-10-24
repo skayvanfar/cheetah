@@ -19,6 +19,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -30,16 +32,31 @@ import java.util.List;
 /**
  * Created by Saeed on 9/10/2015.
  */
-public class DownloadPanel extends JPanel implements DownloadInfoListener, DownloadStatusListener {
+public class DownloadPanel extends JPanel implements DownloadInfoListener, DownloadStatusListener, ActionListener {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+
+    private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     // DatabaseController
     private DatabaseController databaseController;
 
     // Table showing downloads.
     private JTable downloadTable;
+
+    private JPopupMenu popup;
+    JMenuItem openItem;
+    JMenuItem openFolderItem;
+    JMenuItem resumeItem;
+    JMenuItem pauseItem;
+    JMenuItem clearItem;
+    JMenuItem reJoinItem;
+    JMenuItem reDownloadItem;
+    JMenuItem moveToQueueItem;
+    JMenuItem removeFromQueueItem;
+    JMenuItem propertiesItem;
+
 
     // Download table's data model.
     private DownloadsTableModel downloadsTableModel;
@@ -101,16 +118,16 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         // Set up Downloads table.
         downloadsTableModel = new DownloadsTableModel();
         downloadTable = new JTable(downloadsTableModel);
+        popup = initPopupMenu();
 
-        downloadTable.getSelectionModel().addListSelectionListener(new
-                                                                           ListSelectionListener() {
-                                                                               public void valueChanged(ListSelectionEvent e) {
-                                                                                   tableSelectionChanged();
-                                                                               }
-                                                                           });
+        downloadTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                tableSelectionChanged();
+            }
+        });
+
         // Allow only one row at a time to be selected.
         downloadTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
 
         // Set up ProgressBar as renderer for progress column.
         ProgressRenderer renderer = new ProgressRenderer(0, 100);
@@ -128,7 +145,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 downloadTable.getSelectionModel().setSelectionInterval(row, row);
                 DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
                 if (e.getButton() == MouseEvent.BUTTON3) { // TODO right click
-                    //     popup.show(table, e.getX(), e.getY());
+                         popup.show(downloadTable, e.getX(), e.getY());
                 } else  if (e.getClickCount() == 2) {  // double click
                     if (!downloadDialog.isVisible()) {
                         downloadDialog.setVisible(true);
@@ -168,6 +185,52 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         download.setDownloaded(downloaded);
     }
 
+    private JPopupMenu initPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        openItem = new JMenuItem(bundle.getString("downloadPanel.openItem.name"));
+        openItem.addActionListener(this);
+        openFolderItem = new JMenuItem(bundle.getString("downloadPanel.openFolderItem.name"));
+        openFolderItem.addActionListener(this);
+
+        resumeItem = new JMenuItem(bundle.getString("downloadPanel.resumeItem.name"));
+        resumeItem.addActionListener(this);
+        pauseItem = new JMenuItem(bundle.getString("downloadPanel.pauseItem.name"));
+        pauseItem.addActionListener(this);
+        clearItem = new JMenuItem(bundle.getString("downloadPanel.clearItem.name"));
+        clearItem.addActionListener(this);
+
+        reJoinItem = new JMenuItem(bundle.getString("downloadPanel.reJoinItem.name"));
+        reJoinItem.addActionListener(this);
+        reDownloadItem = new JMenuItem(bundle.getString("downloadPanel.reDownloadItem.name"));
+        reDownloadItem.addActionListener(this);
+
+        moveToQueueItem = new JMenuItem(bundle.getString("downloadPanel.moveToQueueItem.name"));
+        moveToQueueItem.addActionListener(this);
+        removeFromQueueItem = new JMenuItem(bundle.getString("downloadPanel.removeFromQueueItem.name"));
+        removeFromQueueItem.addActionListener(this);
+
+        propertiesItem = new JMenuItem(bundle.getString("downloadPanel.propertiesItem.name"));
+        propertiesItem.addActionListener(this);
+
+        popupMenu.add(openItem);
+        popupMenu.add(openFolderItem);
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(resumeItem);
+        popupMenu.add(pauseItem);
+        popupMenu.add(clearItem);
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(reJoinItem);
+        popupMenu.add(reDownloadItem);
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(moveToQueueItem);
+        popupMenu.add(removeFromQueueItem);
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(propertiesItem);
+
+        return popupMenu;
+    }
+
     public void addDownload(final Download download) {
         download.setDownloadInfoListener(this);
 
@@ -179,7 +242,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
       //  File downloadRangePath = FileUtil.outputFile(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName()));
 
         File downloadPath = new File(download.getDownloadPath() + File.separator + download.getDownloadName());
-          File downloadRangePath = new File(download.getDownloadRangePath() + File.separator + download.getDownloadName());
+        File downloadRangePath = new File(download.getDownloadRangePath() + File.separator + download.getDownloadName());
 
         List<File> outPutfiles = new ArrayList<>();
         outPutfiles.add(downloadPath);
@@ -419,5 +482,41 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         }
 
         downloadsTableModel.setDownloads(selectedDownloads);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int row = downloadTable.getSelectedRow();
+        JMenuItem clicked= (JMenuItem) e.getSource();
+
+
+            if (clicked == openItem) {
+                actionResume();
+            } else if (clicked == openFolderItem) {
+          //      mainToolbarListener.resumeEventOccured();
+            } else if (clicked == resumeItem) {
+                actionResume(); // todo may need  mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
+            }  else if (clicked == pauseItem) {
+                actionPause();
+            } else if (clicked == clearItem) {
+                int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+                if (action == JOptionPane.OK_OPTION) {
+                    actionClear();
+                }
+            } else if (clicked == reJoinItem) {
+         //       mainToolbarListener.clearAllCompletedEventOccured();
+            } else if (clicked == reDownloadItem) {
+        //        mainToolbarListener.preferencesEventOccured();
+            } else if (clicked == moveToQueueItem) {
+        //        mainToolbarListener.preferencesEventOccured();
+            } else if (clicked == removeFromQueueItem) {
+        //        mainToolbarListener.preferencesEventOccured();
+            } else if (clicked == propertiesItem) {
+                DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
+                if (!downloadDialog.isVisible()) {
+                    downloadDialog.setVisible(true);
+                }
+            }
+
     }
 }

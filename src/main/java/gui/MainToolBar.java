@@ -4,6 +4,7 @@ import gui.listener.MainToolbarListener;
 import utils.Utils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,6 +29,8 @@ class MainToolBar extends JToolBar implements ActionListener {
         setBorder(BorderFactory.createEtchedBorder());
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
+   //     setBackground(Color.WHITE);
 
         newDownloadButton = new JButton(bundle.getString("mainToolBar.newDownloadButton.label"));
         newDownloadButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.newDownloadButton.iconPath")));

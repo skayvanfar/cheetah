@@ -228,10 +228,10 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     // Pause this download.
     @Override
     public void pause() {
-        for (DownloadRange downloadRange : downloadRangeList)
-            downloadRange.disConnect();
         status = DownloadStatus.DISCONNECTING;
         stateChanged();
+        for (DownloadRange downloadRange : downloadRangeList)
+            downloadRange.disConnect();
     }
 
     // Resume this download.

@@ -36,8 +36,8 @@ import java.util.prefs.Preferences;
 // implements Observer
 public class DownloadManagerGUI extends JFrame {
 
-    private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
-    private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
+    private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+    private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
 
     private MainToolBar mainToolbar;
     private CategoryPanel categoryPanel;
@@ -93,6 +93,18 @@ public class DownloadManagerGUI extends JFrame {
         preferences = Preferences.userRoot().node("db");
         final PreferencesDTO preferencesDTO = getPreferences();
 
+        try {
+            PreferencesDTO preferencesDTOTest = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
+        } catch (ClassCastException e) {
+            try {
+                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+            } catch (IOException | ClassNotFoundException | BackingStoreException e1) {
+                e1.printStackTrace();
+            }
+        } catch (ClassNotFoundException | BackingStoreException | IOException e) {
+            e.printStackTrace();
+        }
+
         createFileHierarchy();
 
         mainToolbar = new MainToolBar();
@@ -105,8 +117,8 @@ public class DownloadManagerGUI extends JFrame {
         statusPanel = new StatusPanel();
         addNewDownloadDialog = new AddNewDownloadDialog(this);
 
-        mainTabPane.addTab(defaultPreferencesBundle.getString("downloadManagerGUI.mainTabPane.downloadPanel"), downloadPanel);
-        mainTabPane.addTab(defaultPreferencesBundle.getString("downloadManagerGUI.mainTabPane.messagePanel"), messagePanel);
+        mainTabPane.addTab(messagesBundle.getString("downloadManagerGUI.mainTabPane.downloadPanel"), downloadPanel);
+        mainTabPane.addTab(messagesBundle.getString("downloadManagerGUI.mainTabPane.messagePanel"), messagePanel);
 
         preferenceDialog = new PreferenceDialog(this, preferencesDTO);
 
@@ -160,8 +172,7 @@ public class DownloadManagerGUI extends JFrame {
 
             @Override
             public void pauseEventOccured() {
-                downloadPanel.actionPause();
-                mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
+                pauseDownload();
             }
 
             @Override
@@ -171,26 +182,17 @@ public class DownloadManagerGUI extends JFrame {
 
             @Override
             public void pauseAllEventOccured() {
-                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
-                if (action == JOptionPane.OK_OPTION) {
-                    downloadPanel.actionPauseAll();
-                }
+                pauseAllDownloads();
             }
 
             @Override
             public void clearEventOccured() {
-                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
-                if (action == JOptionPane.OK_OPTION) {
-                    downloadPanel.actionClear();
-                }
+                clearDownload();
             }
 
             @Override
             public void clearAllCompletedEventOccured() {
-                int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete all completed files?", "Confirm delete all", JOptionPane.OK_CANCEL_OPTION);
-                if (action == JOptionPane.OK_OPTION) {
-                    downloadPanel.actionClearAllCompleted();
-                }
+                clearAllCompletedDownloads();
             }
 
             @Override
@@ -260,9 +262,7 @@ public class DownloadManagerGUI extends JFrame {
 
             checkAndSetPreferencesDTO(preferencesDTO);
             setPreferences(preferencesDTO);
-        } catch (IOException | BackingStoreException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | BackingStoreException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -280,7 +280,7 @@ public class DownloadManagerGUI extends JFrame {
             preferenceConnectionDTO = new PreferenceConnectionDTO();
         }
         if (preferenceConnectionDTO.getMaxConnectionNumber() == 0) {
-            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(messagesBundle.getString("maxConnectionNumber")));
+            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(defaultPreferencesBundle.getString("maxConnectionNumber")));
         }
 
         // preferencesSaveDTO
@@ -294,52 +294,61 @@ public class DownloadManagerGUI extends JFrame {
             // preferencesCompressedDirCategoryDTO
             PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesCompressedDirCategoryDTO.setDirectoryName(messagesBundle.getString("compressedDirectoryCategory.directoryName"));
-            preferencesCompressedDirCategoryDTO.setPath(path + messagesBundle.getString("compressedDirectoryCategory.path"));
-            String [] fileCompressedExtensions = messagesBundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
+            preferencesCompressedDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("compressedDirectoryCategory.directoryName"));
+            preferencesCompressedDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("compressedDirectoryCategory.path"));
+            String [] fileCompressedExtensions = defaultPreferencesBundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
             preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
-            preferencesCompressedDirCategoryDTO.setIconPath(messagesBundle.getString("compressedDirectoryCategory.icon"));
+            preferencesCompressedDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("compressedDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesCompressedDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesDocumentDirCategoryDTO.setDirectoryName(messagesBundle.getString("documentDirectoryCategory.directoryName"));
-            preferencesDocumentDirCategoryDTO.setPath(path + messagesBundle.getString("documentDirectoryCategory.path"));
-            String [] fileDocumentExtensions = messagesBundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
+            preferencesDocumentDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("documentDirectoryCategory.directoryName"));
+            preferencesDocumentDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("documentDirectoryCategory.path"));
+            String [] fileDocumentExtensions = defaultPreferencesBundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
             preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
-            preferencesDocumentDirCategoryDTO.setIconPath(messagesBundle.getString("documentDirectoryCategory.icon"));
+            preferencesDocumentDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("documentDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesDocumentDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesMusicDirCategoryDTO.setDirectoryName(messagesBundle.getString("musicDirectoryCategory.directoryName"));
-            preferencesMusicDirCategoryDTO.setPath(path + messagesBundle.getString("musicDirectoryCategory.path"));
-            String [] fileMusicExtensions = messagesBundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
+            preferencesMusicDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("musicDirectoryCategory.directoryName"));
+            preferencesMusicDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("musicDirectoryCategory.path"));
+            String [] fileMusicExtensions = defaultPreferencesBundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
             preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
-            preferencesMusicDirCategoryDTO.setIconPath(messagesBundle.getString("musicDirectoryCategory.icon"));
+            preferencesMusicDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("musicDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesMusicDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesProgramDirCategoryDTO.setDirectoryName(messagesBundle.getString("programDirectoryCategory.directoryName"));
-            preferencesProgramDirCategoryDTO.setPath(path + messagesBundle.getString("programDirectoryCategory.path"));
-            String [] fileProgramExtensions = messagesBundle.getString("programDirectoryCategory.fileExtensions").split(" ");
+            preferencesProgramDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("programDirectoryCategory.directoryName"));
+            preferencesProgramDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("programDirectoryCategory.path"));
+            String [] fileProgramExtensions = defaultPreferencesBundle.getString("programDirectoryCategory.fileExtensions").split(" ");
             preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
-            preferencesProgramDirCategoryDTO.setIconPath(messagesBundle.getString("programDirectoryCategory.icon"));
+            preferencesProgramDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("programDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesProgramDirCategoryDTO);
 
 
             PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesVideoDirCategoryDTO.setDirectoryName(messagesBundle.getString("videoDirectoryCategory.directoryName"));
-            preferencesVideoDirCategoryDTO.setPath(path + messagesBundle.getString("videoDirectoryCategory.path"));
-            String [] fileVideoExtensions = messagesBundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
+            preferencesVideoDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("videoDirectoryCategory.directoryName"));
+            preferencesVideoDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("videoDirectoryCategory.path"));
+            String [] fileVideoExtensions = defaultPreferencesBundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
             preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
-            preferencesVideoDirCategoryDTO.setIconPath(messagesBundle.getString("videoDirectoryCategory.icon"));
+            preferencesVideoDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("videoDirectoryCategory.icon"));
             preferencesDirectoryCategoryDTOs.add(preferencesVideoDirCategoryDTO);
+
+            PreferencesDirectoryCategoryDTO preferencesImageDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+            preferencesImageDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("imageDirectoryCategory.directoryName"));
+            preferencesImageDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("imageDirectoryCategory.path"));
+            String [] fileImageExtensions = defaultPreferencesBundle.getString("imageDirectoryCategory.fileExtensions").split(" ");
+            preferencesImageDirCategoryDTO.setFileExtensions(fileImageExtensions);
+            preferencesImageDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("imageDirectoryCategory.icon"));
+            preferencesDirectoryCategoryDTOs.add(preferencesImageDirCategoryDTO);
 
 
             preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
@@ -347,10 +356,10 @@ public class DownloadManagerGUI extends JFrame {
             // todo other needed ... use other method
         }
         if (preferencesSaveDTO.getTempDirectory() == null || preferencesSaveDTO.getTempDirectory().equals("")) {
-            preferencesSaveDTO.setTempDirectory(path + messagesBundle.getString("tempDirectory"));
+            preferencesSaveDTO.setTempDirectory(path + defaultPreferencesBundle.getString("tempDirectory"));
         }
         if (preferencesSaveDTO.getDatabasePath() == null || preferencesSaveDTO.getDatabasePath().equals("")) {
-            preferencesSaveDTO.setDatabasePath(path + messagesBundle.getString("databasePath"));
+            preferencesSaveDTO.setDatabasePath(path + defaultPreferencesBundle.getString("databasePath"));
         }
 
 
@@ -363,9 +372,7 @@ public class DownloadManagerGUI extends JFrame {
  //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferenceConnectionDTO().getMaxConnectionNumber());
         try {
             PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
-        } catch (IOException | BackingStoreException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | BackingStoreException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -397,10 +404,10 @@ public class DownloadManagerGUI extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         /////////////////////////////////////////////////////////////////////////
-        JMenu fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.fileMenu.name"));
         JMenuItem exportDataItem = new JMenuItem("Export Data...");
         JMenuItem importDataItem = new JMenuItem("Import Data...");
-        JMenuItem exitItem = new JMenuItem("Exit");
+        JMenuItem exitItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.exitItem.name"));
 
         exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/primo48/others/button_cancel.png"))); // NOI18N
 
@@ -410,11 +417,11 @@ public class DownloadManagerGUI extends JFrame {
         fileMenu.add(exitItem);
 
         /////////////////////////////////////////////////////////////////////////
-        JMenu windowMenu = new JMenu("Window");
-        JMenu showMenu = new JMenu("Show");
-        JMenuItem prefsItem = new JMenuItem("Preferences...");
+        JMenu windowMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.windowMenu.name"));
+        JMenu showMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.showMenu.name"));
+        JMenuItem prefsItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.prefsItem.name"));
 
-        JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem("Category");
+        JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem(messagesBundle.getString("downloadManagerGUI.showFormItem.name"));
         showFormItem.setSelected(true);
 
         showMenu.add(showFormItem);
@@ -422,13 +429,30 @@ public class DownloadManagerGUI extends JFrame {
         windowMenu.add(prefsItem);
 
         /////////////////////////////////////////////////////////////////////////
-        JMenu helpMenu = new JMenu("Help");
-        JMenuItem aboutItem = new JMenuItem("About...");
+        JMenu downloadsMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.downloadsMenu.name"));
+        JMenuItem addURlItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.addURlItem.name"));
+        JMenuItem resumeItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.resumeItem.name"));
+        JMenuItem pauseItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseItem.name"));
+        JMenuItem pauseAllItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseAllItem.name"));
+        JMenuItem clearItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearItem.name"));
+        JMenuItem clearAllCompletedItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.name"));
+
+        downloadsMenu.add(addURlItem);
+        downloadsMenu.add(resumeItem);
+        downloadsMenu.add(pauseItem);
+        downloadsMenu.add(pauseAllItem);
+        downloadsMenu.add(clearItem);
+        downloadsMenu.add(clearAllCompletedItem);
+
+        /////////////////////////////////////////////////////////////////////////
+        JMenu helpMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.helpMenu.name"));
+        JMenuItem aboutItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.aboutItem.name"));
 
         helpMenu.add(aboutItem);
 
         menuBar.add(fileMenu);
         menuBar.add(windowMenu);
+        menuBar.add(downloadsMenu);
         menuBar.add(helpMenu);
 
         prefsItem.addActionListener(new ActionListener() {
@@ -482,6 +506,50 @@ public class DownloadManagerGUI extends JFrame {
      //           }
     //        }
     //    });
+
+        //////////////////////////////////////////////////////////////////////// Downloads Actions
+        addURlItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNewDownloadDialog.setVisible(true);
+            }
+        });
+
+        resumeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downloadPanel.actionResume();
+            }
+        });
+
+        pauseItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pauseDownload();
+            }
+        });
+
+        pauseAllItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pauseAllDownloads();
+            }
+        });
+
+        clearItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearDownload();
+            }
+        });
+
+        clearAllCompletedItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearAllCompletedDownloads();
+            }
+        });
+
 
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -538,6 +606,32 @@ public class DownloadManagerGUI extends JFrame {
             e.printStackTrace();
         } catch (SecurityException se) {
             JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Unable to create necessary directories. may be not have write permission, please restart program", "Directories creation problem", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void pauseDownload() {
+        downloadPanel.actionPause();
+        mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
+    }
+
+    private void pauseAllDownloads() {
+        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
+        if (action == JOptionPane.OK_OPTION) {
+            downloadPanel.actionPauseAll();
+        }
+    }
+
+    private void clearDownload() {
+        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            downloadPanel.actionClear();
+        }
+    }
+
+    private void clearAllCompletedDownloads() {
+        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete all completed files?", "Confirm delete all", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            downloadPanel.actionClearAllCompleted();
         }
     }
 }

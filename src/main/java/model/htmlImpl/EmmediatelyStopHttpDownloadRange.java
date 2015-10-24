@@ -1,7 +1,7 @@
 package model.htmlImpl;
 
 import enums.ConnectionStatus;
-import model.*;
+import model.AbstractDownloadRange;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,19 +10,49 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Saeed on 10/17/2015.
+ * Created by Saeed on 10/23/2015.
  */
-public class HttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 
-    public HttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
+    // to quick stop thread
+    private boolean stop = false;
+    private boolean directStop = false;
+
+    private RandomAccessFile randomAccessFile = null;
+    private InputStream stream = null;
+
+    public EmmediatelyStopHttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
     }
 
     @Override
-    public void run() {
+    public void disConnect() {
+        if (connectionStatus == ConnectionStatus.CONNECTING || connectionStatus == ConnectionStatus.SEND_GET || connectionStatus == ConnectionStatus.RECEIVING_DATA )
+            connectionStatus = ConnectionStatus.DISCONNECTING;
+        setFlags(true);
+    //    thread.interrupt();
+        stateChanged(0); // TODO two time call and print "disconnect from download .... "
+        stopDownload();
+    }
 
-        RandomAccessFile randomAccessFile = null;
-        InputStream stream = null;
+    @Override
+    public void resume() {
+        if (connectionStatus != ConnectionStatus.COMPLETED) {
+            setFlags(false);
+            download();
+        }
+    }
+
+    private void setFlags(boolean flag) {
+        stop = flag;
+        directStop = flag;
+    }
+
+
+    @Override
+    public void run() {
+//      RandomAccessFile randomAccessFile = null;
+        //      InputStream stream = null;
 
         try {
             // Open connection to URL.
@@ -49,7 +79,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 error();
             }
 
-            int rangeContentLength;
+            int rangeContentLength = 0;
             rangeContentLength = connection.getContentLength();
 
             if (rangeContentLength < 1) {
@@ -91,13 +121,8 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 if (stop) //todo may be better way for stop thread
                     break;
 
-
-                int bytesAvailable = stream.available();
-                byte[] input = new byte[bytesAvailable];
-
                 // Read from server into buffer.
-                // temp amount read
-                int bytesRead = stream.read(input, 0, bytesAvailable);
+                int bytesRead = stream.read(buffer);
 
                 if (bytesRead == -1) {
                     System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
@@ -105,10 +130,11 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 }
 
                 // Write buffer to file.
+       //         if (randomAccessFile.)
                 randomAccessFile.write(buffer, 0, bytesRead);
                 rangeDownloaded += bytesRead;
                 //       if (getProgress() - previousProgress > 1) { // when 1% changed
-                if (bytesRead != 0) {
+                if (bytesRead != 0 && !directStop) {
                     stateChanged(bytesRead);
                 }
                 //       }
@@ -117,22 +143,26 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                     System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
-                Thread.sleep(100);
+
             }
 
             /* Change status to complete if this point was
               reached because downloading has finished. */
-            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && !stop) {
-                connectionStatus = ConnectionStatus.COMPLETED;
-                randomAccessFile.close();
-            } else {
-                connectionStatus = ConnectionStatus.DISCONNECTED;
-                randomAccessFile.close();
-            }
-            stateChanged(0);
+            //       if (connectionStatus == ConnectionStatus.RECEIVING_DATA && stop == false) {
+            //          connectionStatus = ConnectionStatus.COMPLETED;
+            //           randomAccessFile.close();
+            //      } else {
+            //           connectionStatus = ConnectionStatus.DISCONNECTED;
+            //           randomAccessFile.close();
+            //       }
+            //        stateChanged(0);
+            if (!directStop)
+                stopDownload();
         } catch (Exception e) {
-            e.printStackTrace();
-            error();
+            if (!directStop) {
+                e.printStackTrace();
+                error();
+            }
         } finally {
             // Close file.
             if (randomAccessFile != null) {
@@ -150,5 +180,38 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 }
             }
         }
+    }
+
+    private void stopDownload() {
+        try {
+            /* Change status to complete if this point was
+              reached because downloading has finished. */
+            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && !stop)
+                connectionStatus = ConnectionStatus.COMPLETED;
+            else
+                connectionStatus = ConnectionStatus.DISCONNECTED;
+            randomAccessFile.close();
+            stateChanged(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            error();
+        } finally {
+            // Close file.
+            if (randomAccessFile != null) {
+                try {
+                    randomAccessFile.close();
+                } catch (Exception ignored) {
+                }
+            }
+
+            // Close connection to server.
+//            if (stream != null) {
+//                try {
+//                    stream.close();
+//                } catch (Exception ignored) {
+//                }
+//            }
+        }
+
     }
 }

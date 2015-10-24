@@ -66,7 +66,7 @@ public class FileUtil {
             File outputFile = outputFile(file);
             outputFiles.add(outputFile);
         }
-       // File file = Collections.max(outputFiles, new FileNameComparator());
+
         return Collections.max(outputFiles, fileNameComparator);
     }
 
