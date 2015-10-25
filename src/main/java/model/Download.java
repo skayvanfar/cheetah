@@ -98,4 +98,7 @@ public interface Download {
 
     // add a new downloadRange if not in downloadRangeList
     public void addDownloadRange(DownloadRange downloadRange);
+
+    // reset data of download for redownload
+    public void resetData();
 }

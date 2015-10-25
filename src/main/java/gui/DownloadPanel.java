@@ -175,6 +175,15 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     }
 
+    private void setStateOfMenuItems() {
+        resumeItem.setEnabled(false);
+        pauseItem.setEnabled(false);
+        //    pauseAllButton.setEnabled(true);
+        clearItem.setEnabled(false);
+        //     clearAllCompletedButton.setEnabled(true);
+        //      preferencesButton.setEnabled(true);
+    }
+
     private void calculateDownloaded(Download download) {
         int downloaded = 0;
         for (DownloadRange downloadRange : download.getDownloadRangeList()) {
@@ -227,6 +236,8 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         popupMenu.add(removeFromQueueItem);
         popupMenu.add(new JPopupMenu.Separator());
         popupMenu.add(propertiesItem);
+
+        setStateOfMenuItems();
 
         return popupMenu;
     }
@@ -318,62 +329,67 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     // Clear the selected download.
     public void actionClear() {
-        if (selectedDownload == null) return;
-        //     Download download = selectedDownloadDialog.getDownload();
+        int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            if (selectedDownload == null) return;
+            //     Download download = selectedDownloadDialog.getDownload();
 
-        clearing = true;
-        downloadsTableModel.clearDownload(selectedDownload);
-        if (downloadList.contains(selectedDownload))
-            downloadList.remove(selectedDownload);
-        clearing = false;
+            clearing = true;
+            downloadsTableModel.clearDownload(selectedDownload);
+            if (downloadList.contains(selectedDownload))
+                downloadList.remove(selectedDownload);
+            clearing = false;
 
-        //    selectedDownloadDialog = null;
-        DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
-        downloadDialogs.remove(downloadDialog);
-        downloadDialog.dispose();
-        downloadDialog = null;
+            //    selectedDownloadDialog = null;
+            DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
+            downloadDialogs.remove(downloadDialog);
+            downloadDialog.dispose();
+            downloadDialog = null;
 
 
-        try {
-            databaseController.delete(selectedDownload.getId());
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                databaseController.delete(selectedDownload.getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            selectedDownload = null;
+            tableSelectionChanged();
         }
-
-        try {
-            FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        selectedDownload = null;
-        tableSelectionChanged();
     }
 
     // Clear all completed downloads.
     public void actionClearAllCompleted() {
+        int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to delete all completed files?", "Confirm delete all", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            List<Download> selectedDownloads = downloadsTableModel.getDownloadsByStatus(DownloadStatus.COMPLETE);
 
-        List<Download> selectedDownloads = downloadsTableModel.getDownloadsByStatus(DownloadStatus.COMPLETE);
+            clearing = true;
+            downloadsTableModel.clearDownloads(selectedDownloads);
+            downloadList.removeAll(selectedDownloads);
+            clearing = false;
 
-        clearing = true;
-        downloadsTableModel.clearDownloads(selectedDownloads);
-        downloadList.removeAll(selectedDownloads);
-        clearing = false;
-
-        try {
-            for (Download download : selectedDownloads) {
-                if (selectedDownload == download)
-                    selectedDownload = null;
-                DownloadDialog downloadDialog = getDownloadDialogByDownload(download);
-                downloadDialogs.remove(downloadDialog);
-                downloadDialog.dispose();
-                databaseController.delete(download.getId());
-                FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName())); // todo must again
+            try {
+                for (Download download : selectedDownloads) {
+                    if (selectedDownload == download)
+                        selectedDownload = null;
+                    DownloadDialog downloadDialog = getDownloadDialogByDownload(download);
+                    downloadDialogs.remove(downloadDialog);
+                    downloadDialog.dispose();
+                    databaseController.delete(download.getId());
+                    FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName())); // todo must again
+                }
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
+            tableSelectionChanged();
         }
-        tableSelectionChanged();
     }
 
     // Called when table row selection changes.
@@ -486,37 +502,70 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int row = downloadTable.getSelectedRow();
         JMenuItem clicked= (JMenuItem) e.getSource();
 
+        if (clicked == openItem) {
+        //    actionResume();
+        } else if (clicked == openFolderItem) {
+      //      mainToolbarListener.resumeEventOccured();
+        } else if (clicked == resumeItem) {
+            actionResume(); // todo may need  mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
+        }  else if (clicked == pauseItem) {
+            actionPause();
+        } else if (clicked == clearItem) {
+            actionClear();
+        } else if (clicked == reJoinItem) {
+            reJoinFileParts();
+        } else if (clicked == reDownloadItem) {
+            reDownload();
+        } else if (clicked == moveToQueueItem) {
+    //        mainToolbarListener.preferencesEventOccured();
+        } else if (clicked == removeFromQueueItem) {
+    //        mainToolbarListener.preferencesEventOccured();
+        } else if (clicked == propertiesItem) {
+            showProperties();
+        }
 
-            if (clicked == openItem) {
-                actionResume();
-            } else if (clicked == openFolderItem) {
-          //      mainToolbarListener.resumeEventOccured();
-            } else if (clicked == resumeItem) {
-                actionResume(); // todo may need  mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
-            }  else if (clicked == pauseItem) {
-                actionPause();
-            } else if (clicked == clearItem) {
-                int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
-                if (action == JOptionPane.OK_OPTION) {
-                    actionClear();
-                }
-            } else if (clicked == reJoinItem) {
-         //       mainToolbarListener.clearAllCompletedEventOccured();
-            } else if (clicked == reDownloadItem) {
-        //        mainToolbarListener.preferencesEventOccured();
-            } else if (clicked == moveToQueueItem) {
-        //        mainToolbarListener.preferencesEventOccured();
-            } else if (clicked == removeFromQueueItem) {
-        //        mainToolbarListener.preferencesEventOccured();
-            } else if (clicked == propertiesItem) {
-                DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
-                if (!downloadDialog.isVisible()) {
-                    downloadDialog.setVisible(true);
-                }
+    }
+
+    public void reJoinFileParts() {
+        List<DownloadRange> downloadRangeList = selectedDownload.getDownloadRangeList();
+        List<File> files = new ArrayList<>();
+        for (DownloadRange downloadRange : downloadRangeList) {
+            files.add(downloadRange.getDownloadRangeFile());
+        }
+
+        FileUtil.joinDownloadedParts(files, selectedDownload.getDownloadPath(), selectedDownload.getDownloadName());
+        JOptionPane.showMessageDialog(parent, "Join parts completed.", "Rejoin", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void reDownload() {
+        int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to redownload the file?", "Confirm Redownload", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            Download newDownload = selectedDownload;
+            try {
+                FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            newDownload.resetData();
+            newDownload.resume();
+            tableSelectionChanged();
+        }
+    }
 
+    public void showProperties() {
+        DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
+        if (!downloadDialog.isVisible()) {
+            downloadDialog.setVisible(true);
+        }
+    }
+
+    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState) {
+        pauseItem.setEnabled(pauseState);
+        resumeItem.setEnabled(resumeState);
+        clearItem.setEnabled(clearState);
+        reJoinItem.setEnabled(reJoinState);
+        reDownloadItem.setEnabled(reDownloadState);
     }
 }

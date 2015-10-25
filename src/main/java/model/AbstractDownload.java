@@ -372,7 +372,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     // Notify observers that this download's status has changed.
-    protected void stateChanged() {
+    protected synchronized void stateChanged() {
         for (final DownloadStatusListener downloadStatusListener : downloadStatusListeners)
             SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
             public void run() { // todo must got to class that listen this class
@@ -407,6 +407,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                 break;
             case ERROR:
                 System.out.println("error");
+          //      downloadRange.resume(); todo test for redownload
                 status = DownloadStatus.ERROR;
                 if (downloadInfoListener != null)
                     downloadInfoListener.downloadNeedSaved(this);
@@ -436,5 +437,13 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
             }
         }
         return state;
+    }
+
+    public void resetData() {
+        downloaded = 0;
+        status = DownloadStatus.DOWNLOADING;
+        for (DownloadRange downloadRange : downloadRangeList) {
+            downloadRange.resetData();
+        }
     }
 }

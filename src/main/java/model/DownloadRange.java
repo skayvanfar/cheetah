@@ -70,4 +70,7 @@ public interface DownloadRange {
 
     // Resume this download.
     public void resume();
+
+    // Reset data
+    public void resetData();
 }

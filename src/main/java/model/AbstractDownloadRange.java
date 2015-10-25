@@ -205,4 +205,11 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         for (DownloadRangeStatusListener downloadRangeStatusListener : downloadRangeStatusListeners)
             downloadRangeStatusListener.downloadStatusChanged(this, readed);
     }
+
+    @Override
+    public void resetData() {
+        rangeSize = -1;
+        rangeDownloaded = 0;
+        connectionStatus = ConnectionStatus.CONNECTING;
+    }
 }

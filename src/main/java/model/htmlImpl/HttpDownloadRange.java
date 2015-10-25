@@ -81,23 +81,23 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
 
                 /* Size buffer according to how much of the
                   file is left to download. */
-                byte buffer[];
-                if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
-                    buffer = new byte[MAX_BUFFER_SIZE];
-                } else {
-                    buffer = new byte[rangeSize - rangeDownloaded];
-                }
+         //       byte buffer[];
+        //        if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
+        //            buffer = new byte[MAX_BUFFER_SIZE];
+        //        } else {
+        //            buffer = new byte[rangeSize - rangeDownloaded];
+       //         }
 
                 if (stop) //todo may be better way for stop thread
                     break;
 
 
                 int bytesAvailable = stream.available();
-                byte[] input = new byte[bytesAvailable];
+                byte[] buffer = new byte[bytesAvailable];
 
                 // Read from server into buffer.
                 // temp amount read
-                int bytesRead = stream.read(input, 0, bytesAvailable);
+                int bytesRead = stream.read(buffer, 0, bytesAvailable);
 
                 if (bytesRead == -1) {
                     System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
@@ -117,7 +117,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                     System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
-                Thread.sleep(100);
+                Thread.sleep(5);
             }
 
             /* Change status to complete if this point was

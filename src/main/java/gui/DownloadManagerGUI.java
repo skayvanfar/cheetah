@@ -4,6 +4,7 @@ import controller.DialogAuthenticator;
 import enums.DownloadCategory;
 import enums.DownloadStatus;
 import enums.ProtocolType;
+import gui.Download.DownloadDialog;
 import gui.listener.*;
 import gui.preference.PreferenceDialog;
 import model.dto.PreferenceConnectionDTO;
@@ -34,7 +35,7 @@ import java.util.prefs.Preferences;
  */
 
 // implements Observer
-public class DownloadManagerGUI extends JFrame {
+public class DownloadManagerGUI extends JFrame implements ActionListener {
 
     private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
     private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
@@ -49,6 +50,28 @@ public class DownloadManagerGUI extends JFrame {
     private PreferenceDialog preferenceDialog;
     private Preferences preferences;
     private AboutDialog aboutDialog;
+
+    // Menu Items
+    private JMenuItem exportDataItem;
+    private JMenuItem importDataItem;
+    private JMenuItem exitItem;
+    private JMenuItem prefsItem;
+
+    private JMenuItem addURlItem;
+    private JMenuItem openItem;
+    private JMenuItem openFolderItem;
+    private JMenuItem pauseItem;
+    private JMenuItem pauseAllItem;
+    private JMenuItem resumeItem;
+    private JMenuItem clearItem;
+    private JMenuItem clearAllCompletedItem;
+    private JMenuItem reJoinItem;
+    private JMenuItem reDownloadItem;
+    private JMenuItem moveToQueueItem;
+    private JMenuItem removeFromQueueItem;
+    private JMenuItem propertiesItem;
+
+    private JMenuItem aboutItem;
 
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
@@ -172,7 +195,8 @@ public class DownloadManagerGUI extends JFrame {
 
             @Override
             public void pauseEventOccured() {
-                pauseDownload();
+                downloadPanel.actionPause();
+                mainToolbar.setStateOfButtonsControl(false, false, false, false, false); // canceled
             }
 
             @Override
@@ -182,17 +206,27 @@ public class DownloadManagerGUI extends JFrame {
 
             @Override
             public void pauseAllEventOccured() {
-                pauseAllDownloads();
+                downloadPanel.actionPauseAll();
             }
 
             @Override
             public void clearEventOccured() {
-                clearDownload();
+                downloadPanel.actionClear();
             }
 
             @Override
             public void clearAllCompletedEventOccured() {
-                clearAllCompletedDownloads();
+                downloadPanel.actionClearAllCompleted();
+            }
+
+            @Override
+            public void reJoinEventOccured() {
+                downloadPanel.reJoinFileParts();
+            }
+
+            @Override
+            public void reDownloadEventOccured() {
+                downloadPanel.reDownload();
             }
 
             @Override
@@ -246,6 +280,15 @@ public class DownloadManagerGUI extends JFrame {
         setSize(900, 580);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
+    }
+
+    private void setStateOfMenuItems() {
+        resumeItem.setEnabled(false);
+        pauseItem.setEnabled(false);
+    //    pauseAllButton.setEnabled(true);
+        clearItem.setEnabled(false);
+   //     clearAllCompletedButton.setEnabled(true);
+  //      preferencesButton.setEnabled(true);
     }
 
     private PreferencesDTO getPreferences() {
@@ -383,20 +426,30 @@ public class DownloadManagerGUI extends JFrame {
         if (state != null) {
             switch (state) {
                 case DOWNLOADING:
-                    mainToolbar.setStateOfButtonsControl(true, false, false);
+                    mainToolbar.setStateOfButtonsControl(true, false, false, false, false); // Toolbar Buttons
+                    downloadPanel.setStateOfButtonsControl(true, false, false, false, false); // Toolbar Buttons
+                    setStateOfMenuItemsControl(true, false, false, false, false); // MenuItems
                     break;
                 case PAUSED:
-                    mainToolbar.setStateOfButtonsControl(false, true, true); // last false
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true); // last false
+                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, true, true, false, true);
                     break;
                 case ERROR:
-                    mainToolbar.setStateOfButtonsControl(false, true, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true);
+                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, true, true, false, true);
                     break;
                 default: // COMPLETE or CANCELLED
-                    mainToolbar.setStateOfButtonsControl(false, false, true);
+                    mainToolbar.setStateOfButtonsControl(false, false, true, true, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, true, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, true, true, true);
             }
         } else {
             // No download is selected in table.
-            mainToolbar.setStateOfButtonsControl(false, false, false);
+            mainToolbar.setStateOfButtonsControl(false, false, false, false, false);
+            downloadPanel.setStateOfButtonsControl(false, false, false, false, false); // Toolbar Buttons
+            setStateOfMenuItemsControl(false, false, false, false, false);
         }
     }
 
@@ -405,9 +458,9 @@ public class DownloadManagerGUI extends JFrame {
 
         /////////////////////////////////////////////////////////////////////////
         JMenu fileMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.fileMenu.name"));
-        JMenuItem exportDataItem = new JMenuItem("Export Data...");
-        JMenuItem importDataItem = new JMenuItem("Import Data...");
-        JMenuItem exitItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.exitItem.name"));
+        exportDataItem = new JMenuItem("Export Data...");
+        importDataItem = new JMenuItem("Import Data...");
+        exitItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.exitItem.name"));
 
         exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/primo48/others/button_cancel.png"))); // NOI18N
 
@@ -419,7 +472,7 @@ public class DownloadManagerGUI extends JFrame {
         /////////////////////////////////////////////////////////////////////////
         JMenu windowMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.windowMenu.name"));
         JMenu showMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.showMenu.name"));
-        JMenuItem prefsItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.prefsItem.name"));
+        prefsItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.prefsItem.name"));
 
         JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem(messagesBundle.getString("downloadManagerGUI.showFormItem.name"));
         showFormItem.setSelected(true);
@@ -428,38 +481,74 @@ public class DownloadManagerGUI extends JFrame {
         windowMenu.add(showMenu);
         windowMenu.add(prefsItem);
 
+        exportDataItem.addActionListener(this);
+        importDataItem.addActionListener(this);
+        exitItem.addActionListener(this);
+        prefsItem.addActionListener(this);
+
         /////////////////////////////////////////////////////////////////////////
         JMenu downloadsMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.downloadsMenu.name"));
-        JMenuItem addURlItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.addURlItem.name"));
-        JMenuItem resumeItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.resumeItem.name"));
-        JMenuItem pauseItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseItem.name"));
-        JMenuItem pauseAllItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseAllItem.name"));
-        JMenuItem clearItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearItem.name"));
-        JMenuItem clearAllCompletedItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.name"));
+        addURlItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.addURlItem.name"));
+        openItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openItem.name"));
+        openFolderItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openFolderItem.name"));
+        resumeItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.resumeItem.name"));
+        pauseItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseItem.name"));
+        pauseAllItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseAllItem.name"));
+        clearItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearItem.name"));
+        clearAllCompletedItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.name"));
+        reJoinItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.reJoinItem.name"));
+        reDownloadItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.reDownloadItem.name"));
+        moveToQueueItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.moveToQueueItem.name"));
+        removeFromQueueItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.removeFromQueueItem.name"));
+        propertiesItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.propertiesItem.name"));
 
         downloadsMenu.add(addURlItem);
+        downloadsMenu.add(new JSeparator());
+        downloadsMenu.add(openItem);
+        downloadsMenu.add(openFolderItem);
+        downloadsMenu.add(new JSeparator());
         downloadsMenu.add(resumeItem);
         downloadsMenu.add(pauseItem);
         downloadsMenu.add(pauseAllItem);
+        downloadsMenu.add(new JSeparator());
         downloadsMenu.add(clearItem);
         downloadsMenu.add(clearAllCompletedItem);
+        downloadsMenu.add(new JSeparator());
+        downloadsMenu.add(reJoinItem);
+        downloadsMenu.add(reDownloadItem);
+        downloadsMenu.add(new JSeparator());
+        downloadsMenu.add(moveToQueueItem);
+        downloadsMenu.add(removeFromQueueItem);
+        downloadsMenu.add(new JSeparator());
+        downloadsMenu.add(propertiesItem);
+
+        addURlItem.addActionListener(this);
+        openItem.addActionListener(this);
+        openFolderItem.addActionListener(this);
+        resumeItem.addActionListener(this);
+        pauseItem.addActionListener(this);
+        pauseAllItem.addActionListener(this);
+        clearItem.addActionListener(this);
+        clearAllCompletedItem.addActionListener(this);
+        reDownloadItem.addActionListener(this);
+        moveToQueueItem.addActionListener(this);
+        removeFromQueueItem.addActionListener(this);
+        propertiesItem.addActionListener(this);
+
+        setStateOfMenuItems();
 
         /////////////////////////////////////////////////////////////////////////
         JMenu helpMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.helpMenu.name"));
-        JMenuItem aboutItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.aboutItem.name"));
+        aboutItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.aboutItem.name"));
 
         helpMenu.add(aboutItem);
+
+        aboutItem.addActionListener(this);
 
         menuBar.add(fileMenu);
         menuBar.add(windowMenu);
         menuBar.add(downloadsMenu);
         menuBar.add(helpMenu);
-
-        prefsItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                preferenceDialog.setVisible(true);
-            }
-        });
 
         showFormItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
@@ -481,93 +570,6 @@ public class DownloadManagerGUI extends JFrame {
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 
         importDataItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
-
-    ///    importDataItem.addActionListener(new  ActionListener() {
-    //        public void actionPerformed(ActionEvent arg0) {
-    //            if(fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-    //                try {
-   //                     controller.loadFromFile(fileChooser.getSelectedFile());
-   //                     tablePanel.refresh();
-   //                 } catch (IOException e) {
-   //                     JOptionPane.showMessageDialog(MainFrame.this, "Could not load data from file.", "Error", JOptionPane.ERROR_MESSAGE);
-   //                 }
-   //             }
-   //         }
-   //     });
-
-   //     exportDataItem.addActionListener(new ActionListener() {
-     //       public void actionPerformed(ActionEvent arg0) {
-     //           if(fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-     //               try {
-       //                 controller.saveToFile(fileChooser.getSelectedFile());
-      //              } catch (IOException e) {
-     //                   JOptionPane.showMessageDialog(MainFrame.this, "Could not save data from file.", "Error", JOptionPane.ERROR_MESSAGE);
-     //               }
-     //           }
-    //        }
-    //    });
-
-        //////////////////////////////////////////////////////////////////////// Downloads Actions
-        addURlItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addNewDownloadDialog.setVisible(true);
-            }
-        });
-
-        resumeItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                downloadPanel.actionResume();
-            }
-        });
-
-        pauseItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pauseDownload();
-            }
-        });
-
-        pauseAllItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pauseAllDownloads();
-            }
-        });
-
-        clearItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearDownload();
-            }
-        });
-
-        clearAllCompletedItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearAllCompletedDownloads();
-            }
-        });
-
-
-        exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                WindowListener[]  listeners = getWindowListeners();
-
-                for (WindowListener listener : listeners) {
-                    listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
-                }
-            }
-        });
-
-        aboutItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!aboutDialog.isVisible())
-                    aboutDialog.setVisible(true);
-            }
-        });
 
         return menuBar;
     }
@@ -609,29 +611,61 @@ public class DownloadManagerGUI extends JFrame {
         }
     }
 
-    private void pauseDownload() {
-        downloadPanel.actionPause();
-        mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
+    private void setStateOfMenuItemsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState) {
+        pauseItem.setEnabled(pauseState);
+        resumeItem.setEnabled(resumeState);
+        clearItem.setEnabled(clearState);
+        reJoinItem.setEnabled(reJoinState);
+        reJoinItem.setEnabled(reDownloadState);
     }
 
-    private void pauseAllDownloads() {
-        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
-        if (action == JOptionPane.OK_OPTION) {
-            downloadPanel.actionPauseAll();
-        }
-    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JMenuItem clicked= (JMenuItem) e.getSource();
 
-    private void clearDownload() {
-        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
-        if (action == JOptionPane.OK_OPTION) {
+        if (clicked == exportDataItem) {
+        //    addNewDownloadDialog.setVisible(true);
+        } else if (clicked == importDataItem) {
+        //    addNewDownloadDialog.setVisible(true);
+        } else if (clicked == exitItem) {
+            WindowListener[]  listeners = getWindowListeners();
+            for (WindowListener listener : listeners)
+                listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
+        } else if (clicked == prefsItem) {
+            preferenceDialog.setVisible(true);
+        } else if (clicked == addURlItem) {
+            addNewDownloadDialog.setVisible(true);
+        } else if (clicked == openItem) {
+        //    downloadPanel.actionResume();
+        } else if (clicked == openFolderItem) {
+            //      mainToolbarListener.resumeEventOccured();
+        } else if (clicked == resumeItem) {
+            downloadPanel.actionResume();
+        } else if (clicked == pauseItem) {
+            downloadPanel.actionPause();
+            mainToolbar.setStateOfButtonsControl(false, false, false, false, false); // canceled
+        } else if (clicked == pauseAllItem) {
+            int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
+            if (action == JOptionPane.OK_OPTION) {
+                downloadPanel.actionPauseAll();
+            }
+        } else if (clicked == clearItem) {
             downloadPanel.actionClear();
-        }
-    }
-
-    private void clearAllCompletedDownloads() {
-        int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to delete all completed files?", "Confirm delete all", JOptionPane.OK_CANCEL_OPTION);
-        if (action == JOptionPane.OK_OPTION) {
+        } else if (clicked == clearAllCompletedItem) {
             downloadPanel.actionClearAllCompleted();
+        } else if (clicked == reJoinItem) {
+            downloadPanel.reJoinFileParts();
+        } else if (clicked == reDownloadItem) {
+            downloadPanel.reDownload();
+        } else if (clicked == moveToQueueItem) {
+            //        mainToolbarListener.preferencesEventOccured();
+        } else if (clicked == removeFromQueueItem) {
+            //        mainToolbarListener.preferencesEventOccured();
+        } else if (clicked == propertiesItem) {
+            downloadPanel.showProperties();
+        } else if (clicked == aboutItem) {
+            if (!aboutDialog.isVisible())
+                aboutDialog.setVisible(true);
         }
     }
 }
