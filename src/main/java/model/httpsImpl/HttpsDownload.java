@@ -1,10 +1,13 @@
-package model.htmlImpl;
+package model.httpsImpl;
 
 import enums.DownloadStatus;
 import enums.ProtocolType;
-import model.*;
+import model.AbstractDownload;
+import model.Download;
+import model.htmlImpl.HttpDownloadRange;
 import utils.ConnectionUtil;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -13,22 +16,25 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
- * Created by Saeed on 10/17/2015.
+ * Created by Saeed on 10/26/2015.
  */
-public class HttpDownload extends AbstractDownload implements Download {
+public class HttpsDownload extends AbstractDownload implements Download {
 
-
-
-    public HttpDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
+    public HttpsDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
         super(id, url, downloadName, partCount, downloadPath, downloadRangePath, protocolType);
     }
 
     @Override
+    public boolean isResumeCapability() {
+        return false;
+    }
+
+    @Override
     public void run() {
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             // Open connection to URL.
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range", "bytes=0-");
@@ -78,11 +84,12 @@ public class HttpDownload extends AbstractDownload implements Download {
         }
         SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog todo move to other loc
             public void run() {
-                downloadInfoListener.newDownloadInfoGot(HttpDownload.this); // todo may be Download
+                downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be Download
             }
         });
     }
 
+    @Override
     public void createDownloadRanges() {
         int partSize= ConnectionUtil.getPartSizeOfDownload(size, partCount);
         int startRange = 0;
@@ -95,7 +102,7 @@ public class HttpDownload extends AbstractDownload implements Download {
             for (int i = 0;  i < partCount; i++) {
                 //   String fileName = ConnectionUtil.getFileName(url);
                 String partFileName = downloadName + ".00" + (i + 1);
-                downloadRange = new HttpDownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, endRange);
+                downloadRange = new HttpsDownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, endRange);
 
                 addDownloadRange(downloadRange);
 
@@ -111,7 +118,7 @@ public class HttpDownload extends AbstractDownload implements Download {
         } else {
             //     String fileName = ConnectionUtil.getFileName(url);
             String partFileName = downloadName + ".00" + 1;
-            downloadRange = new HttpDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, size);
+            downloadRange = new HttpsDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, size);
             addDownloadRange(downloadRange);
             downloadRange.resume();
         }

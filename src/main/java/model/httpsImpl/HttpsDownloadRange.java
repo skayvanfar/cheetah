@@ -1,8 +1,9 @@
-package model.htmlImpl;
+package model.httpsImpl;
 
 import enums.ConnectionStatus;
-import model.*;
+import model.AbstractDownloadRange;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -10,11 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Saeed on 10/17/2015.
+ * Created by Saeed on 10/26/2015.
  */
-public class HttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+public class HttpsDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 
-    public HttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
+    public HttpsDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
     }
 
@@ -25,7 +26,7 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
 
         try {
             // Open connection to URL.
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
             String rangePropertyValue = "bytes=" + (startRange + rangeDownloaded) + "-";
 
@@ -80,12 +81,12 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
 
                 /* Size buffer according to how much of the
                   file is left to download. */
-         //       byte buffer[];
-        //        if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
-        //            buffer = new byte[MAX_BUFFER_SIZE];
-        //        } else {
-        //            buffer = new byte[rangeSize - rangeDownloaded];
-       //         }
+                //       byte buffer[];
+                //        if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
+                //            buffer = new byte[MAX_BUFFER_SIZE];
+                //        } else {
+                //            buffer = new byte[rangeSize - rangeDownloaded];
+                //         }
 
                 if (stop) //todo may be better way for stop thread
                     break;

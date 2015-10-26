@@ -7,9 +7,9 @@ import java.util.Objects;
  */
 public enum ProtocolType {
 
-    HTTP(0, "HTTP"),
-    FTP(1, "FTP"),
-    HTTPS(2, "HTTPS");
+    HTTP(0, "http"),
+    FTP(1, "ftp"),
+    HTTPS(2, "https");
 
     private Integer value;
     private String desc;
@@ -32,6 +32,16 @@ public enum ProtocolType {
     public static ProtocolType valueOf(Integer type) {
         for (ProtocolType code : ProtocolType.values()) {
             if (Objects.equals(type, code.getValue())) {
+                return code;
+            }
+        }
+        return null;
+    }
+
+    // static factory method
+    public static ProtocolType valueOfByDesc(String desc) {
+        for (ProtocolType code : ProtocolType.values()) {
+            if (desc.equals(code.getDesc())) {
                 return code;
             }
         }

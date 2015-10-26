@@ -8,6 +8,8 @@ import model.Download;
 import model.DownloadRange;
 import model.htmlImpl.HttpDownload;
 import model.htmlImpl.HttpDownloadRange;
+import model.httpsImpl.HttpsDownload;
+import model.httpsImpl.HttpsDownloadRange;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -294,10 +296,10 @@ public class JDBCDatabaseDao implements DatabaseDao {
                     download = new HttpDownload(id, new URL(url), downloadName, 8, downloadPath, downloadRangePath, protocolType);
                     break;
                 case FTP:
-
+                    // todo must be created ...
                     break;
                 case HTTPS:
-
+                    download = new HttpsDownload(id, new URL(url), downloadName, 8, downloadPath, downloadRangePath, protocolType);
                     break;
             }
             download.setSize(size);
@@ -322,10 +324,10 @@ public class JDBCDatabaseDao implements DatabaseDao {
                         downloadRange = new HttpDownloadRange(number, new URL(url), new File(downloadRangeFile), startRange, endRange); // todo 0 0
                         break;
                     case FTP:
-
+                        // todo must be created ...
                         break;
                     case HTTPS:
-
+                        downloadRange = new HttpsDownloadRange(number, new URL(url), new File(downloadRangeFile), startRange, endRange);
                         break;
                 }
 

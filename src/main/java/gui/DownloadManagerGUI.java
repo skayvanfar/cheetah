@@ -7,14 +7,17 @@ import enums.ProtocolType;
 import gui.Download.DownloadDialog;
 import gui.listener.*;
 import gui.preference.PreferenceDialog;
+import model.Download;
 import model.dto.PreferenceConnectionDTO;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesDirectoryCategoryDTO;
 import model.dto.PreferencesSaveDTO;
 import model.htmlImpl.HttpDownload;
+import model.httpsImpl.HttpsDownload;
 import org.apache.commons.io.FilenameUtils;
 import utils.ConnectionUtil;
 import utils.PrefObj;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -167,9 +170,22 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                         File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
                         int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
 
+                        Download download = null;
                         // todo must set stretegy pattern
-                        downloadPanel.addDownload(new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                downloadPathFile, downloadRangeFile, ProtocolType.HTTP));
+                        switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
+                            case HTTP:
+                                download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
+                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                                break;
+                            case FTP:
+                                // todo must be created ...
+                                break;
+                            case HTTPS:
+                                download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
+                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                                break;
+                        }
+                        downloadPanel.addDownload(download);
                     } catch (IOException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
@@ -274,6 +290,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         });
 
         Authenticator.setDefault(new DialogAuthenticator(this));
+
+        setIconImage(Utils.createIcon(messagesBundle.getString("downloadManagerGUI.mainFrame.iconPath")).getImage());
 
         setMinimumSize(new Dimension(640, 480));
         // Set window size.

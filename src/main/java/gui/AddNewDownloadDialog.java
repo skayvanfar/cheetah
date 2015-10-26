@@ -178,7 +178,7 @@ class AddNewDownloadDialog extends JDialog {
     // Verify download URL.
     private URL verifyUrl(String url) {
         // Only allow HTTP URLs.
-        if (!url.toLowerCase().startsWith("http://"))
+        if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
             return null;
 
         // Verify format of URL.

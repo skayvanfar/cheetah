@@ -35,6 +35,8 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected File downloadPath;
     protected File downloadRangePath;
 
+    protected boolean resumeCapability;
+
     protected List<DownloadRange> downloadRangeList;
 
     protected DownloadInfoListener downloadInfoListener;
@@ -55,6 +57,8 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         this.downloadRangePath = downloadRangePath;
 
         this.protocolType = protocolType;
+
+        resumeCapability = false;
 
         downloadRangeList = new ArrayList<>();
 
@@ -162,7 +166,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     @Override
-    public abstract boolean isResumeCapability();
+    public boolean isResumeCapability() {
+        return resumeCapability;
+    }
 
     // Get this download's size.
     @Override
