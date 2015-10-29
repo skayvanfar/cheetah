@@ -31,7 +31,7 @@ public class DownloadDialog extends JDialog {
         setLayout(new BorderLayout());
 
         downloadInfoPanel = new DownloadInfoPanel(download);
-        downloadPropertiesPanel = new DownloadPropertiesPanel();
+        downloadPropertiesPanel = new DownloadPropertiesPanel(download);
         JTabbedPane tabbedPane = new JTabbedPane();
 
         tabbedPane.addTab(bundle.getString("downloadDialog.tabbedPane.downloadInfoPanel"), downloadInfoPanel);

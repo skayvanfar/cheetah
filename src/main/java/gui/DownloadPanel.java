@@ -106,7 +106,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
         downloadDialogs = new ArrayList<>();
 
-        String connectionUrl = "jdbc:sqlite:"+ databasePath + File.separator + "chita.db";
+        String connectionUrl = "jdbc:sqlite:"+ databasePath + File.separator + "cheetah.db";
         databaseController = new DatabaseControllerImpl("org.sqlite.JDBC", connectionUrl, 0, "", "");
 
         try {

@@ -8,7 +8,7 @@ import javax.swing.*;
 public class Application {
 
     // Set application title.
-    private final static String NAME_OF_CUI = "Chita";
+    private final static String NAME_OF_CUI = "Cheetah";
 
     public static void main( String[] args ) {
 

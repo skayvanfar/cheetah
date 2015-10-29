@@ -98,7 +98,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             }
 
             // setTheme(String themeName, String licenseKey, String logoString)
-    //        com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "LPG", "Chita");
+    //        com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "LPG", "Cheetah");
 
             // select Look and Feel
        //     UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
@@ -207,6 +207,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             @Override
             public void newDownloadEventOccured() {
                 addNewDownloadDialog.setVisible(true);
+                addNewDownloadDialog.onPaste();
             }
 
             @Override
@@ -333,7 +334,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     private void checkAndSetPreferencesDTO(PreferencesDTO preferencesDTO) {
         String homeDir = System.getProperty("user.home");
 
-        String path = homeDir + File.separator + "Downloads" + File.separator + "Chita Downloaded Files" + File.separator;
+        String path = homeDir + File.separator + "Downloads" + File.separator + "Cheetah Downloaded Files" + File.separator;
 
         // PreferenceConnectionDTO
         PreferenceConnectionDTO preferenceConnectionDTO = preferencesDTO.getPreferenceConnectionDTO();
@@ -653,6 +654,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             preferenceDialog.setVisible(true);
         } else if (clicked == addURlItem) {
             addNewDownloadDialog.setVisible(true);
+            addNewDownloadDialog.onPaste();
         } else if (clicked == openItem) {
         //    downloadPanel.actionResume();
         } else if (clicked == openFolderItem) {

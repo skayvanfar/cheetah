@@ -7,6 +7,9 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -196,4 +199,16 @@ class AddNewDownloadDialog extends JDialog {
 
         return verifiedUrl;
     }
+
+    public void onPaste(){
+        Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable t = c.getContents(this);
+        if (t == null)
+            return;
+        try {
+            newTextField.setText((String) t.getTransferData(DataFlavor.stringFlavor));
+        } catch (Exception e){
+            e.printStackTrace();
+        }//try
+    }//onPaste
 }
