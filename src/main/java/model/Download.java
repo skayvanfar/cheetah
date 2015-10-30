@@ -40,6 +40,10 @@ public interface Download {
 
     public void setProtocolType(ProtocolType protocolType);
 
+    public String getDescription();
+
+    public void setDescription(String description);
+
     public int getDownloaded();
 
     public void setDownloaded(int downloaded);

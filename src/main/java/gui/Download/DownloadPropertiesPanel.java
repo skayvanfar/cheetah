@@ -1,10 +1,13 @@
 package gui.Download;
 
+import gui.listener.DownloadPropertiesPanelListener;
 import model.Download;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by Saeed on 9/14/2015.
@@ -25,8 +28,13 @@ class DownloadPropertiesPanel extends JPanel {
     private JTextField descriptionTextField;
     private JButton okButton;
 
+    private DownloadPropertiesPanelListener downloadPropertiesPanelListener;
 
-    public DownloadPropertiesPanel(Download download) {
+    public void setDownloadPropertiesPanelListener(DownloadPropertiesPanelListener downloadPropertiesPanelListener) {
+        this.downloadPropertiesPanelListener = downloadPropertiesPanelListener;
+    }
+
+    public DownloadPropertiesPanel(final Download download) {
         setBackground(Color.WHITE);
         fileNameLabel = new JLabel("Name:");
         fileNameValueLabel = new JLabel(download.getDownloadName());
@@ -39,8 +47,16 @@ class DownloadPropertiesPanel extends JPanel {
         urlLabel = new JLabel("URL:");
         urlTextField = new JTextField(download.getUrl().toString(), 45);
         descriptionLabel = new JLabel("Description:");
-        descriptionTextField = new JTextField("Description");
+        descriptionTextField = new JTextField(download.getDescription(), 45);
         okButton = new JButton("OK");
+
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (downloadPropertiesPanelListener != null)
+                    downloadPropertiesPanelListener.okButtonClicked(descriptionTextField.getText());
+            }
+        });
 
         layoutControls();
     }

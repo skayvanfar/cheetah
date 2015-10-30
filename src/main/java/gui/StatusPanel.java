@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -13,7 +14,7 @@ class StatusPanel extends JPanel implements ActionListener {
     private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     // Add download text field.
-    private JLabel chitaLabel;
+    private JLabel cheetahLabel;
  //   private JButton addButton;
 
  //   private MainToolbarListener mainToolbarListener;
@@ -22,10 +23,13 @@ class StatusPanel extends JPanel implements ActionListener {
 
   //      setBorder(BorderFactory.createEtchedBorder());
 
-        chitaLabel = new JLabel(defaultPreferencesBundle.getString("aboutPanel.program.name"));
+   //     setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        cheetahLabel = new JLabel(defaultPreferencesBundle.getString("aboutPanel.program.name"));
+        cheetahLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
   //      addTextField = new JTextField(30);
 
-        add(chitaLabel);
+        add(cheetahLabel);
   //      add(addButton);
  //       add(addTextField);
     }

@@ -78,12 +78,15 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     public void addDownloadDialog(DownloadDialog downloadDialog) {
         if (downloadDialog == null)
             throw new NullPointerException();
-        if (!downloadDialogs.contains(downloadDialog))
+        if (!downloadDialogs.contains(downloadDialog)) {
             downloadDialogs.add(downloadDialog);
+            downloadDialog.setDownloadInfoListener(this);
+        }
     }
 
     private void deleteDownloadDialog(DownloadDialog downloadDialog) {
         downloadDialogs.remove(downloadDialog);
+        downloadDialog.removeDownloadInfoListener(this);
     }
 
     private DownloadDialog getDownloadDialogByDownload(Download download) {
@@ -154,7 +157,9 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             }
         });
 
-        add(new JScrollPane(downloadTable), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(downloadTable);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        add(scrollPane, BorderLayout.CENTER);
 
         try {
             downloadList = databaseController.load();
@@ -168,6 +173,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             download.setDownloadInfoListener(this);
             download.addDownloadStatusListener(this);
             downloadDialog = new DownloadDialog(parent, download);
+            downloadDialog.setDownloadInfoListener(this);
             downloadDialogs.add(downloadDialog);
             downloadsTableModel.addDownload(download);
             downloadDialog.setDownloadRanges(download.getDownloadRangeList());
@@ -278,6 +284,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 }
 
                 DownloadDialog downloadDialog = new DownloadDialog(parent, download);
+                downloadDialog.setDownloadInfoListener(DownloadPanel.this);
                 if (!downloadDialogs.contains(downloadDialog))
                     downloadDialogs.add(downloadDialog);
 
@@ -344,6 +351,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
             downloadDialogs.remove(downloadDialog);
             downloadDialog.dispose();
+            downloadDialog.removeDownloadInfoListener(this);
             downloadDialog = null;
 
 
@@ -381,6 +389,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                         selectedDownload = null;
                     DownloadDialog downloadDialog = getDownloadDialogByDownload(download);
                     downloadDialogs.remove(downloadDialog);
+                    downloadDialog.removeDownloadInfoListener(this);
                     downloadDialog.dispose();
                     databaseController.delete(download.getId());
                     FileUtils.forceDelete(new File(download.getDownloadRangePath() + File.separator + download.getDownloadName())); // todo must again

@@ -14,10 +14,10 @@ import java.util.*;
 public class DownloadsTableModel extends AbstractTableModel implements DownloadStatusListener {
 
     // These are the names for the table's columns.
-    private static final String[] columnNames = {"Name", "Size", "Progress", "Transfer Rate","Status"};
+    private static final String[] columnNames = {"Name", "Size", "Progress", "Transfer Rate", "Status", "Description"};
 
     // These are the classes for each column's values.
-    private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class, String.class};
+    private static final Class[] columnClasses = {String.class, String.class, JProgressBar.class, String.class, String.class, String.class};
 
     // The table's list of downloadDialogs.
     private List<Download> downloadList = new ArrayList<>();
@@ -129,6 +129,8 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
                 return download.getTransferRate();
             case 4: // Status
                 return download.getStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
+            case 5: // Status
+                return download.getDescription();
         }
         return null;
     }

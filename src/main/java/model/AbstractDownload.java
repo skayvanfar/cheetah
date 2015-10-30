@@ -26,6 +26,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected DownloadStatus status; // current status of download
     protected String transferRate; // rate of transfer
     protected ProtocolType protocolType;
+    protected String description;
 
     protected int downloaded; // number of bytes downloaded
 
@@ -128,6 +129,16 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     @Override
     public void setProtocolType(ProtocolType protocolType) {
         this.protocolType = protocolType;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

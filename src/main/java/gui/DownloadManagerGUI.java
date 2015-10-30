@@ -314,7 +314,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         PreferencesDTO preferencesDTO = null;
         try {
-      //      PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+      //     PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
             } catch(NullPointerException | EOFException e) {

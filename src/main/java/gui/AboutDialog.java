@@ -13,6 +13,8 @@ class AboutDialog extends JDialog {
 
         setLayout(new BorderLayout());
 
+        setBackground(Color.WHITE);
+
         AboutPanel aboutPanel = new AboutPanel();
         add(aboutPanel, BorderLayout.CENTER);
 

@@ -1,5 +1,7 @@
 package gui.Download;
 
+import gui.listener.DownloadInfoListener;
+import gui.listener.DownloadPropertiesPanelListener;
 import model.Download;
 import model.DownloadRange;
 
@@ -10,14 +12,26 @@ import java.util.List;
 /**
  * Created by Saeed on 9/14/2015.
  */
-public class DownloadDialog extends JDialog {
+public class DownloadDialog extends JDialog implements DownloadPropertiesPanelListener {
 
     private DownloadInfoPanel downloadInfoPanel;
     private DownloadPropertiesPanel downloadPropertiesPanel;
 
     private Download download;////**********
 
+    private DownloadInfoListener downloadInfoListener;
+
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
+
+    public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
+        this.downloadInfoListener = downloadInfoListener;
+    }
+
+    public void removeDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
+        if (this.downloadInfoListener.equals(downloadInfoListener))
+            this.downloadInfoListener = null;
+    }
+
 
     public Download getDownload() {
         return download;
@@ -39,6 +53,8 @@ public class DownloadDialog extends JDialog {
 
         add(tabbedPane, BorderLayout.CENTER);
 
+        downloadPropertiesPanel.setDownloadPropertiesPanelListener(this);
+
         setSize(530, 230);
         setLocationRelativeTo(parent);
     }
@@ -51,4 +67,10 @@ public class DownloadDialog extends JDialog {
         downloadInfoPanel.setDownloadRanges(downloadRanges);
     }
 
+    @Override
+    public void okButtonClicked(String downloadDescription) {
+        download.setDescription(downloadDescription);
+        if (downloadInfoListener != null)
+            downloadInfoListener.downloadNeedSaved(download);
+    }
 }

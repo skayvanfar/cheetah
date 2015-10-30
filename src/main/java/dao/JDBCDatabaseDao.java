@@ -99,7 +99,8 @@ public class JDBCDatabaseDao implements DatabaseDao {
                     " DOWNLOAD_RANGE_PATH TEXT NOT NULL," +
                     " SIZE INT NOT NULL," +
                     " STATUS INT NOT NULL," +
-                    " PROTOCOL_TYPE INT NOT NULL)";
+                    " PROTOCOL_TYPE INT NOT NULL," +
+                    " DESCRIPTION TEXT)";
 
             createStatement.addBatch(downloadCreateSql);
 
@@ -139,12 +140,12 @@ public class JDBCDatabaseDao implements DatabaseDao {
         String pkDownloadRangeSql = "SELECT ID FROM DOWNLOAD_RANGE WHERE ID = ?";
         PreparedStatement pkDownloadRangeStatement = con.prepareStatement(checkSql);
 
-        String insertDownloadSql = "INSERT INTO DOWNLOAD (ID, URL, DOWNLOAD_NAME_FILE, DOWNLOAD_PATH, DOWNLOAD_RANGE_PATH, SIZE, STATUS, PROTOCOL_TYPE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertDownloadSql = "INSERT INTO DOWNLOAD (ID, URL, DOWNLOAD_NAME_FILE, DOWNLOAD_PATH, DOWNLOAD_RANGE_PATH, SIZE, STATUS, PROTOCOL_TYPE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement insertDownloadStatement = con.prepareStatement(insertDownloadSql);
         String insertDownloadRangeSql = "INSERT INTO DOWNLOAD_RANGE (NUMBER, RANGE_SIZE, CONNECTION_STATUS,DOWNLOAD_RANGE_FILE, START_RANGE, END_RANGE, DOWNLOAD_ID) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement insertDownloadRangeStatement = con.prepareStatement(insertDownloadRangeSql, Statement.RETURN_GENERATED_KEYS);
 
-        String updateDownloadSql = "UPDATE DOWNLOAD SET URL=?, DOWNLOAD_NAME_FILE=?, DOWNLOAD_PATH=?, DOWNLOAD_RANGE_PATH=?, SIZE=?, STATUS=?, PROTOCOL_TYPE=? WHERE ID = ?";
+        String updateDownloadSql = "UPDATE DOWNLOAD SET URL=?, DOWNLOAD_NAME_FILE=?, DOWNLOAD_PATH=?, DOWNLOAD_RANGE_PATH=?, SIZE=?, STATUS=?, PROTOCOL_TYPE=?, DESCRIPTION=? WHERE ID = ?";
         PreparedStatement updateDownloadStatement = con.prepareStatement(updateDownloadSql);
         String updateDownloadRangeSql = "UPDATE DOWNLOAD_RANGE SET NUMBER=?, RANGE_SIZE=?, CONNECTION_STATUS=?, DOWNLOAD_RANGE_FILE=?, START_RANGE=?, END_RANGE=? WHERE ID = ?";
         PreparedStatement updateDownloadRangeStatement = con.prepareStatement(updateDownloadRangeSql);
@@ -158,6 +159,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         int size = download.getSize();
         DownloadStatus downloadStatus = download.getStatus();
         ProtocolType protocolType = download.getProtocolType();
+        String description = download.getDescription();
 
         checkStatement.setInt(1, id);
 
@@ -183,6 +185,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             insertDownloadStatement.setInt(col++, size);
             insertDownloadStatement.setInt(col++, downloadStatus.getValue());
             insertDownloadStatement.setInt(col++, protocolType.getValue());
+            insertDownloadStatement.setString(col++, description);
 
             insertDownloadStatement.executeUpdate();
 
@@ -228,6 +231,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             updateDownloadStatement.setInt(col++, size);
             updateDownloadStatement.setInt(col++, downloadStatus.getValue());
             updateDownloadStatement.setInt(col++, protocolType.getValue());
+            updateDownloadStatement.setString(col++, description);
             updateDownloadStatement.setInt(col++, id);
 
             updateDownloadStatement.executeUpdate();
@@ -270,7 +274,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
 
         List<Download> downloads = new ArrayList<>();
 
-        String selectDownloadSql = "SELECT ID, URL, DOWNLOAD_NAME_FILE, DOWNLOAD_PATH, DOWNLOAD_RANGE_PATH, SIZE, STATUS, PROTOCOL_TYPE FROM DOWNLOAD ORDER BY ID";
+        String selectDownloadSql = "SELECT ID, URL, DOWNLOAD_NAME_FILE, DOWNLOAD_PATH, DOWNLOAD_RANGE_PATH, SIZE, STATUS, PROTOCOL_TYPE, DESCRIPTION FROM DOWNLOAD ORDER BY ID";
         Statement selectDownloadStatement = con.createStatement();
 
         String selectDownloadRangeSql = "SELECT ID, NUMBER, RANGE_SIZE, CONNECTION_STATUS, DOWNLOAD_RANGE_FILE, START_RANGE, END_RANGE FROM DOWNLOAD_RANGE WHERE DOWNLOAD_ID = ?";
@@ -288,6 +292,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             int size = downloadResultSet.getInt("SIZE");
             int status = downloadResultSet.getInt("STATUS");
             ProtocolType protocolType = ProtocolType.valueOf(downloadResultSet.getInt("PROTOCOL_TYPE"));
+            String description = downloadResultSet.getString("DESCRIPTION");
 
             ////**************************** todo must use sterategy pattern
             Download download = null;
@@ -304,6 +309,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             }
             download.setSize(size);
             download.setStatus(DownloadStatus.valueOf(status));
+            download.setDescription(description);
             ////*****************************
 
             selectDownloadRangeStatement.setInt(1, id);

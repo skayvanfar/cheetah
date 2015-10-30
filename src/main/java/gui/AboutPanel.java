@@ -10,6 +10,10 @@ class AboutPanel extends JPanel {
 
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
+    public AboutPanel() {
+     //   setBackground(Color.WHITE);
+    }
+
     public void paintComponent(Graphics g) {
         g.setColor(getForeground());
         g.setFont(new Font("Edwardian Script ITC", Font.BOLD, 28));
