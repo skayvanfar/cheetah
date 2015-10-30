@@ -10,18 +10,31 @@ class AboutPanel extends JPanel {
 
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
+    private JLabel programNameLabel;
+    private JLabel productionMessageLabel;
+    private JLabel producerLabel;
+
     public AboutPanel() {
-     //   setBackground(Color.WHITE);
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        programNameLabel = new JLabel(bundle.getString("aboutPanel.program.name"));
+        productionMessageLabel = new JLabel(bundle.getString("aboutPanel.program.productionMessage"));
+        producerLabel = new JLabel(bundle.getString("aboutPanel.program.producer"));
+
+        programNameLabel.setFont(new Font("Edwardian Script ITC", Font.BOLD, 28));
+        productionMessageLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+        producerLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+
+        add(programNameLabel);
+        add(new JSeparator());
+        add(productionMessageLabel);
+        add(producerLabel);
     }
 
-    public void paintComponent(Graphics g) {
-        g.setColor(getForeground());
-        g.setFont(new Font("Edwardian Script ITC", Font.BOLD, 28));
-        g.drawString(bundle.getString("aboutPanel.program.name"), 20, 80);
-        g.drawLine(20, 90, 450, 90);
-        g.setFont(new Font("Dialog", Font.PLAIN, 12));
-        g.drawString(bundle.getString("aboutPanel.program.productionMessage"), 40, 120);
-        g.setFont(new Font("Dialog", Font.BOLD, 14));
-        g.drawString(bundle.getString("aboutPanel.program.producer"), 40, 140);
+    @Override
+    public Insets getInsets() {
+        return new Insets(50,50,70,50);
     }
+
 }

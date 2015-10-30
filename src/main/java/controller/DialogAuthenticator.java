@@ -57,6 +57,9 @@ public class DialogAuthenticator extends Authenticator {
         usernameField.addActionListener(al);
         passwordField.addActionListener(al);
         cancelButton.addActionListener(new CancelResponse());
+
+        passwordDialog.setLocationRelativeTo(parent);
+        passwordDialog.setResizable(false);
     }
 
     private void show() {

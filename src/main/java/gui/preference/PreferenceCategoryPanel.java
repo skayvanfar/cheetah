@@ -2,12 +2,14 @@ package gui.preference;
 
 import gui.listener.PreferenceCategoryPanelListener;
 import org.apache.log4j.Logger;
+import utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
 /**
@@ -25,6 +27,13 @@ class PreferenceCategoryPanel extends JPanel {
 
     public PreferenceCategoryPanel() {
         categoryTree = new JTree(initTree());
+        UIManager.put("Tree.rendererFillBackground", false);
+
+        categoryTree.setBackground(new Color(238, 238, 244));
+        categoryTree.setOpaque(true);
+
+        PreferenceCategoryTreeCellRenderer preferenceCategoryTreeCellRenderer = new PreferenceCategoryTreeCellRenderer();
+        categoryTree.setCellRenderer(preferenceCategoryTreeCellRenderer);
 
         categoryTree.setRootVisible(false);
    //     categoryTree.setShowsRootHandles(true);

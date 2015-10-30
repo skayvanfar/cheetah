@@ -25,11 +25,6 @@ public class HttpsDownload extends AbstractDownload implements Download {
     }
 
     @Override
-    public boolean isResumeCapability() {
-        return false;
-    }
-
-    @Override
     public void run() {
         HttpsURLConnection connection = null;
         try {
@@ -82,11 +77,9 @@ public class HttpsDownload extends AbstractDownload implements Download {
             if (connection != null) ///???
                 connection.disconnect();
         }
-        SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog todo move to other loc
-            public void run() {
-                downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be Download
-            }
-        });
+
+        downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be Download
+
     }
 
     @Override

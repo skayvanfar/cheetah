@@ -85,6 +85,8 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         add(preferenceCards, BorderLayout.CENTER);
         add(confirmationPanel, BorderLayout.SOUTH);
 
+        setPanelBackgroundColor(Color.WHITE);
+
         cardLayout.show(preferenceCards, "General");
 
     //    setResizable(false);
@@ -92,6 +94,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         setMinimumSize(new Dimension(350,250));
         setSize(800, 500);
         setLocationRelativeTo(parent);
+        pack();
 
         okButton.addActionListener(new ActionListener() {
             @Override
@@ -114,6 +117,23 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
                 preferencesListener.preferenceReset();
             }
         });
+    }
+
+    private void setPanelBackgroundColor(Color color) {
+   //     setBackground(color);
+        preferenceCategoryPanel.setBackground(color);
+        preferenceCards.setBackground(color);
+        confirmationPanel.setBackground(color);
+
+        preferenceGeneralPanel.setBackground(color);
+        preferenceFileTypesPanel.setBackground(color);
+        preferenceSavePanel.setBackground(color);
+        preferenceDownloadPanel.setBackground(color);
+        preferenceConnectionPanel.setBackground(color);
+        preferenceProxySocksPanel.setBackground(color);
+        preferenceSitesLoginsPanel.setBackground(color);
+        preferenceDialUpVPN.setBackground(color);
+        preferenceSoundPanel.setBackground(color);
     }
 
     private void okButtonClicked() {

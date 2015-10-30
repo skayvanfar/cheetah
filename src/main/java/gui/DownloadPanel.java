@@ -315,6 +315,22 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         downloadsTableModel.fireTableDataChanged();
     }
 
+    public void actionOpenFile() {
+        try {
+            Desktop.getDesktop().open(new File(selectedDownload.getDownloadPath() + File.separator + selectedDownload.getDownloadName()));
+        } catch (IOException e) {
+            e.printStackTrace(); //todo
+        }
+    }
+
+    public void actionOpenFolder() {
+        try {
+            Desktop.getDesktop().open(selectedDownload.getDownloadPath());
+        } catch (IOException e) {
+            e.printStackTrace(); //todo
+        }
+    }
+
     // Pause the selected download.
     public void actionPause() {
         selectedDownload.pause();
@@ -401,6 +417,39 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         }
     }
 
+    public void actionReJoinFileParts() {
+        List<DownloadRange> downloadRangeList = selectedDownload.getDownloadRangeList();
+        List<File> files = new ArrayList<>();
+        for (DownloadRange downloadRange : downloadRangeList) {
+            files.add(downloadRange.getDownloadRangeFile());
+        }
+
+        FileUtil.joinDownloadedParts(files, selectedDownload.getDownloadPath(), selectedDownload.getDownloadName());
+        JOptionPane.showMessageDialog(parent, "Join parts completed.", "Rejoin", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void actionReDownload() {
+        int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to redownload the file?", "Confirm Redownload", JOptionPane.OK_CANCEL_OPTION);
+        if (action == JOptionPane.OK_OPTION) {
+            Download newDownload = selectedDownload;
+            try {
+                FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            newDownload.resetData();
+            newDownload.resume();
+            tableSelectionChanged();
+        }
+    }
+
+    public void actionProperties() {
+        DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
+        if (!downloadDialog.isVisible()) {
+            downloadDialog.setVisible(true);
+        }
+    }
+
     // Called when table row selection changes.
     private void tableSelectionChanged() {
         /* Unregister from receiving notifications
@@ -440,6 +489,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     public void downloadNeedSaved(Download download) {
         try {
             databaseController.save(download);
+            downloadsTableModel.fireTableDataChanged();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -453,7 +503,8 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                     downloadAskDialog.setInfo(download.getUrl().toString(), download.getFormattedSize(), download.isResumeCapability());
                 } else {
                     System.out.println("newDownloadInfoGot with error");
-                    DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
+                    downloadAskDialog.dispose();
+              //      DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
                 }
             }
         });
@@ -514,9 +565,9 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         JMenuItem clicked= (JMenuItem) e.getSource();
 
         if (clicked == openItem) {
-        //    actionResume();
+            actionOpenFile();
         } else if (clicked == openFolderItem) {
-      //      mainToolbarListener.resumeEventOccured();
+            actionOpenFolder();
         } else if (clicked == resumeItem) {
             actionResume(); // todo may need  mainToolbar.setStateOfButtonsControl(false, false, false); // canceled
         }  else if (clicked == pauseItem) {
@@ -524,57 +575,25 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         } else if (clicked == clearItem) {
             actionClear();
         } else if (clicked == reJoinItem) {
-            reJoinFileParts();
+            actionReJoinFileParts();
         } else if (clicked == reDownloadItem) {
-            reDownload();
+            actionReDownload();
         } else if (clicked == moveToQueueItem) {
     //        mainToolbarListener.preferencesEventOccured();
         } else if (clicked == removeFromQueueItem) {
     //        mainToolbarListener.preferencesEventOccured();
         } else if (clicked == propertiesItem) {
-            showProperties();
+            actionProperties();
         }
 
     }
 
-    public void reJoinFileParts() {
-        List<DownloadRange> downloadRangeList = selectedDownload.getDownloadRangeList();
-        List<File> files = new ArrayList<>();
-        for (DownloadRange downloadRange : downloadRangeList) {
-            files.add(downloadRange.getDownloadRangeFile());
-        }
-
-        FileUtil.joinDownloadedParts(files, selectedDownload.getDownloadPath(), selectedDownload.getDownloadName());
-        JOptionPane.showMessageDialog(parent, "Join parts completed.", "Rejoin", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void reDownload() {
-        int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to redownload the file?", "Confirm Redownload", JOptionPane.OK_CANCEL_OPTION);
-        if (action == JOptionPane.OK_OPTION) {
-            Download newDownload = selectedDownload;
-            try {
-                FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            newDownload.resetData();
-            newDownload.resume();
-            tableSelectionChanged();
-        }
-    }
-
-    public void showProperties() {
-        DownloadDialog downloadDialog = getDownloadDialogByDownload(selectedDownload);
-        if (!downloadDialog.isVisible()) {
-            downloadDialog.setVisible(true);
-        }
-    }
-
-    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState) {
+    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
         pauseItem.setEnabled(pauseState);
         resumeItem.setEnabled(resumeState);
         clearItem.setEnabled(clearState);
         reJoinItem.setEnabled(reJoinState);
         reDownloadItem.setEnabled(reDownloadState);
+        propertiesItem.setEnabled(propertiesState);
     }
 }

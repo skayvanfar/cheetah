@@ -213,7 +213,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             @Override
             public void pauseEventOccured() {
                 downloadPanel.actionPause();
-                mainToolbar.setStateOfButtonsControl(false, false, false, false, false); // canceled
+                mainToolbar.setStateOfButtonsControl(false, false, false, false, false, true); // canceled
             }
 
             @Override
@@ -238,12 +238,17 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
             @Override
             public void reJoinEventOccured() {
-                downloadPanel.reJoinFileParts();
+                downloadPanel.actionReJoinFileParts();
             }
 
             @Override
             public void reDownloadEventOccured() {
-                downloadPanel.reDownload();
+                downloadPanel.actionReDownload();
+            }
+
+            @Override
+            public void propertiesEventOccured() {
+                downloadPanel.actionProperties();
             }
 
             @Override
@@ -308,6 +313,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         clearItem.setEnabled(false);
    //     clearAllCompletedButton.setEnabled(true);
   //      preferencesButton.setEnabled(true);
+        reJoinItem.setEnabled(false);
+        reDownloadItem.setEnabled(false);
+        propertiesItem.setEnabled(false);
     }
 
     private PreferencesDTO getPreferences() {
@@ -445,30 +453,30 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         if (state != null) {
             switch (state) {
                 case DOWNLOADING:
-                    mainToolbar.setStateOfButtonsControl(true, false, false, false, false); // Toolbar Buttons
-                    downloadPanel.setStateOfButtonsControl(true, false, false, false, false); // Toolbar Buttons
-                    setStateOfMenuItemsControl(true, false, false, false, false); // MenuItems
+                    mainToolbar.setStateOfButtonsControl(true, false, false, false, false, true); // Toolbar Buttons
+                    downloadPanel.setStateOfButtonsControl(true, false, false, false, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(true, false, false, false, false, true); // MenuItems
                     break;
                 case PAUSED:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true); // last false
-                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, true, true, false, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true); // last false
+                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, true, true, false, true, true);
                     break;
                 case ERROR:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true);
-                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, true, true, false, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true);
+                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, true, true, false, true, true);
                     break;
                 default: // COMPLETE or CANCELLED
-                    mainToolbar.setStateOfButtonsControl(false, false, true, true, true);
-                    downloadPanel.setStateOfButtonsControl(false, false, true, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, false, true, true, true);
+                    mainToolbar.setStateOfButtonsControl(false, false, true, true, true, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, true, true, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, true, true, true, true);
             }
         } else {
             // No download is selected in table.
-            mainToolbar.setStateOfButtonsControl(false, false, false, false, false);
-            downloadPanel.setStateOfButtonsControl(false, false, false, false, false); // Toolbar Buttons
-            setStateOfMenuItemsControl(false, false, false, false, false);
+            mainToolbar.setStateOfButtonsControl(false, false, false, false, false, false);
+            downloadPanel.setStateOfButtonsControl(false, false, false, false, false, false); // Toolbar Buttons
+            setStateOfMenuItemsControl(false, false, false, false, false, false);
         }
     }
 
@@ -630,12 +638,13 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         }
     }
 
-    private void setStateOfMenuItemsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState) {
+    private void setStateOfMenuItemsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
         pauseItem.setEnabled(pauseState);
         resumeItem.setEnabled(resumeState);
         clearItem.setEnabled(clearState);
         reJoinItem.setEnabled(reJoinState);
-        reJoinItem.setEnabled(reDownloadState);
+        reDownloadItem.setEnabled(reDownloadState);
+        propertiesItem.setEnabled(propertiesState);
     }
 
     @Override
@@ -656,14 +665,14 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             addNewDownloadDialog.setVisible(true);
             addNewDownloadDialog.onPaste();
         } else if (clicked == openItem) {
-        //    downloadPanel.actionResume();
+            downloadPanel.actionOpenFile();
         } else if (clicked == openFolderItem) {
-            //      mainToolbarListener.resumeEventOccured();
+            downloadPanel.actionOpenFolder();
         } else if (clicked == resumeItem) {
             downloadPanel.actionResume();
         } else if (clicked == pauseItem) {
             downloadPanel.actionPause();
-            mainToolbar.setStateOfButtonsControl(false, false, false, false, false); // canceled
+            mainToolbar.setStateOfButtonsControl(false, false, false, false, false, true); // canceled
         } else if (clicked == pauseAllItem) {
             int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this, "Do you realy want to pause all downloads?", "Confirm pause all", JOptionPane.OK_CANCEL_OPTION); ////***********
             if (action == JOptionPane.OK_OPTION) {
@@ -674,15 +683,15 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         } else if (clicked == clearAllCompletedItem) {
             downloadPanel.actionClearAllCompleted();
         } else if (clicked == reJoinItem) {
-            downloadPanel.reJoinFileParts();
+            downloadPanel.actionReJoinFileParts();
         } else if (clicked == reDownloadItem) {
-            downloadPanel.reDownload();
+            downloadPanel.actionReDownload();
         } else if (clicked == moveToQueueItem) {
             //        mainToolbarListener.preferencesEventOccured();
         } else if (clicked == removeFromQueueItem) {
             //        mainToolbarListener.preferencesEventOccured();
         } else if (clicked == propertiesItem) {
-            downloadPanel.showProperties();
+            downloadPanel.actionProperties();
         } else if (clicked == aboutItem) {
             if (!aboutDialog.isVisible())
                 aboutDialog.setVisible(true);

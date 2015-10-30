@@ -118,13 +118,15 @@ class PreferenceSavePanel extends JPanel {
     }
 
     private void layoutComponents() {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         layoutComponentsOfSaveToPanel();
         layoutComponentsOfTempDirPanel();
     }
 
     private void layoutComponentsOfSaveToPanel() {
+
+        saveToPanel.setBackground(Color.WHITE);
 
         saveToPanel.setBorder(BorderFactory.createTitledBorder("Save To"));
 
@@ -194,10 +196,12 @@ class PreferenceSavePanel extends JPanel {
         gc.insets = noPadding;
         saveToPanel.add(pathTextField, gc);
 
-        add(saveToPanel, BorderLayout.CENTER);
+        add(saveToPanel);
     }
 
     private void layoutComponentsOfTempDirPanel() {
+
+        tempDirPanel.setBackground(Color.WHITE);
 
         tempDirPanel.setBorder(new TitledBorder("Temporary Directories"));
 
@@ -211,7 +215,7 @@ class PreferenceSavePanel extends JPanel {
 
         ///////////////// First row ////////////////////////////////////////////
         gc.weightx = 1;
-        gc.weighty = 0.1;
+        gc.weighty = 1;
 
         gc.gridx = 0;
         gc.fill = GridBagConstraints.NONE;
@@ -242,7 +246,7 @@ class PreferenceSavePanel extends JPanel {
         gc.anchor = GridBagConstraints.LINE_START;
         tempDirPanel.add(databasePathTextField, gc);
 
-        add(tempDirPanel, BorderLayout.SOUTH);
+        add(tempDirPanel);
     }
 
     public void setPreferenceSaveDTO(PreferencesSaveDTO preferenceSaveDTO) {

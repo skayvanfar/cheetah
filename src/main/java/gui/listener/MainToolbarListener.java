@@ -12,5 +12,6 @@ public interface MainToolbarListener {
     public void clearAllCompletedEventOccured();
     public void reJoinEventOccured();
     public void reDownloadEventOccured();
+    public void propertiesEventOccured();
     public void preferencesEventOccured();
 }

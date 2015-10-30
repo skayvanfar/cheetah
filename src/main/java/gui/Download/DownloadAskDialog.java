@@ -214,6 +214,11 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         this.downloadAskDialogListener = downloadAskDialogListener;
     }
 
+    public void removeDownloadAskDialogListener(DownloadAskDialogListener downloadAskDialogListener) {
+        if (downloadAskDialogListener.equals(downloadAskDialogListener))
+            downloadAskDialogListener = null;
+    }
+
     public void setInfo(String url, String path) {
         urlTextField.setText(url);
   //      downloadNameField.setText(downloadNameFile);

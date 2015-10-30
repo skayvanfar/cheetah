@@ -206,9 +206,13 @@ class AddNewDownloadDialog extends JDialog {
         if (t == null)
             return;
         try {
-            newTextField.setText((String) t.getTransferData(DataFlavor.stringFlavor));
+        String textURL = (String) t.getTransferData(DataFlavor.stringFlavor);
+            if (verifyUrl(textURL) != null) {
+                newTextField.setText(textURL);
+            }
         } catch (Exception e){
             e.printStackTrace();
         }//try
+
     }//onPaste
 }

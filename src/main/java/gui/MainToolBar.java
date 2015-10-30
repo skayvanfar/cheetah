@@ -21,6 +21,7 @@ class MainToolBar extends JToolBar implements ActionListener {
     private JButton clearAllCompletedButton;
     private JButton reJoinButton;
     private JButton reDownloadButton;
+    private JButton propertiesButton;
     private JButton preferencesButton;
   //  private JButton schedulerButton;
 
@@ -83,6 +84,12 @@ class MainToolBar extends JToolBar implements ActionListener {
         reDownloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
         reDownloadButton.setToolTipText(bundle.getString("mainToolBar.reDownloadButton.toolTip"));
 
+        propertiesButton = new JButton(bundle.getString("mainToolBar.propertiesButton.label"));
+        propertiesButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.propertiesButton.iconPath")));
+        propertiesButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        propertiesButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        propertiesButton.setToolTipText(bundle.getString("mainToolBar.propertiesButton.toolTip"));
+
         preferencesButton = new JButton(bundle.getString("mainToolBar.preferencesButton.label"));
         preferencesButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.preferencesButton.iconPath")));
         preferencesButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -97,6 +104,7 @@ class MainToolBar extends JToolBar implements ActionListener {
         clearAllCompletedButton.addActionListener(this);
         reJoinButton.addActionListener(this);
         reDownloadButton.addActionListener(this);
+        propertiesButton.addActionListener(this);
         preferencesButton.addActionListener(this);
 
         add(newDownloadButton);
@@ -107,6 +115,7 @@ class MainToolBar extends JToolBar implements ActionListener {
         add(clearAllCompletedButton);
         add(reJoinButton);
         add(reDownloadButton);
+        add(propertiesButton);
         add(preferencesButton);
 
         setStateOfButtons();
@@ -120,6 +129,7 @@ class MainToolBar extends JToolBar implements ActionListener {
         clearAllCompletedButton.setEnabled(true);
         reJoinButton.setEnabled(false);
         reDownloadButton.setEnabled(false);
+        propertiesButton.setEnabled(false);
         preferencesButton.setEnabled(true);
     }
 
@@ -127,12 +137,13 @@ class MainToolBar extends JToolBar implements ActionListener {
         this.mainToolbarListener = mainToolbarListener;
     }
 
-    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState) {
+    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
         resumeButton.setEnabled(resumeState);
         pauseButton.setEnabled(pauseState);
         clearButton.setEnabled(clearState);
         reJoinButton.setEnabled(reJoinState);
         reDownloadButton.setEnabled(reDownloadState);
+        propertiesButton.setEnabled(propertiesState);
     }
 
     // can use inner class instead this on every button
@@ -156,6 +167,8 @@ class MainToolBar extends JToolBar implements ActionListener {
                 mainToolbarListener.reJoinEventOccured();
             } else if (clicked == reDownloadButton) {
                 mainToolbarListener.reDownloadEventOccured();
+            } else if (clicked == propertiesButton) {
+                mainToolbarListener.propertiesEventOccured();
             } else if (clicked == preferencesButton) {
                 mainToolbarListener.preferencesEventOccured();
             }

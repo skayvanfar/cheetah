@@ -19,6 +19,7 @@ class PreferenceConnectionPanel extends JPanel {
     private PreferenceConnectionDTO preferenceConnectionDTO;
 
     public PreferenceConnectionPanel(PreferenceConnectionDTO preferenceConnectionDTO) {
+
         Dimension dim = getPreferredSize();
         dim.width = 250;
         setPreferredSize(dim);
