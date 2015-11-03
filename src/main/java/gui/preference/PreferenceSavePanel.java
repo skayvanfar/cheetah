@@ -2,6 +2,7 @@ package gui.preference;
 
 import model.dto.PreferencesDirectoryCategoryDTO;
 import model.dto.PreferencesSaveDTO;
+import utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,16 +10,18 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/13/2015.
  */
-class PreferenceSavePanel extends JPanel {
+class PreferenceSavePanel extends PreferenceJPanel {
 
     private JPanel saveToPanel;
+    private JPanel tempDirPanel;
     private JLabel categoryLabel;
-    private JButton newButton;
-    private JButton editButton;
+    //  private JButton newButton;
+    //   private JButton editButton;
     private JComboBox<PreferencesDirectoryCategoryDTO> categoryComboBox;
     private JLabel fileExtensionLabel;
     private JTextField fileExtensionTextField;
@@ -29,24 +32,19 @@ class PreferenceSavePanel extends JPanel {
     private JLabel databasePathLabel;
     private JTextField databasePathTextField;
 
-    private JPanel tempDirPanel;
-
     private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
     private PreferencesSaveDTO preferencesSaveDTO;
 
     public PreferenceSavePanel(final PreferencesSaveDTO preferencesSaveDTO) {
-    //    Dimension dim = getPreferredSize();
-    //    dim.width = 250;
-    //    setPreferredSize(dim);
-    //    setMinimumSize(dim);
+        super("Save To", "preferenceSavePanel.iconPath");
 
         this.preferencesSaveDTO = preferencesSaveDTO;
 
         saveToPanel = new JPanel();
         categoryLabel = new JLabel("Category");
-        newButton = new JButton("New");
-        editButton = new JButton("Edit");
+        //    newButton = new JButton("New");
+        //     editButton = new JButton("Edit");
         categoryComboBox = new JComboBox<>();
         fileExtensionLabel = new JLabel("File Extensions:");
         fileExtensionTextField = new JTextField(45);
@@ -58,11 +56,8 @@ class PreferenceSavePanel extends JPanel {
         databasePathTextField = new JTextField(45);
         tempDirPanel = new JPanel();
 
-        Border innerBorder = BorderFactory.createTitledBorder("Save");
-        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
-        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
-
-        layoutComponents();
+        layoutComponentsOfSaveToPanel();
+        layoutComponentsOfTempDirPanel();
 
         setPreferenceSaveDTO(preferencesSaveDTO);
 
@@ -117,20 +112,10 @@ class PreferenceSavePanel extends JPanel {
         return result.toString();
     }
 
-    private void layoutComponents() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        layoutComponentsOfSaveToPanel();
-        layoutComponentsOfTempDirPanel();
-    }
-
     private void layoutComponentsOfSaveToPanel() {
-
-        saveToPanel.setBackground(Color.WHITE);
-
-        saveToPanel.setBorder(BorderFactory.createTitledBorder("Save To"));
-
         saveToPanel.setLayout(new GridBagLayout());
+        saveToPanel.setBorder(BorderFactory.createTitledBorder("Save To"));
+        saveToPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -147,11 +132,11 @@ class PreferenceSavePanel extends JPanel {
         gc.insets = rightPadding;
         saveToPanel.add(categoryLabel, gc);
 
-        gc.gridx = 1;
-        gc.gridy = 0;
-        gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.LINE_START; // LINE_START
-        saveToPanel.add(newButton, gc);
+//        gc.gridx = 1;
+//        gc.gridy = 0;
+//        gc.insets = noPadding;
+//        gc.anchor = GridBagConstraints.LINE_START; // LINE_START
+//        saveToPanel.add(newButton, gc);
 
         ////////////Next row ////////////////////////////
         gc.gridy++;
@@ -161,11 +146,11 @@ class PreferenceSavePanel extends JPanel {
         gc.anchor = GridBagConstraints.LINE_START;
         saveToPanel.add(categoryComboBox, gc);
 
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.insets = noPadding;
-        gc.anchor = GridBagConstraints.LINE_START;
-        saveToPanel.add(editButton, gc);
+//        gc.gridx = 1;
+//        gc.gridy = 1;
+//        gc.insets = noPadding;
+//        gc.anchor = GridBagConstraints.LINE_START;
+//        saveToPanel.add(editButton, gc);
 
         ///////////////// Next row ////////////////////////////////////////////
         gc.gridy++;
@@ -195,7 +180,7 @@ class PreferenceSavePanel extends JPanel {
         gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = noPadding;
         saveToPanel.add(pathTextField, gc);
-
+        saveToPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(saveToPanel);
     }
 
@@ -246,6 +231,7 @@ class PreferenceSavePanel extends JPanel {
         gc.anchor = GridBagConstraints.LINE_START;
         tempDirPanel.add(databasePathTextField, gc);
 
+        tempDirPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(tempDirPanel);
     }
 
@@ -267,10 +253,11 @@ class PreferenceSavePanel extends JPanel {
     }
 
     public PreferencesSaveDTO getPreferenceSaveDTO() {
- //       PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
+        //       PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
         preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
         preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
         preferencesSaveDTO.setTempDirectory(databasePathTextField.getText());
         return preferencesSaveDTO;
     }
+
 }

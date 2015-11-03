@@ -1,5 +1,7 @@
 package model.dto;
 
+import gui.preference.PreferenceGeneralPanel;
+
 import java.io.Serializable;
 
 /**
@@ -7,11 +9,21 @@ import java.io.Serializable;
  */
 public class PreferencesDTO implements Serializable {
 
+    private PreferenceGeneralDTO preferenceGeneralDTO;
     private PreferenceConnectionDTO preferenceConnectionDTO;
     private PreferencesSaveDTO preferencesSaveDTO;
+    private PreferenceProxyDTO preferenceProxyDTO;
 
     public PreferencesDTO() {
 
+    }
+
+    public PreferenceGeneralDTO getPreferenceGeneralDTO() {
+        return preferenceGeneralDTO;
+    }
+
+    public void setPreferenceGeneralDTO(PreferenceGeneralDTO preferenceGeneralDTO) {
+        this.preferenceGeneralDTO = preferenceGeneralDTO;
     }
 
     public PreferenceConnectionDTO getPreferenceConnectionDTO() {
@@ -28,5 +40,13 @@ public class PreferencesDTO implements Serializable {
 
     public void setPreferencesSaveDTO(PreferencesSaveDTO preferencesSaveDTO) {
         this.preferencesSaveDTO = preferencesSaveDTO;
+    }
+
+    public PreferenceProxyDTO getPreferenceProxyDTO() {
+        return preferenceProxyDTO;
+    }
+
+    public void setPreferenceProxyDTO(PreferenceProxyDTO preferenceProxyDTO) {
+        this.preferenceProxyDTO = preferenceProxyDTO;
     }
 }

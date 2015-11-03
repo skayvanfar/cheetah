@@ -77,24 +77,24 @@ class PreferenceCategoryPanel extends JPanel {
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("Category");
         DefaultMutableTreeNode generalBranch = new DefaultMutableTreeNode("General");
-        DefaultMutableTreeNode fileTypesBranch = new DefaultMutableTreeNode("File Types");
+    //    DefaultMutableTreeNode fileTypesBranch = new DefaultMutableTreeNode("File Types");
         DefaultMutableTreeNode saveToBranch = new DefaultMutableTreeNode("Save To");
-        DefaultMutableTreeNode downloadsBranch = new DefaultMutableTreeNode("Downloads");
+        DefaultMutableTreeNode downloadBranch = new DefaultMutableTreeNode("Download");
         DefaultMutableTreeNode connectionBranch = new DefaultMutableTreeNode("Connection");
-        DefaultMutableTreeNode proxySocksBranch = new DefaultMutableTreeNode("Proxy / Socks");
-        DefaultMutableTreeNode siteLoginsBranch = new DefaultMutableTreeNode("Site Logins");
-        DefaultMutableTreeNode dialUpVPNBranch = new DefaultMutableTreeNode("dial Up / VPN");
-        DefaultMutableTreeNode soundsBranch = new DefaultMutableTreeNode("Sounds");
+        DefaultMutableTreeNode proxyBranch = new DefaultMutableTreeNode("Proxy");
+        DefaultMutableTreeNode siteLoginBranch = new DefaultMutableTreeNode("Site Login");
+    //    DefaultMutableTreeNode dialUpVPNBranch = new DefaultMutableTreeNode("dial Up / VPN");
+    //    DefaultMutableTreeNode soundsBranch = new DefaultMutableTreeNode("Sounds");
 
         top.add(generalBranch);
-        top.add(fileTypesBranch);
+    //    top.add(fileTypesBranch);
         top.add(saveToBranch);
-        top.add(downloadsBranch);
+        top.add(downloadBranch);
         top.add(connectionBranch);
-        top.add(proxySocksBranch);
-        top.add(siteLoginsBranch);
-        top.add(dialUpVPNBranch);
-        top.add(soundsBranch);
+        top.add(proxyBranch);
+        top.add(siteLoginBranch);
+    //    top.add(dialUpVPNBranch);
+    //    top.add(soundsBranch);
 
         return top;
     }

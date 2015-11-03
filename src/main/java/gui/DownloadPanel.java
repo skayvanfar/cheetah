@@ -126,6 +126,8 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         downloadTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 tableSelectionChanged();
+                if (downloadPanelListener != null)
+                    downloadPanelListener.downloadSelected(selectedDownload);
             }
         });
 

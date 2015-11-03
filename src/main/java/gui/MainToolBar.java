@@ -33,8 +33,6 @@ class MainToolBar extends JToolBar implements ActionListener {
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
-   //     setBackground(Color.WHITE);
-
         newDownloadButton = new JButton(bundle.getString("mainToolBar.newDownloadButton.label"));
         newDownloadButton.setIcon(Utils.createIcon(bundle.getString("mainToolBar.newDownloadButton.iconPath")));
         newDownloadButton.setVerticalTextPosition(SwingConstants.BOTTOM);

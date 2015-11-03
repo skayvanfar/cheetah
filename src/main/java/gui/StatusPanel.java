@@ -13,30 +13,34 @@ class StatusPanel extends JPanel implements ActionListener {
 
     private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
-    // Add download text field.
     private JLabel cheetahLabel;
- //   private JButton addButton;
-
- //   private MainToolbarListener mainToolbarListener;
+    private JLabel selectedDownloadNameLabel;
+ //   private JLabel sizeLabel;
 
     public StatusPanel() {
 
   //      setBorder(BorderFactory.createEtchedBorder());
 
-   //     setLayout(new FlowLayout(FlowLayout.RIGHT));
+        setLayout(new BorderLayout());
 
         cheetahLabel = new JLabel(defaultPreferencesBundle.getString("aboutPanel.program.name"));
         cheetahLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
-  //      addTextField = new JTextField(30);
+        selectedDownloadNameLabel = new JLabel();
+      //  sizeLabel = new JLabel("dd");
 
-        add(cheetahLabel);
-  //      add(addButton);
- //       add(addTextField);
+        add(cheetahLabel, BorderLayout.EAST);
+        add(selectedDownloadNameLabel, BorderLayout.WEST);
+   //     add(sizeLabel, BorderLayout.CENTER);
     }
 
-  //  public void setToolbarListener(MainToolbarListener listener) {
- //       this.mainToolbarListener = mainToolbarListener;
- //   }
+    @Override
+    public Insets getInsets() {
+        return new Insets(0, 25, 0, 25);
+    }
+
+    public void setStatus(String selectedDownloadName) {
+        selectedDownloadNameLabel.setText(selectedDownloadName);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -50,7 +54,7 @@ class StatusPanel extends JPanel implements ActionListener {
    //         if (listener != null) {
   ///              listener.refereshEventOccured();
    //         }
-        }
+    }
    //     actionAdd();
 
 }

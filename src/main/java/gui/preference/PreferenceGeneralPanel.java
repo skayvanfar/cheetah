@@ -1,46 +1,75 @@
 package gui.preference;
 
+import model.dto.PreferenceGeneralDTO;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/13/2015.
  */
-public class PreferenceGeneralPanel extends JPanel {
+public class PreferenceGeneralPanel extends PreferenceJPanel {
 
-    private JCheckBox citizenCheck;
+    private JPanel generalPanel;
+    private JLabel lunchOnStartupLabel;
+    private JCheckBox lunchOnStartupCheckBox;
 
-    public PreferenceGeneralPanel() {
+    private PreferenceGeneralDTO preferenceGeneralDTO;
 
-            JButton jButton = new JButton("PreferenceGeneralPanel");
-            add(jButton);
+    public PreferenceGeneralPanel(PreferenceGeneralDTO preferenceGeneralDTO) {
+        super("General", "preferenceGeneralPanel.iconPath");
 
+        this.preferenceGeneralDTO = preferenceGeneralDTO;
 
-        Dimension dim = getPreferredSize();
-        dim.width = 250;
-        setPreferredSize(dim);
-        setMinimumSize(dim);
+        generalPanel = new JPanel();
+        lunchOnStartupLabel = new JLabel("Launch Cheetah on startup");
+        lunchOnStartupCheckBox = new JCheckBox();
 
-        Border innerBorder = BorderFactory.createTitledBorder("Connection");
-        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
-        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
-
-        layoutComponents();
+        layoutComponentsOfGeneralPanel();
     }
 
-    public void layoutComponents() {
-        setLayout(new GridBagLayout());
+    private void layoutComponentsOfGeneralPanel() {
+        generalPanel.setLayout(new GridBagLayout());
+        generalPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gc = new GridBagConstraints();
 
+
         ///////////////// First row ////////////////////////////////////////////
+        gc.gridy = 0;
 
+        gc.weightx = 1;
+        gc.weighty = 0.1;
+
+        gc.gridx = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.insets = new Insets(0, 0, 0, 5);
+        generalPanel.add(lunchOnStartupLabel, gc);
+
+        gc.gridx = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.anchor = GridBagConstraints.LINE_START;
+        generalPanel.add(lunchOnStartupCheckBox, gc);
+        ///////////////// Next row ////////////////////////////////////////////
+//        gc.gridy++;
+//
+//        gc.gridx = 0;
+//        gc.fill = GridBagConstraints.NONE;
+//        gc.anchor = GridBagConstraints.LINE_END;
+//        gc.insets = new Insets(0, 0, 0, 5);
+//        generalPanel.add(maxConnectionNumberLabel, gc);
+//
+//        gc.gridx = 1;
+//        gc.insets = new Insets(0, 0, 0, 0);
+//        gc.anchor = GridBagConstraints.LINE_START;
+//        generalPanel.add(maxConnectionNumberComboBox, gc);
+
+        generalPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        add(generalPanel);
     }
 
-    public void setDefaults(String user, String password, int port) {
-        //   userField.setText(user);
-        //    passField.setText(password);
-        //    portSpinner.setValue(port);
-    }
 }
