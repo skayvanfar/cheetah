@@ -6,5 +6,5 @@ package enums;
 public enum TimeUnit {
     SEC,
     MIN,
-    HOUR,
+    HOUR;
 }

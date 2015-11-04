@@ -5,11 +5,11 @@ import java.io.Serializable;
 /**
  * Created by sad.keyvanfar on 11/3/2015.
  */
-public class PreferenceGeneralDTO implements Serializable {
+public class PreferencesGeneralDTO implements Serializable {
 
     private boolean launchOnsStartup;
 
-    public PreferenceGeneralDTO(boolean launchOnsStartup) {
+    public PreferencesGeneralDTO(boolean launchOnsStartup) {
         this.launchOnsStartup = launchOnsStartup;
     }
 

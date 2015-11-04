@@ -85,6 +85,7 @@ class PreferenceCategoryPanel extends JPanel {
         DefaultMutableTreeNode siteLoginBranch = new DefaultMutableTreeNode("Site Login");
     //    DefaultMutableTreeNode dialUpVPNBranch = new DefaultMutableTreeNode("dial Up / VPN");
     //    DefaultMutableTreeNode soundsBranch = new DefaultMutableTreeNode("Sounds");
+        DefaultMutableTreeNode interfaceBranch = new DefaultMutableTreeNode("Interface");
 
         top.add(generalBranch);
     //    top.add(fileTypesBranch);
@@ -95,6 +96,7 @@ class PreferenceCategoryPanel extends JPanel {
         top.add(siteLoginBranch);
     //    top.add(dialUpVPNBranch);
     //    top.add(soundsBranch);
+        top.add(interfaceBranch);
 
         return top;
     }

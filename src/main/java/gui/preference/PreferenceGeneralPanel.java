@@ -1,11 +1,9 @@
 package gui.preference;
 
-import model.dto.PreferenceGeneralDTO;
+import model.dto.PreferencesGeneralDTO;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/13/2015.
@@ -16,12 +14,12 @@ public class PreferenceGeneralPanel extends PreferenceJPanel {
     private JLabel lunchOnStartupLabel;
     private JCheckBox lunchOnStartupCheckBox;
 
-    private PreferenceGeneralDTO preferenceGeneralDTO;
+    private PreferencesGeneralDTO preferencesGeneralDTO;
 
-    public PreferenceGeneralPanel(PreferenceGeneralDTO preferenceGeneralDTO) {
+    public PreferenceGeneralPanel(PreferencesGeneralDTO preferencesGeneralDTO) {
         super("General", "preferenceGeneralPanel.iconPath");
 
-        this.preferenceGeneralDTO = preferenceGeneralDTO;
+        this.preferencesGeneralDTO = preferencesGeneralDTO;
 
         generalPanel = new JPanel();
         lunchOnStartupLabel = new JLabel("Launch Cheetah on startup");

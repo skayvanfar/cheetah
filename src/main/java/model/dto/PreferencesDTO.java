@@ -1,7 +1,5 @@
 package model.dto;
 
-import gui.preference.PreferenceGeneralPanel;
-
 import java.io.Serializable;
 
 /**
@@ -9,29 +7,30 @@ import java.io.Serializable;
  */
 public class PreferencesDTO implements Serializable {
 
-    private PreferenceGeneralDTO preferenceGeneralDTO;
-    private PreferenceConnectionDTO preferenceConnectionDTO;
+    private PreferencesGeneralDTO preferencesGeneralDTO;
+    private PreferencesConnectionDTO preferencesConnectionDTO;
     private PreferencesSaveDTO preferencesSaveDTO;
-    private PreferenceProxyDTO preferenceProxyDTO;
+    private PreferencesProxyDTO preferencesProxyDTO;
+    private PreferencesInterfaceDTO  preferencesInterfaceDTO;
 
     public PreferencesDTO() {
 
     }
 
-    public PreferenceGeneralDTO getPreferenceGeneralDTO() {
-        return preferenceGeneralDTO;
+    public PreferencesGeneralDTO getPreferencesGeneralDTO() {
+        return preferencesGeneralDTO;
     }
 
-    public void setPreferenceGeneralDTO(PreferenceGeneralDTO preferenceGeneralDTO) {
-        this.preferenceGeneralDTO = preferenceGeneralDTO;
+    public void setPreferencesGeneralDTO(PreferencesGeneralDTO preferencesGeneralDTO) {
+        this.preferencesGeneralDTO = preferencesGeneralDTO;
     }
 
-    public PreferenceConnectionDTO getPreferenceConnectionDTO() {
-        return preferenceConnectionDTO;
+    public PreferencesConnectionDTO getPreferencesConnectionDTO() {
+        return preferencesConnectionDTO;
     }
 
-    public void setPreferenceConnectionDTO(PreferenceConnectionDTO preferenceConnectionDTO) {
-        this.preferenceConnectionDTO = preferenceConnectionDTO;
+    public void setPreferencesConnectionDTO(PreferencesConnectionDTO preferencesConnectionDTO) {
+        this.preferencesConnectionDTO = preferencesConnectionDTO;
     }
 
     public PreferencesSaveDTO getPreferencesSaveDTO() {
@@ -42,11 +41,19 @@ public class PreferencesDTO implements Serializable {
         this.preferencesSaveDTO = preferencesSaveDTO;
     }
 
-    public PreferenceProxyDTO getPreferenceProxyDTO() {
-        return preferenceProxyDTO;
+    public PreferencesProxyDTO getPreferencesProxyDTO() {
+        return preferencesProxyDTO;
     }
 
-    public void setPreferenceProxyDTO(PreferenceProxyDTO preferenceProxyDTO) {
-        this.preferenceProxyDTO = preferenceProxyDTO;
+    public void setPreferencesProxyDTO(PreferencesProxyDTO preferencesProxyDTO) {
+        this.preferencesProxyDTO = preferencesProxyDTO;
+    }
+
+    public PreferencesInterfaceDTO getPreferencesInterfaceDTO() {
+        return preferencesInterfaceDTO;
+    }
+
+    public void setPreferencesInterfaceDTO(PreferencesInterfaceDTO preferencesInterfaceDTO) {
+        this.preferencesInterfaceDTO = preferencesInterfaceDTO;
     }
 }

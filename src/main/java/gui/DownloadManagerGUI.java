@@ -1,22 +1,19 @@
 package gui;
 
 import controller.DialogAuthenticator;
+import enums.ConnectionType;
 import enums.DownloadCategory;
 import enums.DownloadStatus;
 import enums.ProtocolType;
 import gui.listener.*;
 import gui.preference.PreferenceDialog;
 import model.Download;
-import model.dto.PreferenceConnectionDTO;
-import model.dto.PreferencesDTO;
-import model.dto.PreferencesDirectoryCategoryDTO;
-import model.dto.PreferencesSaveDTO;
+import model.dto.*;
 import model.htmlImpl.HttpDownload;
 import model.httpsImpl.HttpsDownload;
 import org.apache.commons.io.FilenameUtils;
-import utils.ConnectionUtil;
-import utils.PrefObj;
-import utils.Utils;
+import utils.*;
+import utils.LookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,23 +75,23 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
-                if ("Windows".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
+    //    try {
+   //         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+   //             System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
+   //             if ("Windows".equals(info.getName())) {
+
       //          } else if ("Nimbus".equals(info.getName())) {
       //              UIManager.setLookAndFeel(info.getClassName());
-                }
+      //          }
 
-                if ("GTK+".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                }
+      //          if ("GTK+".equals(info.getName())) {
+     //               UIManager.setLookAndFeel(info.getClassName());
+       //         }
 
         //        if ("Nimbus".equals(info.getName())) {
        //             UIManager.setLookAndFeel(info.getClassName());
        //         }
-            }
+   //         }
 
             // setTheme(String themeName, String licenseKey, String logoString)
     //        com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "LPG", "Cheetah");
@@ -109,9 +106,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
 
             //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
-        }
+    //    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+    //        e.printStackTrace();
+    //    }
 
         setLayout(new BorderLayout());
 
@@ -129,6 +126,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         } catch (ClassNotFoundException | BackingStoreException | IOException e) {
             e.printStackTrace();
         }
+
+        LookAndFeel.setLaf(preferencesDTO.getPreferencesInterfaceDTO().getLookAndFeelName());
 
         createFileHierarchy();
 
@@ -167,7 +166,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                         String fileExtension =  FilenameUtils.getExtension(downloadName);
                         File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
                         File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
-                        int maxNum = preferencesDTO.getPreferenceConnectionDTO().getMaxConnectionNumber();
+                        int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
 
                         Download download = null;
                         // todo must set stretegy pattern
@@ -276,6 +275,14 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
             @Override
             public void preferenceReset() {
+                PreferencesDTO resetPreferencesDTO = getPreferences();
+                checkAndSetPreferencesDTO(resetPreferencesDTO);
+                preferenceDialog.setPreferencesDTO(resetPreferencesDTO);
+                categoryPanel.setTreeModel(resetPreferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
+            }
+
+            @Override
+            public void preferenceDefaults() {
                 PreferencesDTO defaultPreferenceDTO = new PreferencesDTO();
                 checkAndSetPreferencesDTO(defaultPreferenceDTO);
                 preferenceDialog.setPreferencesDTO(defaultPreferenceDTO);
@@ -289,7 +296,6 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             public void windowClosing(WindowEvent windowEvent) {
                 int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this,
                         "Do you realy want to exit the application?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
-
                 if (action == JOptionPane.OK_OPTION) {
                     System.out.println("Window Closing");
                     downloadPanel.actionPauseAll();
@@ -326,7 +332,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         PreferencesDTO preferencesDTO = null;
         try {
-      //     PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
+       //   PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
             } catch(NullPointerException | EOFException e) {
@@ -348,13 +354,28 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         String path = homeDir + File.separator + "Downloads" + File.separator + "Cheetah Downloaded Files" + File.separator;
 
-        // PreferenceConnectionDTO
-        PreferenceConnectionDTO preferenceConnectionDTO = preferencesDTO.getPreferenceConnectionDTO();
-        if (preferenceConnectionDTO == null) {
-            preferenceConnectionDTO = new PreferenceConnectionDTO();
+        // PreferencesConnectionDTO
+        PreferencesConnectionDTO preferencesConnectionDTO = preferencesDTO.getPreferencesConnectionDTO();
+        if (preferencesConnectionDTO == null) {
+            preferencesConnectionDTO = new PreferencesConnectionDTO();
         }
-        if (preferenceConnectionDTO.getMaxConnectionNumber() == 0) {
-            preferenceConnectionDTO.setMaxConnectionNumber(Integer.parseInt(defaultPreferencesBundle.getString("maxConnectionNumber")));
+        if (preferencesConnectionDTO.getConnectionType() == null) {
+            preferencesConnectionDTO.setConnectionType(ConnectionType.valueOfByDesc(defaultPreferencesBundle.getString("connectionType")));
+        }
+        if (preferencesConnectionDTO.getMaxConnectionNumber() == 0) {
+            preferencesConnectionDTO.setMaxConnectionNumber(Integer.parseInt(defaultPreferencesBundle.getString("maxConnectionNumber")));
+        }
+        if (preferencesConnectionDTO.getTimeBetweenAttempts() == 0) {
+            preferencesConnectionDTO.setTimeBetweenAttempts(Integer.parseInt(defaultPreferencesBundle.getString("timeBetweenAttempts")));
+        }
+        if (preferencesConnectionDTO.getMaxNumberAttempts() == 0) {
+            preferencesConnectionDTO.setMaxNumberAttempts(Integer.parseInt(defaultPreferencesBundle.getString("maxNumberAttempts")));
+        }
+        if (preferencesConnectionDTO.getConnectionTimeOut() == 0) {
+            preferencesConnectionDTO.setConnectionTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("connectionTimeOut")));
+        }
+        if (preferencesConnectionDTO.getReadTimeOut() == 0) {
+            preferencesConnectionDTO.setReadTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("readTimeOut")));
         }
 
         // preferencesSaveDTO
@@ -436,14 +457,75 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             preferencesSaveDTO.setDatabasePath(path + defaultPreferencesBundle.getString("databasePath"));
         }
 
+        // PreferenceProxyDTO
+        PreferencesProxyDTO preferencesProxyDTO = preferencesDTO.getPreferencesProxyDTO();
+        if (preferencesProxyDTO == null) {
+            preferencesProxyDTO = new PreferencesProxyDTO();
+        }
+
+        if (preferencesProxyDTO.getProxySettingType() == 0) {
+            preferencesProxyDTO.setProxySettingType(Integer.parseInt(defaultPreferencesBundle.getString("proxySettingType")));
+        }
+
+        if (preferencesProxyDTO.getHttpProxyAddress() == null || preferencesProxyDTO.getHttpProxyAddress().equals("")) {
+            preferencesProxyDTO.setHttpProxyAddress(defaultPreferencesBundle.getString("httpProxyAddress"));
+        }
+        if (preferencesProxyDTO.getHttpProxyPort() != 0) {
+            preferencesProxyDTO.setHttpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpProxyPort")));
+        }
+        if (preferencesProxyDTO.getHttpProxyUserName() == null || preferencesProxyDTO.getHttpProxyUserName().equals("")) {
+            preferencesProxyDTO.setHttpProxyUserName(defaultPreferencesBundle.getString("httpProxyUserName"));
+        }
+        if (preferencesProxyDTO.getHttpProxyPassword() == null || preferencesProxyDTO.getHttpProxyPassword().equals("")) {
+            preferencesProxyDTO.setHttpProxyPassword(defaultPreferencesBundle.getString("httpProxyPassword"));
+        }
+
+        if (preferencesProxyDTO.getHttpsProxyAddress() == null || preferencesProxyDTO.getHttpsProxyAddress().equals("")) {
+            preferencesProxyDTO.setHttpsProxyAddress(defaultPreferencesBundle.getString("httpsProxyAddress"));
+        }
+        if (preferencesProxyDTO.getHttpsProxyPort() != 0) {
+            preferencesProxyDTO.setHttpsProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpsProxyPort")));
+        }
+        if (preferencesProxyDTO.getHttpsProxyUserName() == null || preferencesProxyDTO.getHttpsProxyUserName().equals("")) {
+            preferencesProxyDTO.setHttpsProxyUserName(defaultPreferencesBundle.getString("httpsProxyUserName"));
+        }
+        if (preferencesProxyDTO.getHttpsProxyPassword() == null || preferencesProxyDTO.getHttpsProxyPassword().equals("")) {
+            preferencesProxyDTO.setHttpsProxyPassword(defaultPreferencesBundle.getString("httpsProxyPassword"));
+        }
+
+        if (preferencesProxyDTO.getFtpProxyAddress() == null || preferencesProxyDTO.getFtpProxyAddress().equals("")) {
+            preferencesProxyDTO.setFtpProxyAddress(defaultPreferencesBundle.getString("ftpProxyAddress"));
+        }
+        if (preferencesProxyDTO.getFtpProxyPort() != 0) {
+            preferencesProxyDTO.setFtpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("ftpProxyPort")));
+        }
+        if (preferencesProxyDTO.getFtpProxyUserName() == null || preferencesProxyDTO.getFtpProxyUserName().equals("")) {
+            preferencesProxyDTO.setFtpProxyUserName(defaultPreferencesBundle.getString("ftpProxyUserName"));
+        }
+        if (preferencesProxyDTO.getFtpProxyPassword() == null || preferencesProxyDTO.getFtpProxyPassword().equals("")) {
+            preferencesProxyDTO.setFtpProxyPassword(defaultPreferencesBundle.getString("ftpProxyPassword"));
+        }
+
+        // PreferenceInterfaceDTO
+        PreferencesInterfaceDTO preferencesInterfaceDTO = preferencesDTO.getPreferencesInterfaceDTO();
+        if (preferencesInterfaceDTO == null) {
+            preferencesInterfaceDTO = new PreferencesInterfaceDTO();
+        }
+
+        if (preferencesInterfaceDTO.getLookAndFeelName() == null || preferencesInterfaceDTO.getLookAndFeelName().equals("")) {
+            preferencesInterfaceDTO.setLookAndFeelName(defaultPreferencesBundle.getString("lookAndFeelName"));
+        }
+
 
         // add all Main preferences objects
-        preferencesDTO.setPreferenceConnectionDTO(preferenceConnectionDTO);
+        preferencesDTO.setPreferencesConnectionDTO(preferencesConnectionDTO);
         preferencesDTO.setPreferencesSaveDTO(preferencesSaveDTO);
+        preferencesDTO.setPreferencesProxyDTO(preferencesProxyDTO);
+        preferencesDTO.setPreferencesInterfaceDTO(preferencesInterfaceDTO);
     }
 
     private void setPreferences(PreferencesDTO preferenceDTO) {
- //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferenceConnectionDTO().getMaxConnectionNumber());
+ //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferencesConnectionDTO().getMaxConnectionNumber());
         try {
             PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
         } catch (IOException | BackingStoreException | ClassNotFoundException e) {

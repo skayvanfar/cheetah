@@ -1,15 +1,11 @@
 package gui.preference;
 
-import model.dto.PreferenceConnectionDTO;
-import utils.Utils;
+import enums.ConnectionType;
+import model.dto.PreferencesConnectionDTO;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ResourceBundle;
 
 /**
  * Created by Saeed on 9/23/2015.
@@ -37,20 +33,20 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
     private JSpinner readTimeOutSpinner;
     private SpinnerNumberModel readTimeOutSpinnerModel;
 
-    private PreferenceConnectionDTO preferenceConnectionDTO;
+    private PreferencesConnectionDTO preferencesConnectionDTO;
 
-    public PreferenceConnectionPanel(PreferenceConnectionDTO preferenceConnectionDTO) {
+    public PreferenceConnectionPanel(PreferencesConnectionDTO preferencesConnectionDTO) {
         super("Connection", "preferenceConnectionPanel.iconPath");
 
-        this.preferenceConnectionDTO = preferenceConnectionDTO;
+        this.preferencesConnectionDTO = preferencesConnectionDTO;
 
         connectionTypePanel = new JPanel();
         connectionPanel = new JPanel();
         errorsPanel = new JPanel();
         connectionTypeLabel = new JLabel("Connection Type:");
-        connectionTypeComboBox = new JComboBox<>(new String[] {"Low speed: Dial Up modem / ISDN / Bluetooth / Mobile Edge / IrDA",
-                "Medium speed: ADSL / DSL /  Mobile 3G / Wi-Fi / Bluetooth 3.0 / other",
-                "High speed: Direct connection (Ethernet/Cable) / Wi-Fi / Mobile 4G / other"});
+        connectionTypeComboBox = new JComboBox<>(new String[] {ConnectionType.NotSet.getDesc(), ConnectionType.LOW.getDesc(),
+                ConnectionType.MEDIUM.getDesc(), ConnectionType.HIGH.getDesc()});
+        connectionTypeComboBox.setEditable(false);
         maxConnectionNumberLabel = new JLabel("Max Connections Number:");
         maxConnectionNumberComboBox = new JComboBox<>(new Integer[] {1, 2, 4, 8, 16, 24, 32});
         maxConnectionNumberComboBox.setEditable(false);
@@ -74,7 +70,7 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
         layoutComponentsOfConnectionPanel();
         layoutComponentsOfErrorsPanel();
 
-        setPreferenceConnectionDTO(preferenceConnectionDTO);
+        setPreferencesConnectionDTO(preferencesConnectionDTO);
     }
 
     private void layoutComponentsOfConnectionPanel() {
@@ -191,12 +187,22 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
         add(errorsPanel);
     }
 
-    public void setPreferenceConnectionDTO(PreferenceConnectionDTO preferenceConnectionDTO) {
-        maxConnectionNumberComboBox.setSelectedItem(preferenceConnectionDTO.getMaxConnectionNumber());
+    public PreferencesConnectionDTO getPreferencesConnectionDTO() {
+        preferencesConnectionDTO.setConnectionType(ConnectionType.valueOfByDesc((String) connectionTypeComboBox.getSelectedItem()));
+        preferencesConnectionDTO.setMaxConnectionNumber((int) maxConnectionNumberComboBox.getSelectedItem());
+        preferencesConnectionDTO.setTimeBetweenAttempts((int) timeBetweenAttemptsSpinner.getValue());
+        preferencesConnectionDTO.setMaxNumberAttempts((int) maxNumberAttemptsSpinner.getValue());
+        preferencesConnectionDTO.setConnectionTimeOut((int) connectionTimeOutSpinner.getValue());
+        preferencesConnectionDTO.setReadTimeOut((int) readTimeOutSpinner.getValue());
+        return preferencesConnectionDTO;
     }
 
-    public PreferenceConnectionDTO getPreferenceConnectionDTO() {
-        preferenceConnectionDTO.setMaxConnectionNumber((Integer) maxConnectionNumberComboBox.getSelectedItem());
-        return preferenceConnectionDTO;
+    public void setPreferencesConnectionDTO(PreferencesConnectionDTO preferencesConnectionDTO) {
+        connectionTypeComboBox.setSelectedItem(preferencesConnectionDTO.getConnectionType().getDesc());
+        maxConnectionNumberComboBox.setSelectedItem(preferencesConnectionDTO.getMaxConnectionNumber());
+        timeBetweenAttemptsSpinner.setValue(preferencesConnectionDTO.getTimeBetweenAttempts());
+        maxNumberAttemptsSpinner.setValue(preferencesConnectionDTO.getMaxNumberAttempts());
+        connectionTimeOutSpinner.setValue(preferencesConnectionDTO.getConnectionTimeOut());
+        readTimeOutSpinner.setValue(preferencesConnectionDTO.getReadTimeOut());
     }
 }

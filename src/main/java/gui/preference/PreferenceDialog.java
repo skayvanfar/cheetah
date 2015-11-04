@@ -18,12 +18,13 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
  //   private PreferenceFileTypesPanel preferenceFileTypesPanel;
     private PreferenceSavePanel preferenceSavePanel;
     private PreferenceDownloadPanel preferenceDownloadPanel;
-
     private PreferenceConnectionPanel preferenceConnectionPanel;
     private PreferenceProxyPanel preferenceProxyPanel;
     private PreferenceSitesLoginPanel preferenceSitesLoginPanel;
  //   private PreferenceDialUpVPN preferenceDialUpVPN;
  //   private PreferenceSoundPanel preferenceSoundPanel;
+    private PreferenceInterfacePanel preferenceInterfacePanel;
+
     private JPanel confirmationPanel;
     private JButton okButton;
     private JButton cancelButton;
@@ -37,23 +38,26 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
     private PreferencesDTO preferencesDTO;
 
+    JFrame parent;
+
     public PreferenceDialog(JFrame parent, PreferencesDTO preferencesDTO) {
 
         super(parent, "Preferences", true);
-
+        this.parent = parent;
         setLayout(new BorderLayout());
 
         this.preferencesDTO = preferencesDTO;
 
-        preferenceGeneralPanel = new PreferenceGeneralPanel(preferencesDTO.getPreferenceGeneralDTO());
+        preferenceGeneralPanel = new PreferenceGeneralPanel(preferencesDTO.getPreferencesGeneralDTO());
      //   preferenceFileTypesPanel = new PreferenceFileTypesPanel();
         preferenceSavePanel = new PreferenceSavePanel(preferencesDTO.getPreferencesSaveDTO());
         preferenceDownloadPanel = new PreferenceDownloadPanel();
-        preferenceConnectionPanel = new PreferenceConnectionPanel(preferencesDTO.getPreferenceConnectionDTO());
-        preferenceProxyPanel = new PreferenceProxyPanel(preferencesDTO.getPreferenceProxyDTO());
+        preferenceConnectionPanel = new PreferenceConnectionPanel(preferencesDTO.getPreferencesConnectionDTO());
+        preferenceProxyPanel = new PreferenceProxyPanel(preferencesDTO.getPreferencesProxyDTO());
         preferenceSitesLoginPanel = new PreferenceSitesLoginPanel();
      //   preferenceDialUpVPN = new PreferenceDialUpVPN();
      //   preferenceSoundPanel = new PreferenceSoundPanel();
+        preferenceInterfacePanel = new PreferenceInterfacePanel(preferencesDTO.getPreferencesInterfaceDTO(), parent);
 
         preferenceCategoryPanel = new PreferenceCategoryPanel();
         preferenceCategoryPanel.setPreferenceCategoryPanelListener(this);
@@ -76,6 +80,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         preferenceCards.add(preferenceSitesLoginPanel, "Site Login");
      //   preferenceCards.add(preferenceDialUpVPN, "dial Up / VPN");
     //    preferenceCards.add(preferenceSoundPanel, "Sounds");
+        preferenceCards.add(preferenceInterfacePanel, "Interface");
 
         confirmationPanel.add(okButton);
         confirmationPanel.add(cancelButton);
@@ -107,6 +112,8 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                preferencesListener.preferenceReset();
+                okButtonClicked();
                 PreferenceDialog.this.setVisible(false);
             }
         });
@@ -114,7 +121,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         defaultButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                preferencesListener.preferenceReset();
+                preferencesListener.preferenceDefaults();
             }
         });
     }
@@ -133,20 +140,26 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         preferenceSitesLoginPanel.setBackground(color);
     //    preferenceDialUpVPN.setBackground(color);
     //    preferenceSoundPanel.setBackground(color);
+        preferenceInterfacePanel.setBackground(color);
     }
 
     private void okButtonClicked() {
         PreferencesDTO preferenceDTO = new PreferencesDTO();
-        preferenceDTO.setPreferenceConnectionDTO(preferenceConnectionPanel.getPreferenceConnectionDTO());
         preferenceDTO.setPreferencesSaveDTO(preferenceSavePanel.getPreferenceSaveDTO());
+        preferenceDTO.setPreferencesConnectionDTO(preferenceConnectionPanel.getPreferencesConnectionDTO());
+        preferenceDTO.setPreferencesProxyDTO(preferenceProxyPanel.getPreferencesProxyDTO());
+        preferenceDTO.setPreferencesInterfaceDTO(preferenceInterfacePanel.getPreferencesInterfaceDTO());
         if (preferencesListener != null) {
             preferencesListener.preferencesSet(preferenceDTO);
         }
+        utils.LookAndFeel.changeLaf(parent, preferenceInterfacePanel.getPreferencesInterfaceDTO().getLookAndFeelName());
     }
 
     public void setPreferencesDTO(PreferencesDTO preferencesDTO) {
-        preferenceConnectionPanel.setPreferenceConnectionDTO(preferencesDTO.getPreferenceConnectionDTO());
         preferenceSavePanel.setPreferenceSaveDTO(preferencesDTO.getPreferencesSaveDTO());
+        preferenceConnectionPanel.setPreferencesConnectionDTO(preferencesDTO.getPreferencesConnectionDTO());
+        preferenceInterfacePanel.setPreferencesInterfaceDTO(preferencesDTO.getPreferencesInterfaceDTO());
+        preferenceProxyPanel.setPreferencesProxyDTO(preferencesDTO.getPreferencesProxyDTO());
     }
 
     public void setPreferencesListener(PreferencesListener preferencesListener) {

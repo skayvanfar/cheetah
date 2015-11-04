@@ -9,7 +9,7 @@ import javax.swing.border.Border;
 class PreferenceSitesLoginPanel extends PreferenceJPanel {
 
     public PreferenceSitesLoginPanel() {
-        super("Sites Logins", "preferenceSitesLoginsPanel.iconPath");
+        super("Sites Login", "preferenceSitesLoginPanel.iconPath");
 
         layoutComponents();
     }

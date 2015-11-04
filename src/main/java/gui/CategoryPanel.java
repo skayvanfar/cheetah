@@ -139,6 +139,7 @@ class CategoryPanel extends JPanel {
     public void setTreeModel(List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs) {
         this.preferencesDirectoryCategoryDTOs = preferencesDirectoryCategoryDTOs;
         categoryTree.setModel(new DefaultTreeModel(initTree(preferencesDirectoryCategoryDTOs), false));
+        expandAllNodes(categoryTree, 0, categoryTree.getRowCount());
     }
 
     public void setCategoryPanelListener(CategoryPanelListener categoryPanelListener) {
