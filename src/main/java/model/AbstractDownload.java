@@ -425,7 +425,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
             case ERROR:
                 System.out.println("error");
                 downloadRange.resume(); // todo test for redownload
-                status = DownloadStatus.ERROR;
+         //       status = DownloadStatus.ERROR;
                 if (downloadInfoListener != null)
                     downloadInfoListener.downloadNeedSaved(this);
                 break;

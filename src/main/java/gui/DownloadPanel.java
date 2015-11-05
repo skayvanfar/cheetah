@@ -180,7 +180,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             downloadsTableModel.addDownload(download);
             downloadDialog.setDownloadRanges(download.getDownloadRangeList());
         }
-
+        setColumnWidths();
     }
 
     private void setStateOfMenuItems() {
@@ -190,6 +190,21 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         clearItem.setEnabled(false);
         //     clearAllCompletedButton.setEnabled(true);
         //      preferencesButton.setEnabled(true);
+    }
+
+    private void setColumnWidths(){
+        downloadTable.getColumnModel().getColumn(0).setPreferredWidth(500);
+        downloadTable.getColumnModel().getColumn(0).setMaxWidth(900);
+        downloadTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        downloadTable.getColumnModel().getColumn(1).setMaxWidth(250);
+        downloadTable.getColumnModel().getColumn(2).setPreferredWidth(250);
+        downloadTable.getColumnModel().getColumn(2).setMaxWidth(500);
+        downloadTable.getColumnModel().getColumn(3).setPreferredWidth(150);
+        downloadTable.getColumnModel().getColumn(3).setMaxWidth(200);
+        downloadTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+        downloadTable.getColumnModel().getColumn(4).setMaxWidth(150);
+
+        downloadTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
     }
 
     private void calculateDownloaded(Download download) {
@@ -590,7 +605,9 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     }
 
-    public void setStateOfButtonsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
+    public void setStateOfButtonsControl(boolean openState, boolean openFolderState, boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
+        openItem.setEnabled(openState);
+        openFolderItem.setEnabled(openFolderState);
         pauseItem.setEnabled(pauseState);
         resumeItem.setEnabled(resumeState);
         clearItem.setEnabled(clearState);

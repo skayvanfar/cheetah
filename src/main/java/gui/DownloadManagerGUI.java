@@ -75,6 +75,10 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
+
+        Properties systemProperties = System.getProperties();
+   //     systemProperties.setProperty("http.proxyHost", "localhost");
+  //      systemProperties.setProperty("http.proxyPort", "45");
     //    try {
    //         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
    //             System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
@@ -173,7 +177,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                         switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
                             case HTTP:
                                 download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
                                 break;
                             case FTP:
                                 // todo must be created ...
@@ -311,12 +315,16 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         setMinimumSize(new Dimension(640, 480));
         // Set window size.
+        pack();
         setSize(900, 580);
+
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
     }
 
     private void setStateOfMenuItems() {
+        openItem.setEnabled(false);
+        openFolderItem.setEnabled(false);
         resumeItem.setEnabled(false);
         pauseItem.setEnabled(false);
     //    pauseAllButton.setEnabled(true);
@@ -335,7 +343,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
        //   PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             try {
                 preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
-            } catch(NullPointerException | EOFException e) {
+            } catch(NullPointerException | EOFException | InvalidClassException e) {
                 PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             }
 
@@ -467,10 +475,14 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             preferencesProxyDTO.setProxySettingType(Integer.parseInt(defaultPreferencesBundle.getString("proxySettingType")));
         }
 
+        if (preferencesProxyDTO.isUseProxyNotSocks() == true) { // todo must use better way
+            preferencesProxyDTO.setUseProxyNotSocks(Boolean.parseBoolean(defaultPreferencesBundle.getString("useProxyNotSocks")));
+        }
+
         if (preferencesProxyDTO.getHttpProxyAddress() == null || preferencesProxyDTO.getHttpProxyAddress().equals("")) {
             preferencesProxyDTO.setHttpProxyAddress(defaultPreferencesBundle.getString("httpProxyAddress"));
         }
-        if (preferencesProxyDTO.getHttpProxyPort() != 0) {
+        if (preferencesProxyDTO.getHttpProxyPort() == 0) {  // todo must use better way
             preferencesProxyDTO.setHttpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpProxyPort")));
         }
         if (preferencesProxyDTO.getHttpProxyUserName() == null || preferencesProxyDTO.getHttpProxyUserName().equals("")) {
@@ -483,7 +495,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         if (preferencesProxyDTO.getHttpsProxyAddress() == null || preferencesProxyDTO.getHttpsProxyAddress().equals("")) {
             preferencesProxyDTO.setHttpsProxyAddress(defaultPreferencesBundle.getString("httpsProxyAddress"));
         }
-        if (preferencesProxyDTO.getHttpsProxyPort() != 0) {
+        if (preferencesProxyDTO.getHttpsProxyPort() == 0) {  // todo must use better way
             preferencesProxyDTO.setHttpsProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpsProxyPort")));
         }
         if (preferencesProxyDTO.getHttpsProxyUserName() == null || preferencesProxyDTO.getHttpsProxyUserName().equals("")) {
@@ -496,7 +508,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         if (preferencesProxyDTO.getFtpProxyAddress() == null || preferencesProxyDTO.getFtpProxyAddress().equals("")) {
             preferencesProxyDTO.setFtpProxyAddress(defaultPreferencesBundle.getString("ftpProxyAddress"));
         }
-        if (preferencesProxyDTO.getFtpProxyPort() != 0) {
+        if (preferencesProxyDTO.getFtpProxyPort() == 0) {  // todo must use better way
             preferencesProxyDTO.setFtpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("ftpProxyPort")));
         }
         if (preferencesProxyDTO.getFtpProxyUserName() == null || preferencesProxyDTO.getFtpProxyUserName().equals("")) {
@@ -540,29 +552,29 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             switch (state) {
                 case DOWNLOADING:
                     mainToolbar.setStateOfButtonsControl(true, false, false, false, false, true); // Toolbar Buttons
-                    downloadPanel.setStateOfButtonsControl(true, false, false, false, false, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(true, false, false, false, false, true); // MenuItems
+                    downloadPanel.setStateOfButtonsControl(false, false, true, false, false, false, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, true, false, false, false, false, true); // MenuItems
                     break;
                 case PAUSED:
                     mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true); // last false
-                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, true, true, false, true, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, false, true, true, false, true, true);
                     break;
                 case ERROR:
                     mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true);
-                    downloadPanel.setStateOfButtonsControl(false, true, true, false, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, true, true, false, true, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, false, true, true, false, true, true);
                     break;
                 default: // COMPLETE or CANCELLED
                     mainToolbar.setStateOfButtonsControl(false, false, true, true, true, true);
-                    downloadPanel.setStateOfButtonsControl(false, false, true, true, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, false, true, true, true, true);
+                    downloadPanel.setStateOfButtonsControl(true, true, false, false, true, true, true, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(true, true, false, false, true, true, true, true);
             }
         } else {
             // No download is selected in table.
             mainToolbar.setStateOfButtonsControl(false, false, false, false, false, false);
-            downloadPanel.setStateOfButtonsControl(false, false, false, false, false, false); // Toolbar Buttons
-            setStateOfMenuItemsControl(false, false, false, false, false, false);
+            downloadPanel.setStateOfButtonsControl(false, false, false, false, false, false, false, false); // Toolbar Buttons
+            setStateOfMenuItemsControl(false, false, false, false, false, false, false, false);
         }
     }
 
@@ -737,7 +749,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         }
     }
 
-    private void setStateOfMenuItemsControl(boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
+    private void setStateOfMenuItemsControl(boolean openState, boolean openFolderState, boolean pauseState, boolean resumeState, boolean clearState, boolean reJoinState, boolean reDownloadState, boolean propertiesState) {
+        openItem.setEnabled(openState);
+        openFolderItem.setEnabled(openFolderState);
         pauseItem.setEnabled(pauseState);
         resumeItem.setEnabled(resumeState);
         clearItem.setEnabled(clearState);

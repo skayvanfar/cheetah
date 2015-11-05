@@ -3,6 +3,9 @@ package gui.preference;
 import gui.listener.PreferenceCategoryPanelListener;
 import gui.listener.PreferencesListener;
 import model.dto.PreferencesDTO;
+import model.dto.PreferencesProxyDTO;
+import service.ProxyService;
+import service.impl.ProxyServiceImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -97,7 +100,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         //    setResizable(false);
 
         setMinimumSize(new Dimension(350,250));
-        setSize(800, 500);
+   //     setSize(800, 500);
         setLocationRelativeTo(parent);
         pack();
 
@@ -152,7 +155,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         if (preferencesListener != null) {
             preferencesListener.preferencesSet(preferenceDTO);
         }
-        utils.LookAndFeel.changeLaf(parent, preferenceInterfacePanel.getPreferencesInterfaceDTO().getLookAndFeelName());
+        setPreferenceEffects(preferenceDTO);
     }
 
     public void setPreferencesDTO(PreferencesDTO preferencesDTO) {
@@ -160,6 +163,27 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         preferenceConnectionPanel.setPreferencesConnectionDTO(preferencesDTO.getPreferencesConnectionDTO());
         preferenceInterfacePanel.setPreferencesInterfaceDTO(preferencesDTO.getPreferencesInterfaceDTO());
         preferenceProxyPanel.setPreferencesProxyDTO(preferencesDTO.getPreferencesProxyDTO());
+    }
+
+    private void setPreferenceEffects(PreferencesDTO preferencesDTO) {
+        utils.LookAndFeel.changeLaf(parent, preferenceInterfacePanel.getPreferencesInterfaceDTO().getLookAndFeelName(), new Dimension(900, 580));
+        ProxyService proxyService = new ProxyServiceImpl();
+        PreferencesProxyDTO preferencesProxyDTO = preferencesDTO.getPreferencesProxyDTO();
+        if (preferencesProxyDTO.getProxySettingType() == 0) {
+            proxyService.setNoProxy();
+        } else if (preferencesProxyDTO.getProxySettingType() == 1) {
+            proxyService.setNoProxy(); // todo must change proxyService.setUseSystemProxy();
+        } else if (preferencesProxyDTO.getProxySettingType() == 2 && preferencesProxyDTO.isUseProxyNotSocks()) {
+            proxyService.setHttpProxy(preferencesProxyDTO.getHttpProxyAddress(), preferencesProxyDTO.getHttpProxyPort(),
+                    preferencesProxyDTO.getHttpProxyUserName(), preferencesProxyDTO.getHttpProxyPassword());
+//            proxyService.setHttpsProxy(preferencesProxyDTO.getHttpsProxyAddress(), preferencesProxyDTO.getHttpsProxyPort(),
+//                    preferencesProxyDTO.getHttpsProxyUserName(), preferencesProxyDTO.getHttpsProxyPassword());
+//            proxyService.setFtpProxy(preferencesProxyDTO.getFtpProxyAddress(), preferencesProxyDTO.getFtpProxyPort(),
+//                    preferencesProxyDTO.getFtpProxyUserName(), preferencesProxyDTO.getFtpProxyPassword());
+        } else if (preferencesProxyDTO.getProxySettingType() == 2 && !preferencesProxyDTO.isUseProxyNotSocks()) {
+            proxyService.setSocksProxy(preferencesProxyDTO.getSocksProxyAddress(), preferencesProxyDTO.getSocksProxyPort(),
+                    preferencesProxyDTO.getSocksProxyUserName(), preferencesProxyDTO.getSocksProxyPassword());
+        }
     }
 
     public void setPreferencesListener(PreferencesListener preferencesListener) {

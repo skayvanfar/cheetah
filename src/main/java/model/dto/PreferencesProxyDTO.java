@@ -9,6 +9,8 @@ public class PreferencesProxyDTO implements Serializable {
 
     private int proxySettingType;
 
+    private boolean useProxyNotSocks;
+
     // http
     private String httpProxyAddress;
     private int httpProxyPort;
@@ -27,12 +29,26 @@ public class PreferencesProxyDTO implements Serializable {
     private String ftpProxyUserName;
     private String ftpProxyPassword;
 
+    // socks
+    private String socksProxyAddress;
+    private int socksProxyPort;
+    private String socksProxyUserName;
+    private String socksProxyPassword;
+
     public int getProxySettingType() {
         return proxySettingType;
     }
 
     public void setProxySettingType(int proxySettingType) {
         this.proxySettingType = proxySettingType;
+    }
+
+    public boolean isUseProxyNotSocks() {
+        return useProxyNotSocks;
+    }
+
+    public void setUseProxyNotSocks(boolean useProxyNotSocks) {
+        this.useProxyNotSocks = useProxyNotSocks;
     }
 
     public String getHttpProxyAddress() {
@@ -129,5 +145,37 @@ public class PreferencesProxyDTO implements Serializable {
 
     public void setFtpProxyPassword(String ftpProxyPassword) {
         this.ftpProxyPassword = ftpProxyPassword;
+    }
+
+    public String getSocksProxyAddress() {
+        return socksProxyAddress;
+    }
+
+    public void setSocksProxyAddress(String socksProxyAddress) {
+        this.socksProxyAddress = socksProxyAddress;
+    }
+
+    public int getSocksProxyPort() {
+        return socksProxyPort;
+    }
+
+    public void setSocksProxyPort(int socksProxyPort) {
+        this.socksProxyPort = socksProxyPort;
+    }
+
+    public String getSocksProxyUserName() {
+        return socksProxyUserName;
+    }
+
+    public void setSocksProxyUserName(String socksProxyUserName) {
+        this.socksProxyUserName = socksProxyUserName;
+    }
+
+    public String getSocksProxyPassword() {
+        return socksProxyPassword;
+    }
+
+    public void setSocksProxyPassword(String socksProxyPassword) {
+        this.socksProxyPassword = socksProxyPassword;
     }
 }

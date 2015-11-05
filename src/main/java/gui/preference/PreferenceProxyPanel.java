@@ -104,7 +104,7 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
         useProxyRadioButton = new JRadioButton();
         useSocksLabel =new JLabel("Use Socks");
         useSocksRadioButton = new JRadioButton();
-        useProxyRadioButton.setSelected(true);
+     //   useProxyRadioButton.setSelected(true);
         proxySocksGroup = new ButtonGroup();
         proxySocksGroup.add(useProxyRadioButton);
         proxySocksGroup.add(useSocksRadioButton);
@@ -454,6 +454,11 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
                 preferencesProxyDTO.setProxySettingType(2);
         }
 
+        if (useProxyRadioButton.isSelected())
+            preferencesProxyDTO.setUseProxyNotSocks(true);
+        else
+            preferencesProxyDTO.setUseProxyNotSocks(false);
+
         // for http
         preferencesProxyDTO.setHttpProxyAddress(httpProxyAddressTextField.getText());
         preferencesProxyDTO.setHttpProxyPort((Integer) httpProxyPortSpinner.getValue());
@@ -472,6 +477,12 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
         preferencesProxyDTO.setFtpProxyUserName(ftpProxyUserNameTextField.getText());
         preferencesProxyDTO.setFtpProxyPassword(new String(ftpProxyPasswordField.getPassword()));
 
+        // for ftp
+        preferencesProxyDTO.setSocksProxyAddress(socksProxyAddressTextField.getText());
+        preferencesProxyDTO.setSocksProxyPort((Integer) socksProxyPortSpinner.getValue());
+        preferencesProxyDTO.setSocksProxyUserName(socksProxyUserNameTextField.getText());
+        preferencesProxyDTO.setSocksProxyPassword(new String(socksProxyPasswordField.getPassword()));
+
         return preferencesProxyDTO;
     }
 
@@ -486,6 +497,11 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
             case 2:
                 manualProxyRadioButton.setSelected(true);
         }
+
+        if (preferencesProxyDTO.isUseProxyNotSocks())
+            useProxyRadioButton.setSelected(true);
+        else
+            useSocksRadioButton.setSelected(true);
 
         // for http
         httpProxyAddressTextField.setText(preferencesProxyDTO.getHttpProxyAddress());
@@ -504,6 +520,12 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
         ftpProxyPortSpinner.setValue(preferencesProxyDTO.getFtpProxyPort());
         ftpProxyUserNameTextField.setText(preferencesProxyDTO.getFtpProxyUserName());
         ftpProxyPasswordField.setText(preferencesProxyDTO.getFtpProxyPassword());
+
+        // for ftp
+        socksProxyAddressTextField.setText(preferencesProxyDTO.getSocksProxyAddress());
+        socksProxyPortSpinner.setValue(preferencesProxyDTO.getSocksProxyPort());
+        socksProxyUserNameTextField.setText(preferencesProxyDTO.getSocksProxyUserName());
+        socksProxyPasswordField.setText(preferencesProxyDTO.getSocksProxyPassword());
 
         this.preferencesProxyDTO = preferencesProxyDTO;
     }

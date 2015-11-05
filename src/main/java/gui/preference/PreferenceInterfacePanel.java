@@ -31,7 +31,7 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
         lookAndFeelSelectComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                utils.LookAndFeel.changeLaf(parentFrame, (String) e.getItem());
+                utils.LookAndFeel.changeLaf(parentFrame, (String) e.getItem(), new Dimension(900, 580));
             }
         });
 
