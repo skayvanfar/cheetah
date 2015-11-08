@@ -103,9 +103,15 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     private JFrame parent;
 
-    public DownloadPanel(JFrame parent, String databasePath) {
+    private int connectionTimeout;
+    private int readTimeout;
+
+    public DownloadPanel(JFrame parent, String databasePath, int connectionTimeout, int readTimeout) {
         this.parent = parent;
         setLayout(new BorderLayout());
+
+        this.connectionTimeout = connectionTimeout;
+        this.readTimeout = readTimeout;
 
         downloadDialogs = new ArrayList<>();
 
@@ -355,6 +361,8 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     // Resume the selected download.
     public void actionResume() {
+        selectedDownload.setConnectTimeout(connectionTimeout);
+        selectedDownload.setReadTimeout(readTimeout);
         selectedDownload.resume();
     }
 

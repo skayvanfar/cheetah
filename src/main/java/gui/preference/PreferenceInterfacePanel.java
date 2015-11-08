@@ -16,6 +16,8 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
     private JPanel interfacePanel;
     private JLabel lookAndFeelSelectLabel;
     private JComboBox<String> lookAndFeelSelectComboBox;
+    private JLabel localLabel;
+    private JComboBox<String> localComboBox;
 
     private PreferencesInterfaceDTO preferencesInterfaceDTO;
 
@@ -27,6 +29,8 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
         interfacePanel = new JPanel();
         lookAndFeelSelectLabel = new JLabel("Select Look and Feel:");
         lookAndFeelSelectComboBox = new JComboBox<>(new String[] {"System", "Metal", "Nimbus"});
+        localLabel = new JLabel("Language");
+        localComboBox = new JComboBox<>(new String[] {"English", "Persian"});
 
         lookAndFeelSelectComboBox.addItemListener(new ItemListener() {
             @Override
@@ -66,18 +70,18 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
         gc.anchor = GridBagConstraints.LINE_START;
         interfacePanel.add(lookAndFeelSelectComboBox, gc);
         ///////////////// Next row ////////////////////////////////////////////
-//        gc.gridy++;
+        gc.gridy++;
 
-//        gc.gridx = 0;
-//        gc.fill = GridBagConstraints.NONE;
-//        gc.anchor = GridBagConstraints.LINE_END;
-//        gc.insets = new Insets(0, 0, 0, 5);
-//        interfacePanel.add(maxConnectionNumberLabel, gc);
+        gc.gridx = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.insets = new Insets(0, 0, 0, 5);
+        interfacePanel.add(localLabel, gc);
 
-//        gc.gridx = 1;
-//        gc.insets = new Insets(0, 0, 0, 0);
-//        gc.anchor = GridBagConstraints.LINE_START;
-//        interfacePanel.add(maxConnectionNumberComboBox, gc);
+        gc.gridx = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.anchor = GridBagConstraints.LINE_START;
+        interfacePanel.add(localComboBox, gc);
 
         interfacePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -86,11 +90,13 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
 
     public PreferencesInterfaceDTO getPreferencesInterfaceDTO() {
         preferencesInterfaceDTO.setLookAndFeelName((String) lookAndFeelSelectComboBox.getSelectedItem());
+        preferencesInterfaceDTO.setLocalName((String) localComboBox.getSelectedItem());
         return preferencesInterfaceDTO;
     }
 
     public void setPreferencesInterfaceDTO(PreferencesInterfaceDTO preferencesInterfaceDTO) {
         this.preferencesInterfaceDTO = preferencesInterfaceDTO;
         lookAndFeelSelectComboBox.setSelectedItem(preferencesInterfaceDTO.getLookAndFeelName());
+        localComboBox.setSelectedItem(preferencesInterfaceDTO.getLocalName());
     }
 }

@@ -3,6 +3,7 @@ package gui.preference;
 import gui.listener.PreferenceCategoryPanelListener;
 import gui.listener.PreferencesListener;
 import model.dto.PreferencesDTO;
+import model.dto.PreferencesInterfaceDTO;
 import model.dto.PreferencesProxyDTO;
 import service.ProxyService;
 import service.impl.ProxyServiceImpl;
@@ -11,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
 
 /**
  * Created by Saeed on 9/13/2015.
@@ -166,7 +168,9 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
     }
 
     private void setPreferenceEffects(PreferencesDTO preferencesDTO) {
-        utils.LookAndFeel.changeLaf(parent, preferenceInterfacePanel.getPreferencesInterfaceDTO().getLookAndFeelName(), new Dimension(900, 580));
+       PreferencesInterfaceDTO preferencesInterfaceDTO = preferencesDTO.getPreferencesInterfaceDTO();
+        utils.LookAndFeel.changeLaf(parent, preferencesInterfaceDTO.getLookAndFeelName(), new Dimension(900, 580));
+        setLocale(new Locale(preferencesInterfaceDTO.getLocalName()));
         ProxyService proxyService = new ProxyServiceImpl();
         PreferencesProxyDTO preferencesProxyDTO = preferencesDTO.getPreferencesProxyDTO();
         if (preferencesProxyDTO.getProxySettingType() == 0) {

@@ -55,16 +55,16 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
         maxConnectionNumberLabel.setLabelFor(maxConnectionNumberComboBox);
 
         timeBetweenAttemptsLabel = new JLabel("Pause Time Between attempts(in sec):");
-        timeBetweenAttemptsSpinnerModel = new SpinnerNumberModel(5, 0, 9999, 1);
+        timeBetweenAttemptsSpinnerModel = new SpinnerNumberModel(5, 1, 9999, 1);
         timeBetweenAttemptsSpinner = new JSpinner(timeBetweenAttemptsSpinnerModel);
         maxNumberAttemptsLabel = new JLabel("Maximum number of attempts:");
-        maxNumberAttemptsSpinnerModel = new SpinnerNumberModel(20, 0, 9999, 1);
+        maxNumberAttemptsSpinnerModel = new SpinnerNumberModel(20, 1, 9999, 1);
         maxNumberAttemptsSpinner = new JSpinner(maxNumberAttemptsSpinnerModel);
         connectionTimeOutLabel = new JLabel("Connection Timeout(in sec):");
-        connectionTimeOutSpinnerModel = new SpinnerNumberModel(20, 0, 9999, 1);
+        connectionTimeOutSpinnerModel = new SpinnerNumberModel(20, 1, 9999, 1);
         connectionTimeOutSpinner = new JSpinner(connectionTimeOutSpinnerModel);
         readTimeOutLabel = new JLabel("Read Timeout(in sec):");
-        readTimeOutSpinnerModel = new SpinnerNumberModel(30, 0, 9999, 1);
+        readTimeOutSpinnerModel = new SpinnerNumberModel(30, 1, 9999, 1);
         readTimeOutSpinner = new JSpinner(readTimeOutSpinnerModel);
 
         layoutComponentsOfConnectionPanel();

@@ -38,6 +38,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     protected boolean resumeCapability;
 
+    protected int connectTimeout;
+    protected int readTimeout;
+
     protected List<DownloadRange> downloadRangeList;
 
     protected DownloadInfoListener downloadInfoListener;
@@ -194,6 +197,26 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    @Override
     public List<DownloadRange> getDownloadRangeList() {
         return downloadRangeList;
     }
@@ -255,6 +278,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     @Override
     public void resume() {
         status = DownloadStatus.DOWNLOADING;
+
         stateChanged();
         if (!downloadRangeList.isEmpty()) {
             for (DownloadRange downloadRange : downloadRangeList)
@@ -304,6 +328,21 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                 }
             }
         }).start();
+    }
+
+    private long previousTime = 0;
+    private void setTransferRate(int readed) {
+        long currentTime = System.currentTimeMillis();
+        long periodTime = currentTime - previousTime;
+
+        float differenceDownloaded = ConnectionUtil.calculateTransferRateInUnit(readed, (int) periodTime, TimeUnit.SEC); // in Byte
+
+        // calculate differenceDownloaded
+        transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloaded, SizeType.BYTE) + "/sec";
+        stateChanged();
+        previousTime = currentTime;
+
+
     }
 
     // Start or resume downloading.
@@ -407,6 +446,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     private synchronized void updateInfo(DownloadRange downloadRange, int readed) {
         downloaded += readed;
+  //      setTransferRate(readed);
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:

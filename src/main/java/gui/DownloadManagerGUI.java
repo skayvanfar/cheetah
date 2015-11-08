@@ -75,8 +75,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
-
-        Properties systemProperties = System.getProperties();
+     //   Locale locale1 = new Locale("fa", "IR", "WIN");
+//setLocale(locale1);
+   //     Properties systemProperties = System.getProperties();
    //     systemProperties.setProperty("http.proxyHost", "localhost");
   //      systemProperties.setProperty("http.proxyPort", "45");
     //    try {
@@ -137,7 +138,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         mainToolbar = new MainToolBar();
         categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
-        downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath());
+        downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath(),
+                preferencesDTO.getPreferencesConnectionDTO().getConnectionTimeOut(), preferencesDTO.getPreferencesConnectionDTO().getReadTimeOut());
         messagePanel = new MessagePanel();
         JTabbedPane mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
@@ -526,6 +528,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         if (preferencesInterfaceDTO.getLookAndFeelName() == null || preferencesInterfaceDTO.getLookAndFeelName().equals("")) {
             preferencesInterfaceDTO.setLookAndFeelName(defaultPreferencesBundle.getString("lookAndFeelName"));
+        }
+        if (preferencesInterfaceDTO.getLocalName() == null || preferencesInterfaceDTO.getLocalName().equals("")) {
+            preferencesInterfaceDTO.setLocalName(getLocale().getLanguage());
         }
 
 

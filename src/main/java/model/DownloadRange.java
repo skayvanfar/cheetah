@@ -47,6 +47,14 @@ public interface DownloadRange {
 
     public void setDownloadRangeFile(File downloadRangeFile);
 
+    public int getConnectTimeout();
+
+    public void setConnectTimeout(int connectTimeout);
+
+    public int getReadTimeout();
+
+    public void setReadTimeout(int readTimeout);
+
     /**
      * Adds an DownloadRangeStatusListener to the set of downloadRangeStatusListeners for this object, provided
      * that it is not the same as some DownloadRangeStatusListener already in the set.

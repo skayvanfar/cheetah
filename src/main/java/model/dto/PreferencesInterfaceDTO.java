@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class PreferencesInterfaceDTO implements Serializable {
 
     private String lookAndFeelName;
+    private String localName;
 
     public String getLookAndFeelName() {
         return lookAndFeelName;
@@ -15,5 +16,13 @@ public class PreferencesInterfaceDTO implements Serializable {
 
     public void setLookAndFeelName(String lookAndFeelName) {
         this.lookAndFeelName = lookAndFeelName;
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
     }
 }

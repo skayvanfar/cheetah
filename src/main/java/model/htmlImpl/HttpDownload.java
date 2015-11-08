@@ -17,8 +17,6 @@ import java.net.UnknownHostException;
  */
 public class HttpDownload extends AbstractDownload implements Download {
 
-
-
     public HttpDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
         super(id, url, downloadName, partCount, downloadPath, downloadRangePath, protocolType);
     }
@@ -29,6 +27,10 @@ public class HttpDownload extends AbstractDownload implements Download {
         try {
             // Open connection to URL.
             connection = (HttpURLConnection) url.openConnection();
+            if (connectTimeout != 0) // When not set
+                connection.setConnectTimeout(connectTimeout);
+            if (readTimeout != 0) // When not set
+                connection.setReadTimeout(readTimeout);
 
             // Specify what portion of file to download.
             connection.setRequestProperty("Range", "bytes=0-");
@@ -99,6 +101,9 @@ public class HttpDownload extends AbstractDownload implements Download {
 
                 addDownloadRange(downloadRange);
 
+                downloadRange.setConnectTimeout(connectTimeout);
+                downloadRange.setReadTimeout(readTimeout);
+
                 downloadRange.resume();
 
                 startRange = endRange + 1;
@@ -113,6 +118,8 @@ public class HttpDownload extends AbstractDownload implements Download {
             String partFileName = downloadName + ".00" + 1;
             downloadRange = new HttpDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, size);
             addDownloadRange(downloadRange);
+            downloadRange.setConnectTimeout(connectTimeout);
+            downloadRange.setReadTimeout(readTimeout);
             downloadRange.resume();
         }
         if (downloadInfoListener != null)

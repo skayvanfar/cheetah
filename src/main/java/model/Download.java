@@ -66,6 +66,14 @@ public interface Download {
     // Get this download's progress.
     public float getProgress();
 
+    public int getConnectTimeout();
+
+    public void setConnectTimeout(int connectTimeout);
+
+    public int getReadTimeout();
+
+    public void setReadTimeout(int readTimeout);
+
     /**
      * Adds an DownloadStatusListener to the set of downloadStatusListeners for this object, provided
      * that it is not the same as some DownloadStatusListener already in the set.

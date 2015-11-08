@@ -256,7 +256,7 @@ class PreferenceSavePanel extends PreferenceJPanel {
         //       PreferencesSaveDTO preferencesSaveDTO = new PreferencesSaveDTO();
         preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
         preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
-        preferencesSaveDTO.setTempDirectory(databasePathTextField.getText());
+        preferencesSaveDTO.setDatabasePath(databasePathTextField.getText());
         return preferencesSaveDTO;
     }
 

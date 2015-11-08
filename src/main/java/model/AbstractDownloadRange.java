@@ -27,6 +27,9 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
 
     protected File downloadRangeFile;
 
+    protected int connectTimeout;
+    protected int readTimeout;
+
     // to quick stop thread
     protected boolean stop = false;
 
@@ -138,6 +141,26 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     @Override
     public void setDownloadRangeFile(File downloadRangeFile) {
         this.downloadRangeFile = downloadRangeFile;
+    }
+
+    @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     /**

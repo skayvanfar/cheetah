@@ -27,6 +27,9 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
             // Open connection to URL.
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+            connection.setConnectTimeout(30000);
+            connection.setReadTimeout(45000);
+
             String rangePropertyValue = "bytes=" + (startRange + rangeDownloaded) + "-";
 
             if (endRange != 0) {
