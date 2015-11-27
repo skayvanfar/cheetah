@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
   <data-source name="SQLite -" uuid="f6a1e6f1-79f9-44df-bc6c-d2dcb5d2eea8">
-    <database-info product="SQLite" version="3.8.11" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native"/>
-    <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed"/>
-    <schema name="" catalog=""/>
-    <table name="DOWNLOAD" schema="" catalog="" type="TABLE">
-      <column name="ID" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="URL" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="DOWNLOAD_NAME_FILE" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="DOWNLOAD_PATH" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="DOWNLOAD_RANGE_PATH" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="SIZE" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="STATUS" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="PROTOCOL_TYPE" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <primary-key columns="id"/>
-      <exported-key name="#FAKE_DOWNLOAD_RANGE_1" table="DOWNLOAD_RANGE" schema="" catalog="" columns="DOWNLOAD_ID"/>
-    </table>
-    <table name="DOWNLOAD_RANGE" schema="" catalog="" type="TABLE">
-      <column name="ID" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
-      <column name="NUMBER" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="RANGE_SIZE" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="CONNECTION_STATUS" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="DOWNLOAD_RANGE_FILE" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="START_RANGE" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="END_RANGE" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="DOWNLOAD_ID" sqlType="INT" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <primary-key columns="id"/>
-      <foreign-key name="#FAKE_DOWNLOAD_RANGE_1" columns="DOWNLOAD_ID" ref-table="DOWNLOAD" ref-schema="" ref-catalog="" ref-columns="ID" update-rule="3" delete-rule="0" deferrability="1"/>
-    </table>
-    <table name="sqlite_sequence" schema="" catalog="" type="TABLE">
-      <column name="name" sqlType="" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
-      <column name="seq" sqlType="" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
-    </table>
+    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
   </data-source>
 </component>

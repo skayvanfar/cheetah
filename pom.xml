@@ -9,13 +9,14 @@
     <version>1.0-SNAPSHOT</version>
 
     <!-- More Project Information -->
-    <name>Chita</name>
-    <description>A fast downloader</description>
+    <name>Cheetah</name>
+    <description>A free fast downloader</description>
     <url></url>
     <inceptionYear>1394</inceptionYear>
     <licenses>
         <license>
-            <name>GPL</name>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <organization>
@@ -24,6 +25,7 @@
     </organization>
     <developers>
         <developer>
+            <id>skayvanfar</id>
             <name>Saeed kayvanfar</name>
             <email>kayvanfar.sj@gmail.com</email>
             <roles>
