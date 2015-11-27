@@ -97,6 +97,9 @@ class PreferenceProxyPanel extends PreferenceJPanel implements ActionListener {
         proxySettingGroup.add(noProxyRadioButton);
         proxySettingGroup.add(systemProxyRadioButton);
         proxySettingGroup.add(manualProxyRadioButton);
+        noProxyRadioButton.setEnabled(false);  // todo for next release
+        systemProxyRadioButton.setEnabled(false);  // todo for next release
+        manualProxyRadioButton.setEnabled(false);  // todo for next release
 
         manualProxyPanel = new JPanel();
 

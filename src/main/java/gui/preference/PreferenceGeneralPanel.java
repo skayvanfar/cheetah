@@ -24,6 +24,7 @@ public class PreferenceGeneralPanel extends PreferenceJPanel {
         generalPanel = new JPanel();
         lunchOnStartupLabel = new JLabel("Launch Cheetah on startup");
         lunchOnStartupCheckBox = new JCheckBox();
+        lunchOnStartupCheckBox.setEnabled(false);  // todo for next release
 
         layoutComponentsOfGeneralPanel();
     }

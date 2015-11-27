@@ -150,7 +150,7 @@ class CategoryPanel extends JPanel {
         top.add(allDownloadsBranch);
         top.add(unfinishedBranch);
         top.add(finishedBranch);
-        top.add(queuesBranch);
+    //    top.add(queuesBranch);
 
         return top;
     }

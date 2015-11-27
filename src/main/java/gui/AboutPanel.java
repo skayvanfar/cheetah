@@ -19,8 +19,15 @@
 
 package gui;
 
+import utils.DesktopUtil;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/25/2015
@@ -31,7 +38,7 @@ class AboutPanel extends JPanel {
 
     private JLabel programNameLabel;
     private JLabel productionMessageLabel;
-    private JLabel producerLabel;
+    private JTextArea copyrightTextArea;
 
     public AboutPanel() {
 
@@ -39,21 +46,35 @@ class AboutPanel extends JPanel {
 
         programNameLabel = new JLabel(bundle.getString("aboutPanel.program.name"));
         productionMessageLabel = new JLabel(bundle.getString("aboutPanel.program.productionMessage"));
-        producerLabel = new JLabel(bundle.getString("aboutPanel.program.producer"));
+        copyrightTextArea = new JTextArea(bundle.getString("aboutPanel.program.copyright"), 15, 40);
 
-        programNameLabel.setFont(new Font("Edwardian Script ITC", Font.BOLD, 28));
-        productionMessageLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
-        producerLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+        programNameLabel.setFont(new Font("Dialog", Font.BOLD, 20));
+        productionMessageLabel.setFont(new Font("Dialog", Font.BOLD, 13));
+        copyrightTextArea.setFont(new Font("Dialog", Font.PLAIN, 12));
+        copyrightTextArea.setEditable(false);
+
+        productionMessageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    URI uri = new URI(bundle.getString("aboutPanel.program.author.mail"));
+                    DesktopUtil.openDefaultMailClient(uri);
+                } catch (URISyntaxException | IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
 
         add(programNameLabel);
         add(new JSeparator());
         add(productionMessageLabel);
-        add(producerLabel);
+        add(new JScrollPane(copyrightTextArea));
     }
 
     @Override
     public Insets getInsets() {
-        return new Insets(50,50,70,50);
+        return new Insets(20,20,20,20);
     }
 
 }

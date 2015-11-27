@@ -47,6 +47,7 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
         connectionTypeComboBox = new JComboBox<>(new String[] {ConnectionType.NotSet.getDesc(), ConnectionType.LOW.getDesc(),
                 ConnectionType.MEDIUM.getDesc(), ConnectionType.HIGH.getDesc()});
         connectionTypeComboBox.setEditable(false);
+        connectionTypeComboBox.setEnabled(false);  // todo for next release
         maxConnectionNumberLabel = new JLabel("Max Connections Number:");
         maxConnectionNumberComboBox = new JComboBox<>(new Integer[] {1, 2, 4, 8, 16, 24, 32});
         maxConnectionNumberComboBox.setEditable(false);
@@ -66,6 +67,9 @@ class PreferenceConnectionPanel extends PreferenceJPanel {
         readTimeOutLabel = new JLabel("Read Timeout(in sec):");
         readTimeOutSpinnerModel = new SpinnerNumberModel(30, 1, 9999, 1);
         readTimeOutSpinner = new JSpinner(readTimeOutSpinnerModel);
+
+        timeBetweenAttemptsSpinner.setEnabled(false);
+        maxNumberAttemptsSpinner.setEnabled(false);
 
         layoutComponentsOfConnectionPanel();
         layoutComponentsOfErrorsPanel();

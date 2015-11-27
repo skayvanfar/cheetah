@@ -17,30 +17,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package gui;
+package utils;
 
-import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
 
 /**
- * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/25/2015
+ * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 11/27/2015
  */
-class AboutDialog extends JDialog {
 
-    public AboutDialog(JFrame parent) {
-        super(parent, "About...", false);
+public class DesktopUtil {
 
-        setLayout(new BorderLayout());
-
-        setBackground(Color.WHITE);
-
-        AboutPanel aboutPanel = new AboutPanel();
-        add(aboutPanel, BorderLayout.CENTER);
-
-        setMinimumSize(new Dimension(350,250));
-        setSize(550, 400);
-        setResizable(false);
-        setLocationRelativeTo(parent);
+    public static void openDefaultBrowser(URI uri) throws IOException {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().browse(uri);
+        } else {}
     }
 
+    public static void openDefaultMailClient(URI uri) throws IOException {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().mail(uri);
+        } else {}
+    }
 }

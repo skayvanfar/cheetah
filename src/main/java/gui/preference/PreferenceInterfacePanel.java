@@ -31,6 +31,7 @@ public class PreferenceInterfacePanel extends PreferenceJPanel {
         lookAndFeelSelectComboBox = new JComboBox<>(new String[] {"System", "Metal", "Nimbus"});
         localLabel = new JLabel("Language");
         localComboBox = new JComboBox<>(new String[] {"English", "Persian"});
+        localComboBox.setEnabled(false);  // todo for next release
 
         lookAndFeelSelectComboBox.addItemListener(new ItemListener() {
             @Override
