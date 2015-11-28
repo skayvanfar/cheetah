@@ -456,6 +456,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         });
     }
 
+    @Override
     public void downloadStatusChanged(DownloadRange downloadRange, int readed) {
         updateInfo(downloadRange, readed);
         stateChanged();
@@ -515,6 +516,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         return state;
     }
 
+    @Override
     public void resetData() {
         downloaded = 0;
         status = DownloadStatus.DOWNLOADING;
