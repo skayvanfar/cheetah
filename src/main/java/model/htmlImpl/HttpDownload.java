@@ -60,6 +60,11 @@ public class HttpDownload extends AbstractDownload implements Download {
 
             responseCode = connection.getResponseCode();
 
+            String raw = connection.getHeaderField("Content-Disposition");
+            if(raw != null && raw.indexOf('=') != -1) {
+                downloadName = raw.split("=")[1]; //getting value after '='
+            }
+
             // Make sure response code is in the 200 range.
             if (responseCode / 100 != 2) {
                 //        error();

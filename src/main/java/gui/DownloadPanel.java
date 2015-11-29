@@ -533,6 +533,12 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     public void downloadNeedSaved(Download download) {
         try {
             databaseController.save(download);
+            //**************************************************
+//            if (!downloadList.contains(download)) {
+//                downloadList.add(download);
+//                setDownloadsByDownloadPath(fileExtensions, downloadCategory);
+//            }
+            //**************************************************
             downloadsTableModel.fireTableDataChanged();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -543,11 +549,23 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     public void newDownloadInfoGot(final Download download) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (download.getStatus() == DownloadStatus.DOWNLOADING) {
+                if (download.getStatus() == DownloadStatus.DOWNLOADING) {// todo add name to downloadAskDialog dialog
                     downloadAskDialog.setInfo(download.getUrl().toString(), download.getFormattedSize(), download.isResumeCapability());
                 } else {
                     System.out.println("newDownloadInfoGot with error");
                     downloadAskDialog.dispose();
+                    //**************************************************
+                    if (!downloadList.contains(download)) {
+                        downloadList.add(download);
+                        setDownloadsByDownloadPath(fileExtensions, downloadCategory);
+                    }
+                    //**************************************************
+                    DownloadDialog downloadDialog = new DownloadDialog(parent, download);
+                    downloadDialog.setDownloadInfoListener(DownloadPanel.this);
+                    if (!downloadDialogs.contains(downloadDialog))
+                        downloadDialogs.add(downloadDialog);
+
+                    JOptionPane.showMessageDialog(parent, "Connection closed.", "Error", JOptionPane.ERROR_MESSAGE);
               //      DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
                 }
             }

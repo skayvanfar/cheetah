@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,13 @@ public class ConnectionUtil {
     // Get file name portion of URL.
     public static String getFileName(URL url) {
         String fileName = url.getFile();
-        return fileName.substring(fileName.lastIndexOf('/') + 1);
+        if (fileName.lastIndexOf('?') != -1) {
+            fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('?'));
+        } else {
+            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+        }
+
+        return URLDecoder.decode(fileName);
     }
 
     public static String getRealFileName(URL url) throws IOException {

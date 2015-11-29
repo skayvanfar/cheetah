@@ -186,8 +186,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             @Override
             public void newDownloadEventOccured(URL textUrl) {
                 if (textUrl != null) {
-                    try {
-                        String downloadName = ConnectionUtil.getRealFileName(textUrl);
+               //     try {
+                 //       String downloadName = ConnectionUtil.getRealFileName(textUrl);
+                        String downloadName = ConnectionUtil.getFileName(textUrl);
                         String fileExtension =  FilenameUtils.getExtension(downloadName);
                         File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
                         File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
@@ -209,10 +210,10 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                                 break;
                         }
                         downloadPanel.addDownload(download);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
+//                    }
 
                 }
             }
