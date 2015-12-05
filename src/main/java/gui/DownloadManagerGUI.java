@@ -141,14 +141,12 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         try {
             PreferencesDTO preferencesDTOTest = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
-        } catch (ClassCastException e) {
+        } catch (ClassCastException | ClassNotFoundException | BackingStoreException | IOException e) {
             try {
                 PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             } catch (IOException | ClassNotFoundException | BackingStoreException e1) {
                 e1.printStackTrace();
             }
-        } catch (ClassNotFoundException | BackingStoreException | IOException e) {
-            e.printStackTrace();
         }
 
         LookAndFeel.setLaf(preferencesDTO.getPreferencesInterfaceDTO().getLookAndFeelName());
@@ -355,6 +353,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
   //      preferencesButton.setEnabled(true);
         reJoinItem.setEnabled(false);
         reDownloadItem.setEnabled(false);
+        moveToQueueItem.setEnabled(false);
+        removeFromQueueItem.setEnabled(false);
         propertiesItem.setEnabled(false);
     }
 
@@ -581,16 +581,21 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                     setStateOfMenuItemsControl(false, false, true, false, false, false, false, true); // MenuItems
                     break;
                 case PAUSED:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true); // last false
-                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, false, false, true, true, false, true, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, false, true); // last false
+                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, false, true, true, false, false, true);
                     break;
                 case ERROR:
-                    mainToolbar.setStateOfButtonsControl(false, true, true, false, true, true);
-                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, true, true); // Toolbar Buttons
-                    setStateOfMenuItemsControl(false, false, false, true, true, false, true, true);
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, false, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, false, true, true, false, false, true);
                     break;
-                default: // COMPLETE or CANCELLED
+                case CANCELLED:
+                    mainToolbar.setStateOfButtonsControl(false, true, true, false, false, true);
+                    downloadPanel.setStateOfButtonsControl(false, false, false, true, true, false, false, true); // Toolbar Buttons
+                    setStateOfMenuItemsControl(false, false, false, true, true, false, false, true);
+                    break;
+                default: // COMPLETE
                     mainToolbar.setStateOfButtonsControl(false, false, true, true, true, true);
                     downloadPanel.setStateOfButtonsControl(true, true, false, false, true, true, true, true); // Toolbar Buttons
                     setStateOfMenuItemsControl(true, true, false, false, true, true, true, true);
@@ -613,8 +618,11 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         exitItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.exitItem.name"));
         exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.exitItem.iconPath")))); // NOI18N
 
-        fileMenu.add(exportDataItem);
-        fileMenu.add(importDataItem);
+        exportDataItem.setEnabled(false);
+        importDataItem.setEnabled(false);
+
+   //     fileMenu.add(exportDataItem);
+   //     fileMenu.add(importDataItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
 

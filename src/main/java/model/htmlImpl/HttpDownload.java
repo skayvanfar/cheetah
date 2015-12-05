@@ -102,11 +102,8 @@ public class HttpDownload extends AbstractDownload implements Download {
             if (connection != null) ///???
                 connection.disconnect();
         }
-        SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog todo move to other loc
-            public void run() {
-                downloadInfoListener.newDownloadInfoGot(HttpDownload.this); // todo may be Download
-            }
-        });
+
+        downloadInfoListener.newDownloadInfoGot(HttpDownload.this);
     }
 
     public void createDownloadRanges() {
@@ -128,7 +125,7 @@ public class HttpDownload extends AbstractDownload implements Download {
                 downloadRange.setConnectTimeout(connectTimeout);
                 downloadRange.setReadTimeout(readTimeout);
 
-                downloadRange.resume();
+          //      downloadRange.resume();
 
                 startRange = endRange + 1;
                 if (i != partCount - 2) {
@@ -144,10 +141,10 @@ public class HttpDownload extends AbstractDownload implements Download {
             addDownloadRange(downloadRange);
             downloadRange.setConnectTimeout(connectTimeout);
             downloadRange.setReadTimeout(readTimeout);
-            downloadRange.resume();
+        //    downloadRange.resume();
         }
         if (downloadInfoListener != null)
             downloadInfoListener.downloadNeedSaved(this);
-        startTransferRate();
+   //     startTransferRate();
     }
 }

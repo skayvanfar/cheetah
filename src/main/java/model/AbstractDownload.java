@@ -317,7 +317,8 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
             downloadInfoListener.downloadNeedSaved(this);
     }
 
-    protected void startTransferRate() {
+    @Override
+    public void startTransferRate() {
         new Thread(new Runnable() {
             ///////////////////////////////////////////////////////////////////////////////////// Download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
@@ -483,9 +484,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                 //      }
                 break;
             case ERROR:
-                System.out.println("error");
-                downloadRange.resume(); // todo test for redownload
-         //       status = DownloadStatus.ERROR;
+                System.out.println("error again");
+        //        downloadRange.resume(); // todo test for redownload
+                status = DownloadStatus.ERROR;
                 if (downloadInfoListener != null)
                     downloadInfoListener.downloadNeedSaved(this);
                 break;

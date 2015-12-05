@@ -244,10 +244,11 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         pathTextField.setText(path);
     }
 
-    public void setInfo(String url, String size, boolean resumeCapability) {
+    public void setInfo(String url, String path, String size, boolean resumeCapability) {
         urlTextField.setText(url);
   //      downloadNameField.setText(downloadNameFile);
     //    pathTextField.setText(path);
+        pathTextField.setText(path);
         sizeTextField.setText(size);
         if (resumeCapability) {
             resumeCapabilityResult.setForeground(Color.GREEN);

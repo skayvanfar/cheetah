@@ -132,4 +132,6 @@ public interface Download {
 
     // reset data of download for redownload
     public void resetData();
+
+    public void startTransferRate();
 }
