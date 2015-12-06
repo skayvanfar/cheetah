@@ -16,4 +16,4 @@ If you execute "mvn install" or "mvn package", you will get a distribution packa
 On the other hand, just run it from an Intellj IDEA project.
 
 # License
-The vlcj-player project is provided under the GPL, version 2 or later.
+The Cheetah project is provided under the GPL, version 2 or later.
