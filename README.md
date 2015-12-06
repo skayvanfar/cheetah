@@ -9,6 +9,10 @@ Cheetah is a Free Fast Downloader built using java with a Swing rich-client user
 * create many connection for download default 8 connection
 * ReDownload ability
 * ReJoin ability
+* Themes
+
+# Screenshot
+![Alt text](/doc/Cheetah.png?raw=true "Cheetah")
 
 # Status
 This project is currently a work-in-progress.
