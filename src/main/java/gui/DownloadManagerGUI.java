@@ -94,45 +94,6 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     // Constructor for Download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
-     //   Locale locale1 = new Locale("fa", "IR", "WIN");
-//setLocale(locale1);
-   //     Properties systemProperties = System.getProperties();
-   //     systemProperties.setProperty("http.proxyHost", "localhost");
-  //      systemProperties.setProperty("http.proxyPort", "45");
-    //    try {
-   //         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-   //             System.out.println(info.getName()); // Metal, Nimbus, CDE/Motif, Windows, Windows Classic, GTK+
-   //             if ("Windows".equals(info.getName())) {
-
-      //          } else if ("Nimbus".equals(info.getName())) {
-      //              UIManager.setLookAndFeel(info.getClassName());
-      //          }
-
-      //          if ("GTK+".equals(info.getName())) {
-     //               UIManager.setLookAndFeel(info.getClassName());
-       //         }
-
-        //        if ("Nimbus".equals(info.getName())) {
-       //             UIManager.setLookAndFeel(info.getClassName());
-       //         }
-   //         }
-
-            // setTheme(String themeName, String licenseKey, String logoString)
-    //        com.jtattoo.plaf.acryl.AcrylLookAndFeel.setTheme("Red", "LPG", "Cheetah");
-
-            // select Look and Feel
-       //     UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
-    //        UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
-
-
-       //     UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
-        //    UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
-
-
-            //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-    //    } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
-    //        e.printStackTrace();
-    //    }
 
         setLayout(new BorderLayout());
 
