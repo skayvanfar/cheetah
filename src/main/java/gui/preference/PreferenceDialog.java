@@ -1,7 +1,7 @@
 package gui.preference;
 
-import gui.listener.PreferenceCategoryPanelListener;
 import gui.listener.PreferencesListener;
+import model.dto.OptionsCategoryDto;
 import model.dto.PreferencesDTO;
 import model.dto.PreferencesInterfaceDTO;
 import model.dto.PreferencesProxyDTO;
@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -26,8 +27,8 @@ public class PreferenceDialog extends JDialog {
     private JButton cancelButton;
     private JButton defaultButton;
 
-    private PreferenceCategoryPanel preferenceCategoryPanel;
-    private PreferencePanels preferencePanels;
+    private OptionsCategoryPanel optionsCategoryPanel;
+    private OptionsPanels preferencePanels;
 
     private PreferencesListener preferencesListener;
 
@@ -39,9 +40,11 @@ public class PreferenceDialog extends JDialog {
         this.parent = parent;
         setLayout(new BorderLayout());
 
-        preferenceCategoryPanel = new PreferenceCategoryPanel();
-        preferencePanels = new PreferencePanels(parent, preferencesDTO);
-        preferenceCategoryPanel.setPreferenceCategoryPanelListener(preferencePanels);
+        OptionsCategoryDto optionsCategoryDto = new OptionsCategoryDto("Category", Arrays.asList("General", "Save To",
+                "Download", "Connection", "Proxy", "Site Login", "Interface")); // Sounds, File Types, dial Up / VPN
+        optionsCategoryPanel = new OptionsCategoryPanel(optionsCategoryDto);
+        preferencePanels = new OptionsPanels(parent, preferencesDTO);
+        optionsCategoryPanel.setOptionsCategoryPanelListener(preferencePanels);
 
         confirmationPanel = new JPanel();
         confirmationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -53,7 +56,7 @@ public class PreferenceDialog extends JDialog {
         confirmationPanel.add(cancelButton);
         confirmationPanel.add(defaultButton);
 
-        add(preferenceCategoryPanel, BorderLayout.WEST);
+        add(optionsCategoryPanel, BorderLayout.WEST);
         add(preferencePanels, BorderLayout.CENTER);
         add(confirmationPanel, BorderLayout.SOUTH);
 
@@ -94,7 +97,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void setPanelBackgroundColor(Color color) {
-        preferenceCategoryPanel.setBackground(color);
+        optionsCategoryPanel.setBackground(color);
         preferencePanels.setPanelBackgroundColor(color);
         confirmationPanel.setBackground(color);
     }

@@ -19,7 +19,7 @@
 
 package gui.preference;
 
-import gui.listener.PreferenceCategoryPanelListener;
+import gui.listener.OptionsCategoryPanelListener;
 import model.dto.PreferencesDTO;
 
 import javax.swing.*;
@@ -28,7 +28,7 @@ import java.awt.*;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> on 6/8/17.
  */
-public class PreferencePanels extends JPanel implements PreferenceCategoryPanelListener {
+public class OptionsPanels extends JPanel implements OptionsCategoryPanelListener {
 
     private PreferenceGeneralPanel preferenceGeneralPanel;
     //   private PreferenceFileTypesPanel preferenceFileTypesPanel;
@@ -46,7 +46,7 @@ public class PreferencePanels extends JPanel implements PreferenceCategoryPanelL
     private PreferencesDTO preferencesDTO;
 
 
-    public PreferencePanels(JFrame parent, PreferencesDTO preferencesDTO) {
+    public OptionsPanels(JFrame parent, PreferencesDTO preferencesDTO) {
         this.preferencesDTO = preferencesDTO;
 
         preferenceGeneralPanel = new PreferenceGeneralPanel(preferencesDTO.getPreferencesGeneralDTO());
