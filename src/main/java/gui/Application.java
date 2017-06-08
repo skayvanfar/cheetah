@@ -31,7 +31,7 @@ public class Application {
 
     public static void main( String[] args ) {
         // enable anti-aliased text:
-        System.setProperty("awt.useSystemAAFontSettings","on");
+        System.setProperty("awt.useSystemAAFontSettings","lcd"); // on or lcd
         System.setProperty("swing.aatext", "true");
 
      //   Utils.setUIFont(new javax.swing.plaf.FontUIResource(Utils.createFont("/fonts/b_koodak.ttf")));

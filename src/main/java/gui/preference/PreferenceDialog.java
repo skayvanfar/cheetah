@@ -17,18 +17,9 @@ import java.util.Locale;
 /**
  * Created by Saeed on 9/13/2015.
  */
-public class PreferenceDialog extends JDialog implements PreferenceCategoryPanelListener {
+public class PreferenceDialog extends JDialog {
 
-    private PreferenceGeneralPanel preferenceGeneralPanel;
- //   private PreferenceFileTypesPanel preferenceFileTypesPanel;
-    private PreferenceSavePanel preferenceSavePanel;
-    private PreferenceDownloadPanel preferenceDownloadPanel;
-    private PreferenceConnectionPanel preferenceConnectionPanel;
-    private PreferenceProxyPanel preferenceProxyPanel;
-    private PreferenceSitesLoginPanel preferenceSitesLoginPanel;
- //   private PreferenceDialUpVPN preferenceDialUpVPN;
- //   private PreferenceSoundPanel preferenceSoundPanel;
-    private PreferenceInterfacePanel preferenceInterfacePanel;
+
 
     private JPanel confirmationPanel;
     private JButton okButton;
@@ -36,12 +27,9 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
     private JButton defaultButton;
 
     private PreferenceCategoryPanel preferenceCategoryPanel;
-    private CardLayout cardLayout;
-    private JPanel preferenceCards;
+    private PreferencePanels preferencePanels;
 
     private PreferencesListener preferencesListener;
-
-    private PreferencesDTO preferencesDTO;
 
     JFrame parent;
 
@@ -51,21 +39,9 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         this.parent = parent;
         setLayout(new BorderLayout());
 
-        this.preferencesDTO = preferencesDTO;
-
-        preferenceGeneralPanel = new PreferenceGeneralPanel(preferencesDTO.getPreferencesGeneralDTO());
-     //   preferenceFileTypesPanel = new PreferenceFileTypesPanel();
-        preferenceSavePanel = new PreferenceSavePanel(preferencesDTO.getPreferencesSaveDTO());
-        preferenceDownloadPanel = new PreferenceDownloadPanel();
-        preferenceConnectionPanel = new PreferenceConnectionPanel(preferencesDTO.getPreferencesConnectionDTO());
-        preferenceProxyPanel = new PreferenceProxyPanel(preferencesDTO.getPreferencesProxyDTO());
-        preferenceSitesLoginPanel = new PreferenceSitesLoginPanel();
-     //   preferenceDialUpVPN = new PreferenceDialUpVPN();
-     //   preferenceSoundPanel = new PreferenceSoundPanel();
-        preferenceInterfacePanel = new PreferenceInterfacePanel(preferencesDTO.getPreferencesInterfaceDTO(), parent);
-
         preferenceCategoryPanel = new PreferenceCategoryPanel();
-        preferenceCategoryPanel.setPreferenceCategoryPanelListener(this);
+        preferencePanels = new PreferencePanels(parent, preferencesDTO);
+        preferenceCategoryPanel.setPreferenceCategoryPanelListener(preferencePanels);
 
         confirmationPanel = new JPanel();
         confirmationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -73,31 +49,17 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
         cancelButton = new JButton("Cancel");
         defaultButton = new JButton("Defaults");
 
-        cardLayout = new CardLayout();
-        preferenceCards = new JPanel();
-        preferenceCards.setLayout(cardLayout);
-        preferenceCards.add(preferenceGeneralPanel, "General");
-     //   preferenceCards.add(preferenceFileTypesPanel, "File Types");
-        preferenceCards.add(preferenceSavePanel, "Save To");
-        preferenceCards.add(preferenceDownloadPanel, "Download");
-        preferenceCards.add(preferenceConnectionPanel, "Connection");
-        preferenceCards.add(preferenceProxyPanel, "Proxy");
-        preferenceCards.add(preferenceSitesLoginPanel, "Site Login");
-     //   preferenceCards.add(preferenceDialUpVPN, "dial Up / VPN");
-    //    preferenceCards.add(preferenceSoundPanel, "Sounds");
-        preferenceCards.add(preferenceInterfacePanel, "Interface");
-
         confirmationPanel.add(okButton);
         confirmationPanel.add(cancelButton);
         confirmationPanel.add(defaultButton);
 
         add(preferenceCategoryPanel, BorderLayout.WEST);
-        add(preferenceCards, BorderLayout.CENTER);
+        add(preferencePanels, BorderLayout.CENTER);
         add(confirmationPanel, BorderLayout.SOUTH);
 
         setPanelBackgroundColor(Color.WHITE);
 
-        cardLayout.show(preferenceCards, "General");
+
 
         //    setResizable(false);
 
@@ -133,27 +95,12 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
     private void setPanelBackgroundColor(Color color) {
         preferenceCategoryPanel.setBackground(color);
-        preferenceCards.setBackground(color);
+        preferencePanels.setPanelBackgroundColor(color);
         confirmationPanel.setBackground(color);
-
-        preferenceGeneralPanel.setBackground(color);
-    //    preferenceFileTypesPanel.setBackground(color);
-        preferenceSavePanel.setBackground(color);
-        preferenceDownloadPanel.setBackground(color);
-        preferenceConnectionPanel.setBackground(color);
-        preferenceProxyPanel.setBackground(color);
-        preferenceSitesLoginPanel.setBackground(color);
-    //    preferenceDialUpVPN.setBackground(color);
-    //    preferenceSoundPanel.setBackground(color);
-        preferenceInterfacePanel.setBackground(color);
     }
 
     private void okButtonClicked() {
-        PreferencesDTO preferenceDTO = new PreferencesDTO();
-        preferenceDTO.setPreferencesSaveDTO(preferenceSavePanel.getPreferenceSaveDTO());
-        preferenceDTO.setPreferencesConnectionDTO(preferenceConnectionPanel.getPreferencesConnectionDTO());
-        preferenceDTO.setPreferencesProxyDTO(preferenceProxyPanel.getPreferencesProxyDTO());
-        preferenceDTO.setPreferencesInterfaceDTO(preferenceInterfacePanel.getPreferencesInterfaceDTO());
+        PreferencesDTO preferenceDTO = preferencePanels.getPreferencesDTO();
         if (preferencesListener != null) {
             preferencesListener.preferencesSet(preferenceDTO);
         }
@@ -161,10 +108,7 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
     }
 
     public void setPreferencesDTO(PreferencesDTO preferencesDTO) {
-        preferenceSavePanel.setPreferenceSaveDTO(preferencesDTO.getPreferencesSaveDTO());
-        preferenceConnectionPanel.setPreferencesConnectionDTO(preferencesDTO.getPreferencesConnectionDTO());
-        preferenceInterfacePanel.setPreferencesInterfaceDTO(preferencesDTO.getPreferencesInterfaceDTO());
-        preferenceProxyPanel.setPreferencesProxyDTO(preferencesDTO.getPreferencesProxyDTO());
+        preferencePanels.setPreferencesDTO(preferencesDTO);
     }
 
     private void setPreferenceEffects(PreferencesDTO preferencesDTO) {
@@ -192,11 +136,6 @@ public class PreferenceDialog extends JDialog implements PreferenceCategoryPanel
 
     public void setPreferencesListener(PreferencesListener preferencesListener) {
         this.preferencesListener = preferencesListener;
-    }
-
-    @Override
-    public void nodeSelectedEventOccured(String nodeName) {
-        cardLayout.show(preferenceCards, nodeName);
     }
 
 }
