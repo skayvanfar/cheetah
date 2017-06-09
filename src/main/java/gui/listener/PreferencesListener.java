@@ -25,7 +25,7 @@ import model.dto.PreferencesDTO;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/13/2015
  */
 public interface PreferencesListener {
-    public void preferencesSet(PreferencesDTO preferenceDTO);
-    public void preferenceReset();
-    public void preferenceDefaults();
+    void preferencesSet(PreferencesDTO preferenceDTO);
+    void preferenceReset();
+    void preferenceDefaults();
 }

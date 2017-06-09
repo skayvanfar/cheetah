@@ -17,10 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package model.htmlImpl;
+package model.httpImpl;
 
 import enums.ConnectionStatus;
-import model.AbstractDownloadRange;
+import model.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,53 +29,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/23/2015
+ * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  */
-public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+public class HttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 
-    // to quick stop thread
-    private boolean stop = false;
-    private boolean directStop = false;
-
-    private RandomAccessFile randomAccessFile = null;
-    private InputStream stream = null;
-
-    public EmmediatelyStopHttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
+    public HttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
     }
 
     @Override
-    public void disConnect() {
-        if (connectionStatus == ConnectionStatus.CONNECTING || connectionStatus == ConnectionStatus.SEND_GET || connectionStatus == ConnectionStatus.RECEIVING_DATA )
-            connectionStatus = ConnectionStatus.DISCONNECTING;
-        setFlags(true);
-    //    thread.interrupt();
-        stateChanged(0); // TODO two time call and print "disconnect from download .... "
-        stopDownload();
-    }
-
-    @Override
-    public void resume() {
-        if (connectionStatus != ConnectionStatus.COMPLETED) {
-            setFlags(false);
-            download();
-        }
-    }
-
-    private void setFlags(boolean flag) {
-        stop = flag;
-        directStop = flag;
-    }
-
-
-    @Override
     public void run() {
-//      RandomAccessFile randomAccessFile = null;
-        //      InputStream stream = null;
+        RandomAccessFile randomAccessFile = null;
+        InputStream stream = null;
 
         try {
             // Open connection to URL.
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setConnectTimeout(30000);
+            connection.setReadTimeout(45000);
 
             String rangePropertyValue = "bytes=" + (startRange + rangeDownloaded) + "-";
 
@@ -98,7 +70,7 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 error();
             }
 
-            int rangeContentLength = 0;
+            int rangeContentLength;
             rangeContentLength = connection.getContentLength();
 
             if (rangeContentLength < 1) {
@@ -130,18 +102,23 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
 
                 /* Size buffer according to how much of the
                   file is left to download. */
-                byte buffer[];
-                if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
-                    buffer = new byte[MAX_BUFFER_SIZE];
-                } else {
-                    buffer = new byte[rangeSize - rangeDownloaded];
-                }
+         //       byte buffer[];
+        //        if (rangeSize - rangeDownloaded > MAX_BUFFER_SIZE) {
+        //            buffer = new byte[MAX_BUFFER_SIZE];
+        //        } else {
+        //            buffer = new byte[rangeSize - rangeDownloaded];
+       //         }
 
                 if (stop) //todo may be better way for stop thread
                     break;
 
+
+                int bytesAvailable = stream.available();
+                byte[] buffer = new byte[bytesAvailable];
+
                 // Read from server into buffer.
-                int bytesRead = stream.read(buffer);
+                // temp amount read
+                int bytesRead = stream.read(buffer, 0, bytesAvailable);
 
                 if (bytesRead == -1) {
                     System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
@@ -149,11 +126,10 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 }
 
                 // Write buffer to file.
-       //         if (randomAccessFile.)
                 randomAccessFile.write(buffer, 0, bytesRead);
                 rangeDownloaded += bytesRead;
                 //       if (getProgress() - previousProgress > 1) { // when 1% changed
-                if (bytesRead != 0 && !directStop) {
+                if (bytesRead != 0) {
                     stateChanged(bytesRead);
                 }
                 //       }
@@ -162,26 +138,22 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                     System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
-
+                Thread.sleep(5);
             }
 
             /* Change status to complete if this point was
               reached because downloading has finished. */
-            //       if (connectionStatus == ConnectionStatus.RECEIVING_DATA && stop == false) {
-            //          connectionStatus = ConnectionStatus.COMPLETED;
-            //           randomAccessFile.close();
-            //      } else {
-            //           connectionStatus = ConnectionStatus.DISCONNECTED;
-            //           randomAccessFile.close();
-            //       }
-            //        stateChanged(0);
-            if (!directStop)
-                stopDownload();
-        } catch (Exception e) {
-            if (!directStop) {
-                e.printStackTrace();
-                error();
+            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && !stop) {
+                connectionStatus = ConnectionStatus.COMPLETED;
+                randomAccessFile.close();
+            } else {
+                connectionStatus = ConnectionStatus.DISCONNECTED;
+                randomAccessFile.close();
             }
+            stateChanged(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            error();
         } finally {
             // Close file.
             if (randomAccessFile != null) {
@@ -199,38 +171,5 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 }
             }
         }
-    }
-
-    private void stopDownload() {
-        try {
-            /* Change status to complete if this point was
-              reached because downloading has finished. */
-            if (connectionStatus == ConnectionStatus.RECEIVING_DATA && !stop)
-                connectionStatus = ConnectionStatus.COMPLETED;
-            else
-                connectionStatus = ConnectionStatus.DISCONNECTED;
-            randomAccessFile.close();
-            stateChanged(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            error();
-        } finally {
-            // Close file.
-            if (randomAccessFile != null) {
-                try {
-                    randomAccessFile.close();
-                } catch (Exception ignored) {
-                }
-            }
-
-            // Close connection to server.
-//            if (stream != null) {
-//                try {
-//                    stream.close();
-//                } catch (Exception ignored) {
-//                }
-//            }
-        }
-
     }
 }

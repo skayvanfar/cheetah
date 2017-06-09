@@ -23,7 +23,7 @@ package gui.listener;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/9/2015
  */
 public interface DownloadAskDialogListener {
-    public void startDownloadEventOccured(String path);
-    public void cancelDownloadEventOccured();
-    public void laterDownloadEventOccured();
+    void startDownloadEventOccured(String path);
+    void cancelDownloadEventOccured();
+    void laterDownloadEventOccured();
 }

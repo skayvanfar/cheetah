@@ -28,7 +28,7 @@ import gui.listener.*;
 import gui.preference.PreferenceDialog;
 import model.Download;
 import model.dto.*;
-import model.htmlImpl.HttpDownload;
+import model.httpImpl.HttpDownload;
 import model.httpsImpl.HttpsDownload;
 import org.apache.commons.io.FilenameUtils;
 import utils.*;
@@ -75,7 +75,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     private JMenuItem exitItem;
     private JMenuItem prefsItem;
 
-    private JMenuItem addURlItem;
+    private JMenuItem newDownloadItem;
     private JMenuItem openItem;
     private JMenuItem openFolderItem;
     private JMenuItem pauseItem;
@@ -91,7 +91,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
     private JMenuItem aboutItem;
 
-    // Constructor for Download Manager.
+    // Constructor for download Manager.
     public DownloadManagerGUI(String name) {
         super(name);
 
@@ -171,7 +171,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                         downloadPanel.addDownload(download);
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
-//                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid Download URL", "Error", JOptionPane.ERROR_MESSAGE);
+//                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid download URL", "Error", JOptionPane.ERROR_MESSAGE);
 //                    }
 
                 }
@@ -608,8 +608,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         /////////////////////////////////////////////////////////////////////////
         JMenu downloadsMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.downloadsMenu.name"));
-        addURlItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.addURlItem.name"));
-        addURlItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.addURlItem.iconPath"))));
+        newDownloadItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.newDownloadItem.name"));
+        newDownloadItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.newDownloadItem.iconPath"))));
         openItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openItem.name"));
         openFolderItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openFolderItem.name"));
         resumeItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.resumeItem.name"));
@@ -633,7 +633,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         propertiesItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.propertiesItem.name"));
         propertiesItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.propertiesItem.iconPath"))));
 
-        downloadsMenu.add(addURlItem);
+        downloadsMenu.add(newDownloadItem);
         downloadsMenu.add(new JSeparator());
         downloadsMenu.add(openItem);
         downloadsMenu.add(openFolderItem);
@@ -653,7 +653,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         downloadsMenu.add(new JSeparator());
         downloadsMenu.add(propertiesItem);
 
-        addURlItem.addActionListener(this);
+        newDownloadItem.addActionListener(this);
         openItem.addActionListener(this);
         openFolderItem.addActionListener(this);
         resumeItem.addActionListener(this);
@@ -768,7 +768,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                 listener.windowClosing(new WindowEvent(DownloadManagerGUI.this, 0));
         } else if (clicked == prefsItem) {
             preferenceDialog.setVisible(true);
-        } else if (clicked == addURlItem) {
+        } else if (clicked == newDownloadItem) {
             addNewDownloadDialog.setVisible(true);
             addNewDownloadDialog.onPaste();
         } else if (clicked == openItem) {

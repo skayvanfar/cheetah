@@ -23,14 +23,11 @@ import enums.DownloadStatus;
 import enums.ProtocolType;
 import model.AbstractDownload;
 import model.Download;
-import model.htmlImpl.HttpDownloadRange;
 import utils.ConnectionUtil;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -102,7 +99,7 @@ public class HttpsDownload extends AbstractDownload implements Download {
                 connection.disconnect();
         }
 
-        downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be Download
+        downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be download
 
     }
 

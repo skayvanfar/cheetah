@@ -25,8 +25,8 @@ import model.DownloadRange;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/15/2015
  */
-public interface DownloadInfoListener { // TODO may not need this, may can use Download that implement Observable
-    public void newDownloadRangeEventOccured(DownloadRange downloadRange);
-    public void downloadNeedSaved(Download download);
-    public void newDownloadInfoGot(Download download);
+public interface DownloadInfoListener { // TODO may not need this, may can use download that implement Observable
+    void newDownloadRangeEventOccured(DownloadRange downloadRange);
+    void downloadNeedSaved(Download download);
+    void newDownloadInfoGot(Download download);
 }

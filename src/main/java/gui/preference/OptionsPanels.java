@@ -65,7 +65,7 @@ public class OptionsPanels extends JPanel implements OptionsCategoryPanelListene
         add(preferenceGeneralPanel, "General");
         //   preferenceCards.add(preferenceFileTypesPanel, "File Types");
         add(preferenceSavePanel, "Save To");
-        add(preferenceDownloadPanel, "Download");
+        add(preferenceDownloadPanel, "download");
         add(preferenceConnectionPanel, "Connection");
         add(preferenceProxyPanel, "Proxy");
         add(preferenceSitesLoginPanel, "Site Login");

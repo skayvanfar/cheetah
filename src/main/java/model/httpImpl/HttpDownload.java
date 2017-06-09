@@ -17,14 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package model.htmlImpl;
+package model.httpImpl;
 
 import enums.DownloadStatus;
 import enums.ProtocolType;
 import model.*;
 import utils.ConnectionUtil;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;

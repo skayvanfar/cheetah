@@ -30,49 +30,49 @@ import java.net.URL;
  */
 public interface DownloadRange {
 
-    public int getId();
+    int getId();
 
-    public void setId(int id);
+    void setId(int id);
 
-    public URL getUrl();
+    URL getUrl();
 
-    public void setUrl(URL url);
+    void setUrl(URL url);
 
-    public int getNumber();
+    int getNumber();
 
-    public void setNumber(int number);
+    void setNumber(int number);
 
-    public int getRangeSize();
+    int getRangeSize();
 
-    public void setRangeSize(int rangeSize);
+    void setRangeSize(int rangeSize);
 
-    public int getRangeDownloaded();
+    int getRangeDownloaded();
 
-    public void setRangeDownloaded(int rangeDownloaded);
+    void setRangeDownloaded(int rangeDownloaded);
 
-    public ConnectionStatus getConnectionStatus();
+    ConnectionStatus getConnectionStatus();
 
-    public void setConnectionStatus(ConnectionStatus connectionStatus);
+    void setConnectionStatus(ConnectionStatus connectionStatus);
 
-    public int getStartRange();
+    int getStartRange();
 
-    public void setStartRange(int startRange);
+    void setStartRange(int startRange);
 
-    public int getEndRange();
+    int getEndRange();
 
-    public void setEndRange(int endRange);
+    void setEndRange(int endRange);
 
-    public File getDownloadRangeFile();
+    File getDownloadRangeFile();
 
-    public void setDownloadRangeFile(File downloadRangeFile);
+    void setDownloadRangeFile(File downloadRangeFile);
 
-    public int getConnectTimeout();
+    int getConnectTimeout();
 
-    public void setConnectTimeout(int connectTimeout);
+    void setConnectTimeout(int connectTimeout);
 
-    public int getReadTimeout();
+    int getReadTimeout();
 
-    public void setReadTimeout(int readTimeout);
+    void setReadTimeout(int readTimeout);
 
     /**
      * Adds an DownloadRangeStatusListener to the set of downloadRangeStatusListeners for this object, provided
@@ -83,21 +83,21 @@ public interface DownloadRange {
      * @param   downloadRangeStatusListener   an DownloadRangeStatusListener to be added.
      * @throws NullPointerException   if the parameter is null.
      */
-    public void addDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener);
+    void addDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener);
 
     /**
      * Deletes an DownloadRangeStatusListener from the set of downloadRangeStatusListeners of this object.
      * Passing <CODE>null</CODE> to this method will have no effect.
      * @param   downloadRangeStatusListener   the DownloadRangeStatusListener to be deleted.
      */
-    public void deleteDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener);
+    void deleteDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener);
 
     // Pause this download.
-    public void disConnect();
+    void disConnect();
 
     // Resume this download.
-    public void resume();
+    void resume();
 
     // Reset data
-    public void resetData();
+    void resetData();
 }

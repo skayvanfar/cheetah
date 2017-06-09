@@ -25,5 +25,5 @@ import model.DownloadRange;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  */
 public interface DownloadRangeStatusListener {
-    public void downloadStatusChanged(DownloadRange downloadRange, int readed);
+    void downloadStatusChanged(DownloadRange downloadRange, int readed);
 }

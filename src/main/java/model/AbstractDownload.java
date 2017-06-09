@@ -66,7 +66,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     protected Vector<DownloadStatusListener> downloadStatusListeners;
 
-    // Constructor for Download.
+    // Constructor for download.
     public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
         this.id = id;
         this.url = url;
@@ -320,7 +320,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     @Override
     public void startTransferRate() {
         new Thread(new Runnable() {
-            ///////////////////////////////////////////////////////////////////////////////////// Download Watch
+            ///////////////////////////////////////////////////////////////////////////////////// download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
 
             @Override
@@ -450,7 +450,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     // Notify observers that this download's status has changed.
     protected synchronized void stateChanged() {
         for (final DownloadStatusListener downloadStatusListener : downloadStatusListeners)
-            SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to Download dialog
+            SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to download dialog
             public void run() { // todo must got to class that listen this class
                 downloadStatusListener.downloadStatusChanged(AbstractDownload.this); // todo dDOwnload maybe
             }

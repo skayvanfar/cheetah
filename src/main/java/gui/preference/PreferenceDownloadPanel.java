@@ -9,7 +9,7 @@ import java.awt.*;
  */
 class PreferenceDownloadPanel extends PreferenceJPanel {
     public PreferenceDownloadPanel() {
-        super("Download", "preferenceDownloadPanel.iconPath");
+        super("download", "preferenceDownloadPanel.iconPath");
 
         layoutComponents();
     }

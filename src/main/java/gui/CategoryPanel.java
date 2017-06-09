@@ -69,27 +69,24 @@ class CategoryPanel extends JPanel {
 
         categoryTree.setEditable(false);
 
-        categoryTree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                //Returns the last path element of the selection.
-                //This method is useful only when the selection model allows a single selection.
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) categoryTree.getLastSelectedPathComponent();
+        categoryTree.addTreeSelectionListener(e -> {
+            //Returns the last path element of the selection.
+            //This method is useful only when the selection model allows a single selection.
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) categoryTree.getLastSelectedPathComponent();
 
-                if (node == null)
-                    //Nothing is selected.
-                    return;
+            if (node == null)
+                //Nothing is selected.
+                return;
 
-                Object nodeInfo = node.getUserObject();
+            Object nodeInfo = node.getUserObject();
 
-                if (nodeInfo instanceof PreferencesDirectoryCategoryDTO) {
-                    PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) nodeInfo;
-                    categoryPanelListener.categoryNodeSelected(Arrays.asList(preferencesDirectoryCategoryDTO.getFileExtensions()),
-                            DownloadCategory.valueOfByDesc(node.getParent().toString()));
-                } else {
-                    categoryPanelListener.categoryNodeSelected(null,
-                            DownloadCategory.valueOfByDesc(node.toString()));
-                }
+            if (nodeInfo instanceof PreferencesDirectoryCategoryDTO) {
+                PreferencesDirectoryCategoryDTO preferencesDirectoryCategoryDTO = (PreferencesDirectoryCategoryDTO) nodeInfo;
+                categoryPanelListener.categoryNodeSelected(Arrays.asList(preferencesDirectoryCategoryDTO.getFileExtensions()),
+                        DownloadCategory.valueOfByDesc(node.getParent().toString()));
+            } else {
+                categoryPanelListener.categoryNodeSelected(null,
+                        DownloadCategory.valueOfByDesc(node.toString()));
             }
         });
 

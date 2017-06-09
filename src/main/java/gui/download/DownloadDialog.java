@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package gui.Download;
+package gui.download;
 
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadPropertiesPanelListener;
@@ -57,7 +57,7 @@ public class DownloadDialog extends JDialog implements DownloadPropertiesPanelLi
     }
 
     public DownloadDialog(JFrame parent, Download download) {
-        super(parent, "Download Dialog", false);
+        super(parent, "download Dialog", false);
 
         this.download = download;
 

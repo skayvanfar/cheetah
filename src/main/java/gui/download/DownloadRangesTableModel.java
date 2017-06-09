@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package gui.Download;
+package gui.download;
 
 import gui.listener.DownloadRangeStatusListener;
 import model.DownloadRange;
@@ -97,7 +97,7 @@ public class DownloadRangesTableModel extends AbstractTableModel implements Down
             case 1: // Downloaded
                 return downloadRange.getRangeDownloaded();
             case 2: // Status
-                return downloadRange.getConnectionStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
+                return downloadRange.getConnectionStatus().getDesc(); // download.STATUSES[download.getStatus().ordinal()]
         }
         return null;
     }

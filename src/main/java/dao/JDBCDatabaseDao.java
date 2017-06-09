@@ -25,8 +25,8 @@ import enums.ProtocolType;
 import exception.DriverNotFoundException;
 import model.Download;
 import model.DownloadRange;
-import model.htmlImpl.HttpDownload;
-import model.htmlImpl.HttpDownloadRange;
+import model.httpImpl.HttpDownload;
+import model.httpImpl.HttpDownloadRange;
 import model.httpsImpl.HttpsDownload;
 import model.httpsImpl.HttpsDownloadRange;
 
@@ -193,7 +193,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         con.setAutoCommit(false);
 
         if (count == 0) {
-            System.out.println("Inserting Download with ID " + id);
+            System.out.println("Inserting download with ID " + id);
 
             int col = 1;
             insertDownloadStatement.setInt(col++, id);
@@ -240,7 +240,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             }
 
         } else {
-            System.out.println("Updating Download with ID " + id);
+            System.out.println("Updating download with ID " + id);
 
             int col = 1;
             updateDownloadStatement.setString(col++, url);

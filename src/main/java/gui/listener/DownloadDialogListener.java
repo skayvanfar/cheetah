@@ -23,5 +23,5 @@ package gui.listener;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/30/2015
  */
 public interface DownloadDialogListener {
-    public void DownloadDescriptionChanged(String downloadDescription);
+    void DownloadDescriptionChanged(String downloadDescription);
 }

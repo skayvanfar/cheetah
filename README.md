@@ -1,14 +1,14 @@
-# Cheetah
+# Cheetah Download Manager
 Cheetah is a Free Fast Downloader built using java with a Swing rich-client user interface.
 
 # Features
 * Downloading files in any format
 * Http, Https Support for now
-* Categorize files by they're type
+* Categorize files by their type
 * Pause ability
 * create many connection for download default 8 connection
-* ReDownload ability
-* ReJoin ability
+* Redownload ability
+* Rejoin ability
 * Themes
 
 # Screenshot

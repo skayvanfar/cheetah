@@ -42,7 +42,7 @@ public class PreferenceDialog extends JDialog {
         setLayout(new BorderLayout());
 
         OptionsCategoryDto optionsCategoryDto = new OptionsCategoryDto("Category", Arrays.asList("General", "Save To",
-                "Download", "Connection", "Proxy", "Site Login", "Interface")); // Sounds, File Types, dial Up / VPN
+                "download", "Connection", "Proxy", "Site Login", "Interface")); // Sounds, File Types, dial Up / VPN
         optionsCategoryPanel = new OptionsCategoryPanel(optionsCategoryDto);
         preferencePanels = new OptionsPanels(parent, preferencesDTO);
         optionsCategoryPanel.setOptionsCategoryPanelListener(preferencePanels);

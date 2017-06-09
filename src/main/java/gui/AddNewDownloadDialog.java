@@ -56,7 +56,7 @@ class AddNewDownloadDialog extends JDialog {
     private AddNewDownloadListener addNewDownloadListener;
 
     public AddNewDownloadDialog(JFrame parent) {
-        super(parent, "Add New Download", false);
+        super(parent, "Add New download", false);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
@@ -191,7 +191,7 @@ class AddNewDownloadDialog extends JDialog {
             setVisible(false);
         } else {
             JOptionPane.showMessageDialog(this,
-                    "Invalid Download URL", "Error",
+                    "Invalid download URL", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

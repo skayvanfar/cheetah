@@ -24,8 +24,8 @@ import controller.DatabaseController;
 import controller.DatabaseControllerImpl;
 import enums.DownloadCategory;
 import enums.DownloadStatus;
-import gui.Download.DownloadAskDialog;
-import gui.Download.DownloadDialog;
+import gui.download.DownloadAskDialog;
+import gui.download.DownloadDialog;
 import gui.listener.*;
 import model.Download;
 import model.DownloadRange;
@@ -77,7 +77,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     private JMenuItem propertiesItem;
 
 
-    // Download table's data model.
+    // download table's data model.
     private DownloadsTableModel downloadsTableModel;
 
     // Currently selected download.
@@ -410,7 +410,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         int action = JOptionPane.showConfirmDialog(parent, "Do you realy want to delete selected file?", "Confirm delete", JOptionPane.OK_CANCEL_OPTION);
         if (action == JOptionPane.OK_OPTION) {
             if (selectedDownload == null) return;
-            //     Download download = selectedDownloadDialog.getDownload();
+            //     download download = selectedDownloadDialog.getDownload();
 
             clearing = true;
             downloadsTableModel.clearDownload(selectedDownload);

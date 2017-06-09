@@ -23,5 +23,5 @@ package gui.listener;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/22/2015
  */
 public interface OptionsCategoryPanelListener {
-    public void nodeSelectedEventOccured(String nodeName);
+    void nodeSelectedEventOccured(String nodeName);
 }

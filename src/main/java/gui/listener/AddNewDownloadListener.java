@@ -25,5 +25,5 @@ import java.net.URL;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
  */
 public interface AddNewDownloadListener {
-    public void newDownloadEventOccured(URL textUrl);
+    void newDownloadEventOccured(URL textUrl);
 }

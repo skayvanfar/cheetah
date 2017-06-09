@@ -147,14 +147,14 @@ public class DownloadsTableModel extends AbstractTableModel implements DownloadS
             case 3: // Transfer Rate
                 return download.getTransferRate();
             case 4: // Status
-                return download.getStatus().getDesc(); // Download.STATUSES[download.getStatus().ordinal()]
+                return download.getStatus().getDesc(); // download.STATUSES[download.getStatus().ordinal()]
             case 5: // Status
                 return download.getDescription();
         }
         return null;
     }
 
-    /* Update is called when a Download notifies its
+    /* Update is called when a download notifies its
        observers of any changes */
     //   public void update(Observable o, Object arg) {
     //      int index = downloadList.indexOf(o);

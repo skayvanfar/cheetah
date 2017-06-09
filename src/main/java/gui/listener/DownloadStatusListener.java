@@ -25,5 +25,5 @@ import model.Download;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/17/2015
  */
 public interface DownloadStatusListener {
-    public void downloadStatusChanged(Download download);
+    void downloadStatusChanged(Download download);
 }

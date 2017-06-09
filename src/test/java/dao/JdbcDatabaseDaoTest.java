@@ -63,7 +63,7 @@ public class JdbcDatabaseDaoTest {
     public void testSave() throws Exception {
    //     boolean expectedValue = true;
 
-   //     Download download = new Download(1, new URL("http://localhost/test.txt"), 8, "", "");
+   //     download download = new download(1, new URL("http://localhost/test.txt"), 8, "", "");
    ///     DownloadRange downloadRange = new DownloadRange(1, new URL("http://localhost/test.txt"), "", 0, 0);
   //      List<DownloadRange> downloadRanges = new ArrayList<>();
    //     downloadRanges.add(downloadRange);
@@ -83,16 +83,16 @@ public class JdbcDatabaseDaoTest {
     public void testLoad() throws Exception {
 /*       boolean expectedValue = true;
 
-        Download download = new Download(1, new URL("http://localhost/test.txt"), 8, "", "");
+        download download = new download(1, new URL("http://localhost/test.txt"), 8, "", "");
         DownloadRange downloadRange = new DownloadRange(0,1, new URL("http://localhost/test.txt"), "", 0, 0);
         List<DownloadRange> downloadRanges = new ArrayList<>();
         downloadRanges.add(downloadRange);
         download.setDownloadRangeList(downloadRanges);
 
         databaseDao.connect();
-        List<Download> downloads = databaseDao.load();
+        List<download> downloads = databaseDao.load();
 
-        for (Download download1 : downloads) {
+        for (download download1 : downloads) {
             System.out.println(download1.toString());
             for (DownloadRange downloadRange1 : download1.getDownloadRangeList()) {
                 System.out.println(downloadRange1.toString());

@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package gui.Download;
+package gui.download;
 
 import model.Download;
 import model.DownloadRange;
@@ -33,7 +33,7 @@ class DownloadInfoPanel extends JPanel {
     // Table showing download ranges.
     private JTable downloadRangeTable;
 
-    // Download Range table's data model.
+    // download Range table's data model.
     private DownloadRangesTableModel downloadRangesTableModel;
 
     private Download download;

@@ -29,10 +29,10 @@ import java.util.List;
  *  @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/30/2015.
  */
 public interface DatabaseController {
-    public boolean connect() throws Exception;
-    public boolean disconnect();
-    public void save(Download download) throws SQLException;
-    public List<Download> load() throws SQLException, MalformedURLException;
-    public void delete(int id) throws SQLException;
-    public void createTablesIfNotExist() throws SQLException;
+    boolean connect() throws Exception;
+    boolean disconnect();
+    void save(Download download) throws SQLException;
+    List<Download> load() throws SQLException, MalformedURLException;
+    void delete(int id) throws SQLException;
+    void createTablesIfNotExist() throws SQLException;
 }

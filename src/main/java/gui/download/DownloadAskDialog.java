@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package gui.Download;
+package gui.download;
 
 import gui.listener.DownloadAskDialogListener;
 
@@ -56,7 +56,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
     private JFrame parent;
 
     public DownloadAskDialog(JFrame parent) {
-        super(parent, "Download File", false);
+        super(parent, "download File", false);
 
         this.parent = parent;
 
@@ -126,22 +126,6 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         gc.insets = noPadding;
         gc.anchor = GridBagConstraints.LINE_START;
         panel.add(urlTextField, gc);
-        ////////////Next row ////////////////////////////
-//        gc.gridy++;
-//
-//        //     gc.weighty= 10;
-//        gc.gridwidth = 1;
-//        gc.gridx = 0;
-//        gc.insets = rightPadding;
-//        gc.anchor = GridBagConstraints.LINE_END;
-//        panel.add(downloadNameLabel, gc);
-//
-//        gc.gridwidth = 3;
-//        gc.gridx = 1;
-//        // gc.gridy = 1;
-//        gc.insets = noPadding;
-//        gc.anchor = GridBagConstraints.LINE_START;
-//        panel.add(downloadNameField, gc);
 
         ////////////Next row ////////////////////////////
         gc.gridy++;

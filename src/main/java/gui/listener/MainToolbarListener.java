@@ -23,14 +23,14 @@ package gui.listener;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
  */
 public interface MainToolbarListener {
-    public void newDownloadEventOccured();
-    public void pauseEventOccured();
-    public void resumeEventOccured();
-    public void pauseAllEventOccured();
-    public void clearEventOccured();
-    public void clearAllCompletedEventOccured();
-    public void reJoinEventOccured();
-    public void reDownloadEventOccured();
-    public void propertiesEventOccured();
-    public void preferencesEventOccured();
+    void newDownloadEventOccured();
+    void pauseEventOccured();
+    void resumeEventOccured();
+    void pauseAllEventOccured();
+    void clearEventOccured();
+    void clearAllCompletedEventOccured();
+    void reJoinEventOccured();
+    void reDownloadEventOccured();
+    void propertiesEventOccured();
+    void preferencesEventOccured();
 }

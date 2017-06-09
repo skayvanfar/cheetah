@@ -33,65 +33,65 @@ import java.util.List;
  */
 public interface Download {
 
-    public int getId();
+    int getId();
 
-    public void setId(int id);
+    void setId(int id);
 
-    public URL getUrl();
+    URL getUrl();
 
-    public void setUrl(URL url);
+    void setUrl(URL url);
 
-    public String getDownloadName();
+    String getDownloadName();
 
-    public void setDownloadName(String downloadName);
+    void setDownloadName(String downloadName);
 
-    public int getSize();
+    int getSize();
 
-    public void setSize(int size);
+    void setSize(int size);
 
-    public DownloadStatus getStatus();
+    DownloadStatus getStatus();
 
-    public void setStatus(DownloadStatus status);
+    void setStatus(DownloadStatus status);
 
-    public String getTransferRate();
+    String getTransferRate();
 
-    public ProtocolType getProtocolType();
+    ProtocolType getProtocolType();
 
-    public void setProtocolType(ProtocolType protocolType);
+    void setProtocolType(ProtocolType protocolType);
 
-    public String getDescription();
+    String getDescription();
 
-    public void setDescription(String description);
+    void setDescription(String description);
 
-    public int getDownloaded();
+    int getDownloaded();
 
-    public void setDownloaded(int downloaded);
+    void setDownloaded(int downloaded);
 
-    public File getDownloadPath();
+    File getDownloadPath();
 
-    public void setDownloadPath(File downloadPath);
+    void setDownloadPath(File downloadPath);
 
-    public File getDownloadRangePath();
+    File getDownloadRangePath();
 
-    public void setDownloadRangePath(File downloadRangePath);
+    void setDownloadRangePath(File downloadRangePath);
 
-    public int getResponseCode();
+    int getResponseCode();
 
-    public boolean isResumeCapability();
+    boolean isResumeCapability();
 
     // Get this download's size.
-    public String getFormattedSize();
+    String getFormattedSize();
 
     // Get this download's progress.
-    public float getProgress();
+    float getProgress();
 
-    public int getConnectTimeout();
+    int getConnectTimeout();
 
-    public void setConnectTimeout(int connectTimeout);
+    void setConnectTimeout(int connectTimeout);
 
-    public int getReadTimeout();
+    int getReadTimeout();
 
-    public void setReadTimeout(int readTimeout);
+    void setReadTimeout(int readTimeout);
 
     /**
      * Adds an DownloadStatusListener to the set of downloadStatusListeners for this object, provided
@@ -102,36 +102,36 @@ public interface Download {
      * @param   downloadStatusListener   an DownloadStatusListener to be added.
      * @throws NullPointerException   if the parameter o is null.
      */
-    public void addDownloadStatusListener(DownloadStatusListener downloadStatusListener);
+    void addDownloadStatusListener(DownloadStatusListener downloadStatusListener);
 
     /**
      * Deletes an DownloadStatusListener from the set of downloadStatusListeners of this object.
      * Passing <CODE>null</CODE> to this method will have no effect.
      * @param   downloadStatusListener   the DownloadStatusListener to be deleted.
      */
-    public void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener);
+    void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener);
 
-    public List<DownloadRange> getDownloadRangeList();
+    List<DownloadRange> getDownloadRangeList();
 
-    public void setDownloadRangeList(List<DownloadRange> downloadRangeList);
+    void setDownloadRangeList(List<DownloadRange> downloadRangeList);
 
-    public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener);
+    void setDownloadInfoListener(DownloadInfoListener downloadInfoListener);
 
-    public void removeDownloadInfo(DownloadInfoListener downloadInfoListener);
+    void removeDownloadInfo(DownloadInfoListener downloadInfoListener);
 
     // Pause this download.
-    public void pause();
+    void pause();
 
     // Resume this download.
-    public void resume();
+    void resume();
 
-    public void createDownloadRanges();
+    void createDownloadRanges();
 
     // add a new downloadRange if not in downloadRangeList
-    public void addDownloadRange(DownloadRange downloadRange);
+    void addDownloadRange(DownloadRange downloadRange);
 
     // reset data of download for redownload
-    public void resetData();
+    void resetData();
 
-    public void startTransferRate();
+    void startTransferRate();
 }

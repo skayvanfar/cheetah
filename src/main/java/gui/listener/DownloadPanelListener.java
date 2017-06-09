@@ -26,6 +26,6 @@ import model.Download;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
  */
 public interface DownloadPanelListener {
-    public void stateChangedEventOccured(DownloadStatus downloadState);
-    public void downloadSelected(Download download);
+    void stateChangedEventOccured(DownloadStatus downloadState);
+    void downloadSelected(Download download);
 }
