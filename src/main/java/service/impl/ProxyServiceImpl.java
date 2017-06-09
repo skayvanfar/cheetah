@@ -19,6 +19,8 @@
 
 package service.impl;
 
+import enums.ConnectionType;
+import enums.ProxyType;
 import service.ProxyService;
 
 import java.util.Enumeration;
@@ -31,6 +33,7 @@ public class ProxyServiceImpl implements ProxyService {
 
     @Override
     public void setNoProxy() {
+        // TODO: 6/9/17 must implemented.
 //        System.getProperties().put("proxySet", "false");
 //        System.setProperty("http.proxyHost", null);
 //        System.setProperty("https.proxyHost", null);
@@ -39,69 +42,20 @@ public class ProxyServiceImpl implements ProxyService {
 
     @Override
     public void setUseSystemProxy() {
-
+        System.setProperty("java.net.useSystemProxies", "true");
     }
 
-    @Override
-    public void setHttpProxy(String urlText, int port, String userName, String password) {
-        if (urlText != "" && port != 0) {
-            System.getProperties().put("proxySet", "true");
-            System.setProperty("http.proxyHost", urlText);
-            System.setProperty("http.proxyPort", String.valueOf(port));
+    public void setProxy(ProxyType proxyType, String urlText, int port, String userName, String password) {
+        if (!urlText.equals("") && port != 0) {
+            System.setProperty(proxyType.getDesc() + ".proxyHost", urlText);
+            System.setProperty(proxyType.getDesc() + ".proxyPort", String.valueOf(port));
+            System.setProperty(proxyType.getDesc() + ".nonProxyHosts", "localhost|127.0.0.1");
         }
 
-        if (userName != "" && password != "") {
-            System.setProperty("http.proxyUser", userName);
-            System.setProperty("http.proxyPassword", password);
-        }
-        System.setProperty("http.nonProxyHosts", "localhost|127.0.0.1");
-        Properties probs = System.getProperties();
-        Enumeration keys = probs.keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            System.out.println("key: " + key + " value: " + probs.get(key));
+        if (!userName.equals("") && !password.equals("")) {
+            System.setProperty(proxyType.getDesc() + ".proxyUser", userName);
+            System.setProperty(proxyType.getDesc() + ".proxyPassword", password);
         }
     }
 
-    @Override
-    public void setHttpsProxy(String urlText, int port, String userName, String password) {
-        if (urlText != "" && port != 0) {
-            System.setProperty("https.proxyHost", urlText);
-            System.setProperty("https.proxyPort", String.valueOf(port));
-            System.setProperty("http.nonProxyHosts", "localhost|127.0.0.1");
-        }
-
-        if (userName != "" && password != "") {
-            System.setProperty("https.proxyUser", userName);
-            System.setProperty("https.proxyPassword", password);
-        }
-    }
-
-    @Override
-    public void setFtpProxy(String urlText, int port, String userName, String password) {
-        if (urlText != "" && port != 0) {
-            System.setProperty("ftp.proxyHost", urlText);
-            System.setProperty("ftp.proxyPort", String.valueOf(port));
-            System.setProperty("http.nonProxyHosts", "localhost|127.0.0.1");
-        }
-
-        if (userName != "" && password != "") {
-            System.setProperty("ftp.proxyUser", userName);
-            System.setProperty("ftp.proxyPassword", password);
-        }
-    }
-
-    @Override
-    public void setSocksProxy(String urlText, int port, String userName, String password) {
-        if (urlText != "" && port != 0) {
-            System.setProperty("socks.proxyHost", urlText);
-            System.setProperty("socks.proxyPort", String.valueOf(port));
-            System.setProperty("http.nonProxyHosts", "localhost|127.0.0.1");
-        }
-
-        if (userName != null && password != null) {
-            System.setProperty("socks.proxyUser", userName);
-            System.setProperty("socks.proxyPassword", password);
-        }
-    }
 }

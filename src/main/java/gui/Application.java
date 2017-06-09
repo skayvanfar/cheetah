@@ -33,6 +33,33 @@ public class Application {
         // enable anti-aliased text:
         System.setProperty("awt.useSystemAAFontSettings","lcd"); // on or lcd
         System.setProperty("swing.aatext", "true");
+   //     System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+     //   System.setProperty("swing.crossplatformlaf", "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+               // System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                System.setProperty("swing.crossplatformlaf", "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+                break;
+            }
+        }
+
+       /* for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+                try {
+                    UIManager.setLookAndFeel(info.getClassName());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedLookAndFeelException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }*/
 
      //   Utils.setUIFont(new javax.swing.plaf.FontUIResource(Utils.createFont("/fonts/b_koodak.ttf")));
         //   Utils.setUIFont(new javax.swing.plaf.FontUIResource("/fonts/b_yekan.ttf",Font.BOLD,12));

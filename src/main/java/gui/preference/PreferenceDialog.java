@@ -1,5 +1,6 @@
 package gui.preference;
 
+import enums.ProxyType;
 import gui.listener.PreferencesListener;
 import model.dto.OptionsCategoryDto;
 import model.dto.PreferencesDTO;
@@ -123,16 +124,12 @@ public class PreferenceDialog extends JDialog {
         if (preferencesProxyDTO.getProxySettingType() == 0) {
             proxyService.setNoProxy();
         } else if (preferencesProxyDTO.getProxySettingType() == 1) {
-            proxyService.setNoProxy(); // todo must change proxyService.setUseSystemProxy();
+            proxyService.setUseSystemProxy();
         } else if (preferencesProxyDTO.getProxySettingType() == 2 && preferencesProxyDTO.isUseProxyNotSocks()) {
-            proxyService.setHttpProxy(preferencesProxyDTO.getHttpProxyAddress(), preferencesProxyDTO.getHttpProxyPort(),
+            proxyService.setProxy(ProxyType.HTTP_PROXY, preferencesProxyDTO.getHttpProxyAddress(), preferencesProxyDTO.getHttpProxyPort(),
                     preferencesProxyDTO.getHttpProxyUserName(), preferencesProxyDTO.getHttpProxyPassword());
-//            proxyService.setHttpsProxy(preferencesProxyDTO.getHttpsProxyAddress(), preferencesProxyDTO.getHttpsProxyPort(),
-//                    preferencesProxyDTO.getHttpsProxyUserName(), preferencesProxyDTO.getHttpsProxyPassword());
-//            proxyService.setFtpProxy(preferencesProxyDTO.getFtpProxyAddress(), preferencesProxyDTO.getFtpProxyPort(),
-//                    preferencesProxyDTO.getFtpProxyUserName(), preferencesProxyDTO.getFtpProxyPassword());
         } else if (preferencesProxyDTO.getProxySettingType() == 2 && !preferencesProxyDTO.isUseProxyNotSocks()) {
-            proxyService.setSocksProxy(preferencesProxyDTO.getSocksProxyAddress(), preferencesProxyDTO.getSocksProxyPort(),
+            proxyService.setProxy(ProxyType.SOCKS_PROXY, preferencesProxyDTO.getSocksProxyAddress(), preferencesProxyDTO.getSocksProxyPort(),
                     preferencesProxyDTO.getSocksProxyUserName(), preferencesProxyDTO.getSocksProxyPassword());
         }
     }
