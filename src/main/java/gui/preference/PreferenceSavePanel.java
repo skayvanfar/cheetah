@@ -31,6 +31,8 @@ class PreferenceSavePanel extends PreferenceJPanel {
     private JTextField temporaryDirectoryTextField;
     private JLabel databasePathLabel;
     private JTextField databasePathTextField;
+    private JLabel logPathLabel;
+    private JTextField logPathTextField;
 
     private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
 
@@ -54,6 +56,8 @@ class PreferenceSavePanel extends PreferenceJPanel {
         temporaryDirectoryTextField = new JTextField(45);
         databasePathLabel = new JLabel("Database Directory:");
         databasePathTextField = new JTextField(45);
+        logPathLabel = new JLabel("log Directory:");
+        logPathTextField = new JTextField(45);
         tempDirPanel = new JPanel();
 
         layoutComponentsOfSaveToPanel();
@@ -100,6 +104,14 @@ class PreferenceSavePanel extends PreferenceJPanel {
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 preferencesSaveDTO.setDatabasePath(databasePathTextField.getText());
+            }
+        });
+
+        logPathTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                preferencesSaveDTO.setLogPath(logPathTextField.getText());
             }
         });
     }
@@ -233,6 +245,24 @@ class PreferenceSavePanel extends PreferenceJPanel {
 
         tempDirPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(tempDirPanel);
+
+        ///////////////// Next row ////////////////////////////////////////////
+
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.insets = rightPadding;
+        tempDirPanel.add(logPathLabel, gc);
+
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.insets = noPadding;
+        gc.anchor = GridBagConstraints.LINE_START;
+        tempDirPanel.add(logPathTextField, gc);
+
+        tempDirPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(tempDirPanel);
     }
 
     public void setPreferenceSaveDTO(PreferencesSaveDTO preferenceSaveDTO) {
@@ -250,6 +280,7 @@ class PreferenceSavePanel extends PreferenceJPanel {
 
         temporaryDirectoryTextField.setText(preferenceSaveDTO.getTempDirectory());
         databasePathTextField.setText(preferenceSaveDTO.getDatabasePath());
+        logPathTextField.setText(preferenceSaveDTO.getLogPath());
     }
 
     public PreferencesSaveDTO getPreferenceSaveDTO() {
@@ -257,6 +288,7 @@ class PreferenceSavePanel extends PreferenceJPanel {
         preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
         preferencesSaveDTO.setTempDirectory(temporaryDirectoryTextField.getText());
         preferencesSaveDTO.setDatabasePath(databasePathTextField.getText());
+        preferencesSaveDTO.setLogPath(logPathTextField.getText());
         return preferencesSaveDTO;
     }
 

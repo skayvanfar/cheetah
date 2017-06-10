@@ -23,6 +23,7 @@ import enums.*;
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadRangeStatusListener;
 import gui.listener.DownloadStatusListener;
+import org.apache.log4j.Logger;
 import utils.ConnectionUtil;
 import utils.FileUtil;
 
@@ -37,6 +38,9 @@ import java.util.Vector;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  */
 public abstract class AbstractDownload implements Download, Runnable, DownloadRangeStatusListener {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     protected int id;
     protected URL url; // download URL
@@ -478,26 +482,26 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                 } else {
                     status = DownloadStatus.DISCONNECTING;
                 }
-                System.out.println("disconnect from download .... ");
+
+                logger.info("disconnect from download .... ");
                 //      if (isLastDownloadRange(ConnectionStatus.DISCONNECTED)) {
 
                 //      }
                 break;
             case ERROR:
-                System.out.println("error again");
+                logger.info("error again");
         //        downloadRange.resume(); // todo test for redownload
                 status = DownloadStatus.ERROR;
                 if (downloadInfoListener != null)
                     downloadInfoListener.downloadNeedSaved(this);
                 break;
             case WAITING_RESPONSE:
-                System.out.println("WAITING_RESPONSE");
+                logger.info("WAITING_RESPONSE");
                 break;
             case COMPLETED:
-                System.out.println("COMPLETED download Range");
-                System.out.println("downloaded = " + downloaded + " size = " + size + "  downloadRange = " + downloadRange.getRangeDownloaded() + " startRange= " +
+                logger.info("COMPLETED download Range");
+                logger.info("downloaded = " + downloaded + " size = " + size + "  downloadRange = " + downloadRange.getRangeDownloaded() + " startRange= " +
                         downloadRange.getStartRange() + " end range= " + downloadRange.getEndRange());
-
                 if (downloaded >= size) { // when all parts downloaded
                     endOfDownload();
                 }

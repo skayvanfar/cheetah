@@ -29,6 +29,7 @@ import model.httpImpl.HttpDownload;
 import model.httpImpl.HttpDownloadRange;
 import model.httpsImpl.HttpsDownload;
 import model.httpsImpl.HttpsDownloadRange;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -42,6 +43,9 @@ import java.util.List;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/30/2015
  */
 public class JDBCDatabaseDao implements DatabaseDao {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private Connection con;
 
@@ -72,7 +76,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
 
         con = DriverManager.getConnection(connectionUrl, userName, password);
 
-        System.out.println("Connected: " + con);
+        logger.info("Connected: " + con);
 
         return true;
     }
@@ -83,11 +87,11 @@ public class JDBCDatabaseDao implements DatabaseDao {
         if (con != null) {
             try {
                 con.close();
-                System.out.println("Disconnected");
+                logger.info("Disconnected");
                 con = null;
                 result = true;
             } catch (SQLException e) {
-                System.out.println("Can't close connection");
+                logger.error("Can't close connection");
             }
         }
         return result;
@@ -144,8 +148,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             //    result = createStatement.executeUpdate(downloadRangeCreateSql);
             createStatement.close();
             con.close();
-            System.out.println("result: " + Arrays.toString(result));
-
+            logger.info("result: " + Arrays.toString(result));
         }
         disconnect();
     }
@@ -193,7 +196,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         con.setAutoCommit(false);
 
         if (count == 0) {
-            System.out.println("Inserting download with ID " + id);
+            logger.info("Inserting download with ID " + id);
 
             int col = 1;
             insertDownloadStatement.setInt(col++, id);
@@ -209,7 +212,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             insertDownloadStatement.executeUpdate();
 
             for (DownloadRange downloadRange : downloadRanges) {
-                System.out.println("Inserting DownloadRange with NUMBER " + downloadRange.getNumber());
+                logger.info("Inserting DownloadRange with NUMBER " + downloadRange.getNumber());
 
                 //       int downloadRangeId = downloadRange.getId();
                 int number = downloadRange.getNumber();
@@ -240,7 +243,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             }
 
         } else {
-            System.out.println("Updating download with ID " + id);
+            logger.info("Updating download with ID " + id);
 
             int col = 1;
             updateDownloadStatement.setString(col++, url);
@@ -256,7 +259,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
             updateDownloadStatement.executeUpdate();
 
             for (DownloadRange downloadRange : downloadRanges) {
-                System.out.println("Updating DownloadRange with NUMBER " + downloadRange.getNumber());
+                logger.info("Updating DownloadRange with NUMBER " + downloadRange.getNumber());
                 int downloadRangeId = downloadRange.getId();
                 int number = downloadRange.getNumber();
                 int rangeSize = downloadRange.getRangeSize();

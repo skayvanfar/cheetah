@@ -47,6 +47,9 @@ public class PreferenceDialog extends JDialog {
         preferencePanels = new OptionsPanels(parent, preferencesDTO);
         optionsCategoryPanel.setOptionsCategoryPanelListener(preferencePanels);
 
+        JScrollPane scrollPane = new JScrollPane(preferencePanels);
+        scrollPane.setMinimumSize(new Dimension(150, 400));
+
         confirmationPanel = new JPanel();
         confirmationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         okButton = new JButton("Ok");
@@ -58,7 +61,7 @@ public class PreferenceDialog extends JDialog {
         confirmationPanel.add(defaultButton);
 
         add(optionsCategoryPanel, BorderLayout.WEST);
-        add(preferencePanels, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(confirmationPanel, BorderLayout.SOUTH);
 
         setPanelBackgroundColor(Color.WHITE);

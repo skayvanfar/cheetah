@@ -31,6 +31,7 @@ import model.dto.*;
 import model.httpImpl.HttpDownload;
 import model.httpsImpl.HttpsDownload;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import utils.*;
 import utils.LookAndFeel;
 
@@ -42,7 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.net.Authenticator;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -54,6 +54,9 @@ import java.util.prefs.Preferences;
 
 // implements Observer
 public class DownloadManagerGUI extends JFrame implements ActionListener {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
     private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
@@ -118,7 +121,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
         downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath(),
                 preferencesDTO.getPreferencesConnectionDTO().getConnectionTimeOut(), preferencesDTO.getPreferencesConnectionDTO().getReadTimeOut());
-        messagePanel = new MessagePanel();
+        messagePanel = new MessagePanel(this);
         JTabbedPane mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
         mainSplitPane.setOneTouchExpandable(true);
@@ -141,40 +144,37 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
    //     preferenceDialog.setDefaults(preferencesDTO);
 
-        addNewDownloadDialog.setAddNewDownloadListener(new AddNewDownloadListener() {
-            @Override
-            public void newDownloadEventOccured(URL textUrl) {
-                if (textUrl != null) {
-               //     try {
-                 //       String downloadName = ConnectionUtil.getRealFileName(textUrl);
-                        String downloadName = ConnectionUtil.getFileName(textUrl);
-                        String fileExtension =  FilenameUtils.getExtension(downloadName);
-                        File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
-                        File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
-                        int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
+        addNewDownloadDialog.setAddNewDownloadListener(textUrl -> {
+            if (textUrl != null) {
+           //     try {
+             //       String downloadName = ConnectionUtil.getRealFileName(textUrl);
+                    String downloadName = ConnectionUtil.getFileName(textUrl);
+                    String fileExtension =  FilenameUtils.getExtension(downloadName);
+                    File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
+                    File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
+                    int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
 
-                        Download download = null;
-                        // todo must set stretegy pattern
-                        switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
-                            case HTTP:
-                                download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
-                                break;
-                            case FTP:
-                                // todo must be created ...
-                                break;
-                            case HTTPS:
-                                download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                        downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
-                                break;
-                        }
-                        downloadPanel.addDownload(download);
+                    Download download = null;
+                    // todo must set stretegy pattern
+                    switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
+                        case HTTP:
+                            download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
+                                    downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
+                            break;
+                        case FTP:
+                            // todo must be created ...
+                            break;
+                        case HTTPS:
+                            download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
+                                    downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                            break;
+                    }
+                    downloadPanel.addDownload(download);
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
 //                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid download URL", "Error", JOptionPane.ERROR_MESSAGE);
 //                    }
 
-                }
             }
         });
 
@@ -282,7 +282,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                 int action = JOptionPane.showConfirmDialog(DownloadManagerGUI.this,
                         "Do you realy want to exit the application?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
                 if (action == JOptionPane.OK_OPTION) {
-                    System.out.println("Window Closing");
+                    logger.info("Window Closing");
                     downloadPanel.actionPauseAll();
                     dispose();
                     System.gc();
@@ -446,6 +446,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         }
         if (preferencesSaveDTO.getDatabasePath() == null || preferencesSaveDTO.getDatabasePath().equals("")) {
             preferencesSaveDTO.setDatabasePath(path + defaultPreferencesBundle.getString("databasePath"));
+        }
+        if (preferencesSaveDTO.getLogPath() == null || preferencesSaveDTO.getLogPath().equals("")) {
+            preferencesSaveDTO.setLogPath(path + defaultPreferencesBundle.getString("logPath"));
         }
 
         // PreferenceProxyDTO
@@ -725,7 +728,11 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             File databasePathFile = new File(databasePath);
             if (!databasePathFile.exists())
                 databasePathFile.mkdirs();
-        } catch (InvalidClassException e) {
+            String logPath = preferencesDTO.getPreferencesSaveDTO().getLogPath();
+            File logPathFile = new File(logPath);
+            if (!logPathFile.exists())
+                logPathFile.mkdirs();
+        } catch (InvalidClassException | NullPointerException e) {
             try {
                 PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
             } catch (IOException | BackingStoreException e1) {

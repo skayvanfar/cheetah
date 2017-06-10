@@ -106,8 +106,9 @@ class AddNewDownloadDialog extends JDialog {
                 }
             }
         });
+        pack();
 
-        setSize(540, 150);
+       // setSize(740, 150);
         setResizable(true);
         setLocationRelativeTo(parent);
     }
@@ -208,7 +209,7 @@ class AddNewDownloadDialog extends JDialog {
         try {
             verifiedUrl = new URL(url);
         } catch (MalformedURLException e) {
-            System.out.println(e);
+            logger.error("URL isn't correct");
             return null;
         }
 

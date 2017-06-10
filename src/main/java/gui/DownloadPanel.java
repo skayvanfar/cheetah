@@ -315,8 +315,6 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         outPutfiles.add(downloadRangePath);
 
         File path = FileUtil.outputFile(outPutfiles, new FileNameComparator());
-        System.out.println(path);
-
 
         String downloadPathName = download.getDownloadPath() + File.separator + FileUtil.getFileName(path);
 
@@ -560,7 +558,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                     String downloadPathName = download.getDownloadPath() + File.separator + download.getDownloadName();
                     downloadAskDialog.setInfo(download.getUrl().toString(), downloadPathName, download.getFormattedSize(), download.isResumeCapability());
                 } else { // When error arise
-                    System.out.println("newDownloadInfoGot with error");
+                    logger.info("newDownloadInfoGot with error");
                     downloadAskDialog.dispose();
 
                     createDownloadDialog(download);

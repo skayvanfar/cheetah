@@ -31,6 +31,7 @@ public class PreferencesSaveDTO implements Serializable {
     private List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs;
     private String tempDirectory;
     private String databasePath;
+    private String logPath;
 
     public PreferencesSaveDTO() {
     }
@@ -57,6 +58,14 @@ public class PreferencesSaveDTO implements Serializable {
 
     public void setDatabasePath(String databasePath) {
         this.databasePath = databasePath;
+    }
+
+    public String getLogPath() {
+        return logPath;
+    }
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
     }
 
     public String getPathByFileExtension(String fileExtension) {

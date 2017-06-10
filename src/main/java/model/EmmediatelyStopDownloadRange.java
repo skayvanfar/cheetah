@@ -239,7 +239,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
                 read = stream.read(buffer);
 
                 if (read == -1) {
-                    System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 
@@ -253,7 +253,7 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
                 //       }
 
                 if (rangeSize == rangeDownloaded) {
-                    System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 

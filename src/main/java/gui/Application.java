@@ -20,6 +20,7 @@
 package gui;
 
 import javax.swing.*;
+import java.io.File;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -30,6 +31,11 @@ public class Application {
     private final static String NAME_OF_CUI = "Cheetah";
 
     public static void main( String[] args ) {
+
+        String path = System.getProperty("user.home") + "/Downloads/Cheetah Downloaded Files/Logs";
+
+        System.setProperty("log.file.path", path);
+
         // enable anti-aliased text:
         System.setProperty("awt.useSystemAAFontSettings","lcd"); // on or lcd
         System.setProperty("swing.aatext", "true");
@@ -105,12 +111,7 @@ public class Application {
         //    }
 
 
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                 new DownloadManagerGUI(NAME_OF_CUI);
-            }
-        });
+        SwingUtilities.invokeLater(() -> new DownloadManagerGUI(NAME_OF_CUI));
 
     }
 }

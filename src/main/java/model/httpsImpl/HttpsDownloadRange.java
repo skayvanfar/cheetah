@@ -21,6 +21,7 @@ package model.httpsImpl;
 
 import enums.ConnectionStatus;
 import model.AbstractDownloadRange;
+import org.apache.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
@@ -33,6 +34,9 @@ import java.net.URL;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/26/2015
  */
 public class HttpsDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public HttpsDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
@@ -120,7 +124,7 @@ public class HttpsDownloadRange extends AbstractDownloadRange implements model.D
                 int bytesRead = stream.read(buffer);
 
                 if (bytesRead == -1) {
-                    System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 
@@ -134,7 +138,7 @@ public class HttpsDownloadRange extends AbstractDownloadRange implements model.D
                 //       }
 
                 if (rangeSize == rangeDownloaded) {
-                    System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
                 Thread.sleep(5);

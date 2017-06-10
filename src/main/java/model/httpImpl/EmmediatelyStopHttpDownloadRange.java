@@ -21,6 +21,7 @@ package model.httpImpl;
 
 import enums.ConnectionStatus;
 import model.AbstractDownloadRange;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -32,6 +33,9 @@ import java.net.URL;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/23/2015
  */
 public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     // to quick stop thread
     private boolean stop = false;
@@ -144,7 +148,7 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 int bytesRead = stream.read(buffer);
 
                 if (bytesRead == -1) {
-                    System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 
@@ -159,7 +163,7 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 //       }
 
                 if (rangeSize == rangeDownloaded) {
-                    System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 

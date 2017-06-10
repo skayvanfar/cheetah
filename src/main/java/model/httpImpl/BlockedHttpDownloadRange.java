@@ -21,6 +21,8 @@ package model.httpImpl;
 
 import enums.ConnectionStatus;
 import model.AbstractDownloadRange;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -31,6 +33,9 @@ import java.net.URL;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/24/2015
  */
 public class BlockedHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
+
+    // Logger
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public BlockedHttpDownloadRange(int number, URL url, File downloadRangeFile, int startRange, int endRange) {
         super(number, url, downloadRangeFile, startRange, endRange);
@@ -116,7 +121,7 @@ public class BlockedHttpDownloadRange extends AbstractDownloadRange implements m
                     break;
 
                 if (bytesRead == -1) {
-                    System.out.println("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("-1   rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 
@@ -130,7 +135,7 @@ public class BlockedHttpDownloadRange extends AbstractDownloadRange implements m
                 //       }
 
                 if (rangeSize == rangeDownloaded) {
-                    System.out.println("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
+                    logger.info("rangeDownload size: " + rangeSize + " downloaded: " + rangeDownloaded);
                     break;
                 }
 
