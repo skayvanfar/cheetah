@@ -35,7 +35,7 @@ class MessagePanel extends JPanel {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
-    Logger logger2 = Logger.getLogger("message");
+    private final Logger messageLogger = Logger.getLogger("message");
 
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
@@ -86,6 +86,6 @@ class MessagePanel extends JPanel {
         appender.activateOptions();
         LogManager.getLogger("message").addAppender(appender);
 
-        logger2.info("testtttttt");
+      //  messageLogger.info("testtttttt");
     }
 }

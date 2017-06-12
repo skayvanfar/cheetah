@@ -55,6 +55,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger messageLogger = Logger.getLogger("message");
 
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
@@ -552,20 +553,20 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
     @Override
     public void newDownloadInfoGot(final Download download) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (download.getStatus() == DownloadStatus.DOWNLOADING) {// todo add name to downloadAskDialog dialog
-                    String downloadPathName = download.getDownloadPath() + File.separator + download.getDownloadName();
-                    downloadAskDialog.setInfo(download.getUrl().toString(), downloadPathName, download.getFormattedSize(), download.isResumeCapability());
-                } else { // When error arise
-                    logger.info("newDownloadInfoGot with error");
-                    downloadAskDialog.dispose();
+        SwingUtilities.invokeLater(() -> {
+            if (download.getStatus() == DownloadStatus.DOWNLOADING) {// todo add name to downloadAskDialog dialog
+                messageLogger.info("New Download is ready to start: " + download.getDownloadName());
+                String downloadPathName = download.getDownloadPath() + File.separator + download.getDownloadName();
+                downloadAskDialog.setInfo(download.getUrl().toString(), downloadPathName, download.getFormattedSize(), download.isResumeCapability());
+            } else { // When error arise
+                logger.info("newDownloadInfoGot with error");
+                messageLogger.info("Connection closed." + download.getDownloadName());
+                downloadAskDialog.dispose();
 
-                    createDownloadDialog(download);
+                createDownloadDialog(download);
 
-                    JOptionPane.showMessageDialog(parent, "Connection closed.", "Error", JOptionPane.ERROR_MESSAGE);
-              //      DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
-                }
+                JOptionPane.showMessageDialog(parent, "Connection closed.", "Error", JOptionPane.ERROR_MESSAGE);
+          //      DownloadAskDialog downloadAskDialog = new DownloadAskDialog(parent);
             }
         });
     }

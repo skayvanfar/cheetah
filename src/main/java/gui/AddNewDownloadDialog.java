@@ -40,6 +40,7 @@ class AddNewDownloadDialog extends JDialog {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger messageLogger = Logger.getLogger("message");
 
     // Add download text field.
     private JTextField newTextField;
@@ -172,6 +173,8 @@ class AddNewDownloadDialog extends JDialog {
         gc.anchor = GridBagConstraints.LINE_END;
         panel.add(useAuthorizationPanel, gc);
 
+        pack();
+
         add(panel);
     }
 
@@ -182,9 +185,10 @@ class AddNewDownloadDialog extends JDialog {
     // can be in DownloadManagerUI
     // Add a new download.
     private void addAction() {
+        messageLogger.info("New Download URL added: " + newTextField.getText());
         URL verifiedUrl = verifyUrl(newTextField.getText());
         if (verifiedUrl != null) {
-
+            messageLogger.info("URL verified.");
             if (addNewDownloadListener != null) {
                 addNewDownloadListener.newDownloadEventOccured(verifiedUrl);
             }
@@ -201,8 +205,10 @@ class AddNewDownloadDialog extends JDialog {
     // Verify download URL.
     private URL verifyUrl(String url) {
         // Only allow HTTP URLs.
-        if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
+        if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://")) {
+            messageLogger.info("Error: Scheme of URL must be http or https.");
             return null;
+        }
 
         // Verify format of URL.
         URL verifiedUrl;
@@ -210,6 +216,7 @@ class AddNewDownloadDialog extends JDialog {
             verifiedUrl = new URL(url);
         } catch (MalformedURLException e) {
             logger.error("URL isn't correct");
+            messageLogger.info("Error: URL isn't correct.");
             return null;
         }
 

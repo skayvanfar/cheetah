@@ -90,8 +90,8 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
         pathButton.addActionListener(this);
 
         layoutControls();
-      //  pack();
-        setSize(650, 210);
+        pack();
+      //  setSize(650, 210);
         setResizable(true);
         setLocationRelativeTo(parent);
     }

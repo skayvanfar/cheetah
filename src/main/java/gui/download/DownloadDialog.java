@@ -74,7 +74,8 @@ public class DownloadDialog extends JDialog implements DownloadPropertiesPanelLi
 
         downloadPropertiesPanel.setDownloadPropertiesPanelListener(this);
 
-        setSize(530, 230);
+        pack();
+     //   setSize(530, 230);
         setLocationRelativeTo(parent);
     }
 

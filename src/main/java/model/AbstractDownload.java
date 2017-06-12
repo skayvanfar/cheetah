@@ -41,6 +41,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger messageLogger = Logger.getLogger("message");
 
     protected int id;
     protected URL url; // download URL
@@ -291,6 +292,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     // Pause this download.
     @Override
     public void pause() {
+        messageLogger.info("Download paused: " + downloadName);
         status = DownloadStatus.DISCONNECTING;
         stateChanged();
         for (DownloadRange downloadRange : downloadRangeList)
@@ -300,6 +302,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     // Resume this download.
     @Override
     public void resume() {
+        messageLogger.info("Download resumed: " + downloadName);
         status = DownloadStatus.DOWNLOADING;
 
         stateChanged();
@@ -314,6 +317,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
     // Mark this download as having an error.
     protected void error() {
+        messageLogger.info("Download has error: " + downloadName);
         status = DownloadStatus.ERROR;
         stateChanged();
 
@@ -435,7 +439,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     protected void endOfDownload() {
-
+        messageLogger.info("End Of Download from remote: " + downloadName);
         List<File> files = new ArrayList<>();
         for (DownloadRange downloadRange : downloadRangeList) {
             files.add(downloadRange.getDownloadRangeFile());
@@ -443,6 +447,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
 
         // files.sort(new FileComperarto());
 
+        messageLogger.info("Joining downloaded parts together " + downloadName);
         FileUtil.joinDownloadedParts(files, downloadPath, downloadName);
 
         status = DownloadStatus.COMPLETE;
@@ -497,9 +502,11 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                 break;
             case WAITING_RESPONSE:
                 logger.info("WAITING_RESPONSE");
+                messageLogger.info("Waiting for response: " + downloadName);
                 break;
             case COMPLETED:
                 logger.info("COMPLETED download Range");
+                messageLogger.info("All download parts has finished: " + downloadName);
                 logger.info("downloaded = " + downloaded + " size = " + size + "  downloadRange = " + downloadRange.getRangeDownloaded() + " startRange= " +
                         downloadRange.getStartRange() + " end range= " + downloadRange.getEndRange());
                 if (downloaded >= size) { // when all parts downloaded

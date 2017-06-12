@@ -20,6 +20,7 @@
 package utils;
 
 import comparator.FileNameComparator;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,8 +68,8 @@ public class FileUtil {
             return file;
         } else {
             String filenameAndExtension = file.getName();
-            String fileName = filenameAndExtension.substring(0, filenameAndExtension.lastIndexOf('.'));
-            String extension = filenameAndExtension.substring(filenameAndExtension.lastIndexOf('.') + 1);
+            String fileName = FilenameUtils.getBaseName(filenameAndExtension);
+            String extension = FilenameUtils.getExtension(filenameAndExtension);
             if (fileName.lastIndexOf('_') != -1) {
                 String firstPartFileName = fileName.substring(0, fileName.lastIndexOf('_'));
                 int lastPartFileName = Integer.parseInt(fileName.substring(fileName.lastIndexOf('_') + 1)) + 1;
