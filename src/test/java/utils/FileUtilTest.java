@@ -51,7 +51,7 @@ public class FileUtilTest {
 
     @Test
     public void testOutputFile() {
-        String expectedValue = "t_1.txt";
+        String expectedValue = "t~1.txt";
 
         URL url = Thread.currentThread().getContextClassLoader().getResource("t.txt");
         assert url != null;

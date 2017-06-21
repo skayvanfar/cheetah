@@ -57,7 +57,7 @@ public class DownloadDialog extends JDialog implements DownloadPropertiesPanelLi
     }
 
     public DownloadDialog(JFrame parent, Download download) {
-        super(parent, "download Dialog", false);
+        super(parent, "Download Dialog", false);
 
         this.download = download;
 

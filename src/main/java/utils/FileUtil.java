@@ -63,6 +63,11 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Specify real name for file to download that was not repeated in download manger and download folder
+     * @param file full file name with extension like index.html
+     * @return
+     */
     public static File outputFile(File file) {
         if (!file.exists()) {
             return file;
@@ -70,12 +75,12 @@ public class FileUtil {
             String filenameAndExtension = file.getName();
             String fileName = FilenameUtils.getBaseName(filenameAndExtension);
             String extension = FilenameUtils.getExtension(filenameAndExtension);
-            if (fileName.lastIndexOf('_') != -1) {
-                String firstPartFileName = fileName.substring(0, fileName.lastIndexOf('_'));
-                int lastPartFileName = Integer.parseInt(fileName.substring(fileName.lastIndexOf('_') + 1)) + 1;
-                return outputFile(new File(file.getParent() + File.separator + firstPartFileName + "_" + lastPartFileName + "." + extension));
+            if (fileName.lastIndexOf('~') != -1) {
+                String firstPartFileName = fileName.substring(0, fileName.lastIndexOf('~'));
+                int lastPartFileName = Integer.parseInt(fileName.substring(fileName.lastIndexOf('~') + 1)) + 1;
+                return outputFile(new File(file.getParent() + File.separator + firstPartFileName + "~" + lastPartFileName + "." + extension));
             } else {
-                return outputFile(new File(file.getParent() + File.separator + fileName + "_1" + "." + extension));
+                return outputFile(new File(file.getParent() + File.separator + fileName + "~1" + "." + extension));
             }
 
         }

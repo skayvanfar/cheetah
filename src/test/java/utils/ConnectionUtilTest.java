@@ -22,10 +22,7 @@ package utils;
 import enums.SizeType;
 import enums.TimeUnit;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.net.URL;
 
@@ -66,6 +63,16 @@ public class ConnectionUtilTest {
     public void testGetRealFileWithoutQueryString() throws Exception {
         String expectedValue = "index.html";
         String actualValue = ConnectionUtil.getFileName(url);
+        System.out.println("actualValue: " + actualValue);
+        Assert.assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    @Ignore
+    public void getRealFileName() throws Exception {
+        url = new URL("http://dabir.nict.ir/IstgWebApp/shareui/pages/signin.aspx?ReturnUrl=%2fistgwebapp%2fShareui%2fpages%2fDownload.aspx%3ffilAllDocId%3dEB4DB78A-2340-416A-A0C1-1C0C1CF65E41%3b311B19E2-B70F-4708-9321-4F23428EE194%3b9C76B4C5-8A3B-4743-A649-388CDC967F50%3bAEFCFE7B-2A7E-4E08-9BF6-F086BBEBE55A%3b7D7FB2FB-2353-42D4-80E5-D0F388902E40%3b2B0C89AA-1131-4130-B178-82EDF4EC0D85%3b%2527&filAllDocId=EB4DB78A-2340-416A-A0C1-1C0C1CF65E41;311B19E2-B70F-4708-9321-4F23428EE194;9C76B4C5-8A3B-4743-A649-388CDC967F50;AEFCFE7B-2A7E-4E08-9BF6-F086BBEBE55A;7D7FB2FB-2353-42D4-80E5-D0F388902E40;2B0C89AA-1131-4130-B178-82EDF4EC0D85;%27");
+        String expectedValue = "signin.html";
+        String actualValue = ConnectionUtil.getRealFileName(url);
         System.out.println("actualValue: " + actualValue);
         Assert.assertEquals(expectedValue, actualValue);
     }

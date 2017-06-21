@@ -21,6 +21,7 @@ package utils;
 
 import enums.SizeType;
 import enums.TimeUnit;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -72,6 +73,13 @@ public class ConnectionUtil {
             } else {
                 fileName = fileNameURL.substring(fileNameURL.lastIndexOf('/') + 1);
             }
+            String contentType = conn.getHeaderField("Content-type");
+            if (contentType != null && !contentType.equals("")) {
+                String type = contentType.substring(contentType.indexOf('/') + 1, contentType.indexOf(';'));
+                if (type != null && !type.equals("")) {
+                    fileName = FilenameUtils.getBaseName(fileName) + '.' + type;
+                }
+            }
         }
         return fileName;
     }
@@ -79,7 +87,7 @@ public class ConnectionUtil {
     // Get file extension portion of file of URL.
     public static String getFileExtension(URL url) {
         String fileName = url.getFile();
-        return fileName.substring(fileName.lastIndexOf('.') + 1);
+        return FilenameUtils.getExtension(fileName);
     }
 
     public static String roundSizeTypeFormat(float transferRate, SizeType sizeType) {
