@@ -26,6 +26,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -33,6 +34,7 @@ import java.util.prefs.Preferences;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a>
  */
 public class FileUtilTest {
+
 
     @Test
     public void testJoinDownloadedParts() throws Exception {
@@ -56,11 +58,43 @@ public class FileUtilTest {
         URL url = Thread.currentThread().getContextClassLoader().getResource("t.txt");
         assert url != null;
         File file = new File(url.getPath());
-        File newFile = FileUtil.outputFile(file);
-        String actualValue = newFile.getName();
+        String actualValue = FileUtil.outputFile(file);
 
         Assert.assertEquals(expectedValue, actualValue);
 
+    }
+
+    @Test
+    public void testCountableFileName() throws Exception {
+        String expectedValue = "t~1.txt";
+
+        List<String> fileNames = Arrays.asList("T~1.txt", "fdfdf.pdf", "dfdf.txt");
+
+        String actualValue = FileUtil.countableFileName(expectedValue, fileNames);
+
+        Assert.assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    public void testCountableFileNameWhenFileNameExist() throws Exception {
+        String expectedValue = "t~2.txt";
+
+        List<String> fileNames = Arrays.asList("t~1.txt", "fdfdf.pdf", "dfdf.txt");
+
+        String actualValue = FileUtil.countableFileName(expectedValue, fileNames);
+
+        Assert.assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    public void testCountableFileNameWhenFileNameExistPlus2() throws Exception {
+        String expectedValue = "t~1.txt";
+
+        List<String> fileNames = Arrays.asList("t~4.txt", "fdfdf.pdf", "dfdf.txt");
+
+        String actualValue = FileUtil.countableFileName(expectedValue, fileNames);
+
+        Assert.assertEquals(expectedValue, actualValue);
     }
 
     @Test

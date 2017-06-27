@@ -74,11 +74,13 @@ public class ConnectionUtil {
                 fileName = fileNameURL.substring(fileNameURL.lastIndexOf('/') + 1);
             }
             String contentType = conn.getHeaderField("Content-type");
-            if (contentType != null && !contentType.equals("")) {
-                String type = contentType.substring(contentType.indexOf('/') + 1, contentType.indexOf(';'));
-                if (type != null && !type.equals("")) {
-                    fileName = FilenameUtils.getBaseName(fileName) + '.' + type;
-                }
+            if (contentType != null && !contentType.equals("") && !contentType.equals("application/octet-stream")) {
+                try {
+                    String type = contentType.substring(contentType.indexOf('/') + 1, contentType.indexOf(';'));
+                    if (type != null && !type.equals("")) {
+                        fileName = FilenameUtils.getBaseName(fileName) + '.' + type;
+                    }
+                } catch (Exception e) {}
             }
         }
         return fileName;

@@ -95,6 +95,10 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     private List<String> fileExtensions;
     private DownloadCategory downloadCategory = DownloadCategory.ALL;
 
+    public List<Download> getDownloadList() {
+        return downloadList;
+    }
+
     public void addDownloadDialog(DownloadDialog downloadDialog) {
         if (downloadDialog == null)
             throw new NullPointerException();
@@ -157,12 +161,10 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         downloadTable = new JTable(downloadsTableModel);
         popup = initPopupMenu();
 
-        downloadTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                tableSelectionChanged();
-                if (downloadPanelListener != null)
-                    downloadPanelListener.downloadSelected(selectedDownload);
-            }
+        downloadTable.getSelectionModel().addListSelectionListener(e -> {
+            tableSelectionChanged();
+            if (downloadPanelListener != null)
+                downloadPanelListener.downloadSelected(selectedDownload);
         });
 
         // Allow only one row at a time to be selected.
@@ -428,13 +430,13 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             try {
                 databaseController.delete(selectedDownload.getId());
             } catch (SQLException e) {
-                e.printStackTrace();
+          //      e.printStackTrace();
             }
 
             try {
                 FileUtils.forceDelete(new File(selectedDownload.getDownloadRangePath() + File.separator + selectedDownload.getDownloadName())); // todo must again
             } catch (IOException e) {
-                e.printStackTrace();
+          //      e.printStackTrace();
             }
 
             selectedDownload = null;

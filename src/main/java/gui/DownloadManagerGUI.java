@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -57,6 +58,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger messageLogger = Logger.getLogger("message");
 
     private final ResourceBundle messagesBundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
     private final ResourceBundle defaultPreferencesBundle = java.util.ResourceBundle.getBundle("defaultPreferences"); // NOI18N
@@ -146,35 +148,49 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         addNewDownloadDialog.setAddNewDownloadListener(textUrl -> {
             if (textUrl != null) {
-           //     try {
-             //       String downloadName = ConnectionUtil.getRealFileName(textUrl);
-                    String downloadName = ConnectionUtil.getFileName(textUrl);
-                    String fileExtension =  FilenameUtils.getExtension(downloadName);
-                    File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
-                    File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
-                    int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
+                String downloadName;
+                try {
+                    downloadName = ConnectionUtil.getRealFileName(textUrl);
+                } catch (IOException e) {
+                    logger.error("Can't get real name of file that you want to download." + textUrl);
+                    messageLogger.error("Can't get real name of file that you want to download." + textUrl);
+                    downloadName = ConnectionUtil.getFileName(textUrl);
+                }
+                String fileExtension =  FilenameUtils.getExtension(downloadName);
+                File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
+                File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
+                int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
 
-                    Download download = null;
-                    // todo must set stretegy pattern
-                    switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
-                        case HTTP:
-                            download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                    downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
-                            break;
-                        case FTP:
-                            // todo must be created ...
-                            break;
-                        case HTTPS:
-                            download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, downloadName, maxNum,
-                                    downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
-                            break;
-                    }
-                    downloadPanel.addDownload(download);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                        JOptionPane.showMessageDialog(DownloadManagerGUI.this, "Invalid download URL", "Error", JOptionPane.ERROR_MESSAGE);
-//                    }
+                Download download = null;
 
+                List<Download> downloads = downloadPanel.getDownloadList();
+                String properDownloadName = getProperNameForDownload(downloadName, downloads, downloadPathFile);
+
+                // todo must set stretegy pattern
+                switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
+                    case HTTP:
+                        download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
+                                downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
+                        break;
+                    case FTP:
+                        // todo must be created ...
+                        break;
+                    case HTTPS:
+                        download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
+                                downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                        break;
+                }
+
+                // select proper name for new Download that is not repeated in Download list and file system.
+                //getProperNameForDownload() {
+
+                //    for (Download download1 : downloads) {
+                //       ffff
+                //   }
+                //}
+
+
+                downloadPanel.addDownload(download);
             }
         });
 
@@ -301,6 +317,20 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
+    }
+
+    /**
+     * Specify real name for file to download that was not repeated in download manger and download folder
+     * @return
+     */
+    private String getProperNameForDownload(String name, List<Download> downloads, File downloadPathFile) {
+        List<String> fileNames = downloads.stream().map(download -> download.getDownloadName()).collect(Collectors.toList());
+        String fileName = FileUtil.countableFileName(name, fileNames);
+        String finalFileName = FileUtil.outputFile(new File(downloadPathFile + File.separator + fileName));
+        if (!fileNames.contains(finalFileName))
+            return finalFileName;
+        else
+            return getProperNameForDownload(finalFileName, downloads, downloadPathFile);
     }
 
     private void setStateOfMenuItems() {

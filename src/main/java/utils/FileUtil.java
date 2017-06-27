@@ -36,7 +36,7 @@ public class FileUtil {
 
     public static void joinDownloadedParts(List<File> files, File path, String fileName) {
       //  String homeDir = System.getProperty("user.home");
-        File outputFile = outputFile(new File(path + File.separator + fileName));
+        File outputFile = new File(path + File.separator + outputFile(new File(path + File.separator + fileName)));
 
         FileOutputStream fos;
         FileInputStream fis;
@@ -64,13 +64,13 @@ public class FileUtil {
     }
 
     /**
-     * Specify real name for file to download that was not repeated in download manger and download folder
+     * Specify real name for file to download that was not repeated in download folder
      * @param file full file name with extension like index.html
      * @return
      */
-    public static File outputFile(File file) {
+    public static String outputFile(File file) {
         if (!file.exists()) {
-            return file;
+            return file.getName();
         } else {
             String filenameAndExtension = file.getName();
             String fileName = FilenameUtils.getBaseName(filenameAndExtension);
@@ -85,10 +85,13 @@ public class FileUtil {
 
         }
     }
+
+
+
     public static File outputFile(List<File> files, FileNameComparator fileNameComparator) {
         List<File> outputFiles = new ArrayList<>();
         for (File file : files) {
-            File outputFile = outputFile(file);
+            File outputFile = new File(file.getParentFile() + File.separator + outputFile(file));
             outputFiles.add(outputFile);
         }
 
@@ -101,4 +104,26 @@ public class FileUtil {
         return fileName.substring(fileName.lastIndexOf(File.separator) + 1);
     }
 
+    /**
+     * Specify real name for file to download that was not repeated in download manger
+     * @param fileName full file name with extension like index.html
+     * @param allFileNames
+     * @return
+     */
+    public static String countableFileName(String fileName, List<String> allFileNames) {
+        if (!allFileNames.contains(fileName)) {
+            return fileName;
+        } else {
+            String baseNameName = FilenameUtils.getBaseName(fileName);
+            String extension = FilenameUtils.getExtension(fileName);
+            if (baseNameName.lastIndexOf('~') != -1) {
+                String firstPartFileName = baseNameName.substring(0, baseNameName.lastIndexOf('~'));
+                int lastPartFileName = Integer.parseInt(baseNameName.substring(baseNameName.lastIndexOf('~') + 1)) + 1;
+                return countableFileName(firstPartFileName + "~" + lastPartFileName + "." + extension, allFileNames);
+            } else {
+                return countableFileName(baseNameName + "~1" + "." + extension, allFileNames);
+            }
+
+        }
+    }
 }

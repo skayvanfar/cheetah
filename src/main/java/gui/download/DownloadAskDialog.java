@@ -56,7 +56,7 @@ public class DownloadAskDialog extends JDialog implements ActionListener {
     private JFrame parent;
 
     public DownloadAskDialog(JFrame parent) {
-        super(parent, "download File", false);
+        super(parent, "Download File", false);
 
         this.parent = parent;
 
