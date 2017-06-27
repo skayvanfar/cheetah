@@ -32,3 +32,10 @@ On the other hand, just run it from an Intellj IDEA project with Cheetah-With-Ma
 
 # License
 The Cheetah project is provided under the GPL, version 2 or later.
+
+# Contact us
+Lead developer: Saeed Kayvanfar
+
+kayvanfar.sj@gmail.com
+
+https://github.com/skayvanfar
