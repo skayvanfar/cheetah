@@ -26,7 +26,7 @@ Cheetah in Windows
 
 # Status
 This project is currently a work-in-progress.
-If you execute maven goal "assembly:assembly", This will give you the Cheetah application jar and all of the dependencies - you can simply execute java -jar chita-...-jar-with-dependencies.jar and the application should start.
+If you execute maven goal "assembly:assembly", This will give you the Cheetah application jar and all of the dependencies - you can simply execute java -jar cheetah-...-jar-with-dependencies.jar and the application should start.
 
 On the other hand, just run it from an Intellj IDEA project with Cheetah-With-Maven configuration.
 
