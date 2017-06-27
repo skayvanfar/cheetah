@@ -14,9 +14,11 @@ Version 1.0.0
 * Themes
 
 # Screenshot
+
 Cheetah in Linux
 
 ![Alt text](/doc/Cheetah%20in%20Linux.png?raw=true "Cheetah")
+
 
 Cheetah in Windows
 
