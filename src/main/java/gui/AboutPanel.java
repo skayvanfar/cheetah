@@ -38,6 +38,7 @@ class AboutPanel extends JPanel {
 
     private JLabel programNameLabel;
     private JLabel productionMessageLabel;
+    private JLabel websiteLabel;
     private JTextArea copyrightTextArea;
 
     public AboutPanel() {
@@ -46,10 +47,12 @@ class AboutPanel extends JPanel {
 
         programNameLabel = new JLabel(bundle.getString("aboutPanel.program.name"));
         productionMessageLabel = new JLabel(bundle.getString("aboutPanel.program.productionMessage"));
+        websiteLabel = new JLabel(bundle.getString("aboutPanel.program.website"));
         copyrightTextArea = new JTextArea(bundle.getString("aboutPanel.program.copyright"), 15, 40);
 
         programNameLabel.setFont(new Font("Dialog", Font.BOLD, 20));
         productionMessageLabel.setFont(new Font("Dialog", Font.BOLD, 13));
+        websiteLabel.setFont(new Font("Dialog", Font.BOLD, 13));
         copyrightTextArea.setFont(new Font("Dialog", Font.PLAIN, 12));
         copyrightTextArea.setEditable(false);
 
@@ -68,6 +71,7 @@ class AboutPanel extends JPanel {
 
         add(programNameLabel);
         add(new JSeparator());
+        add(websiteLabel);
         add(productionMessageLabel);
         add(new JScrollPane(copyrightTextArea));
     }
