@@ -24,6 +24,7 @@ import gui.listener.DownloadRangeStatusListener;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -253,5 +254,41 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         rangeSize = -1;
         rangeDownloaded = 0;
         connectionStatus = ConnectionStatus.CONNECTING;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractDownloadRange that = (AbstractDownloadRange) o;
+        return id == that.id &&
+                number == that.number &&
+                rangeSize == that.rangeSize &&
+                rangeDownloaded == that.rangeDownloaded &&
+                startRange == that.startRange &&
+                endRange == that.endRange &&
+                Objects.equals(url, that.url) &&
+                connectionStatus == that.connectionStatus &&
+                Objects.equals(downloadRangeFile, that.downloadRangeFile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, url, number, rangeSize, rangeDownloaded, connectionStatus, startRange, endRange, downloadRangeFile);
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractDownloadRange{" +
+                "id=" + id +
+                ", url=" + url +
+                ", number=" + number +
+                ", rangeSize=" + rangeSize +
+                ", rangeDownloaded=" + rangeDownloaded +
+                ", connectionStatus=" + connectionStatus +
+                ", startRange=" + startRange +
+                ", endRange=" + endRange +
+                ", downloadRangeFile=" + downloadRangeFile +
+                '}';
     }
 }

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Observable;
 
 /**
@@ -338,6 +339,28 @@ public class EmmediatelyStopDownloadRange extends Observable implements Runnable
     private void setFlags(boolean flag) {
         stop = flag;
         directStop = flag;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmmediatelyStopDownloadRange that = (EmmediatelyStopDownloadRange) o;
+        return id == that.id &&
+                number == that.number &&
+                rangeSize == that.rangeSize &&
+                rangeDownloaded == that.rangeDownloaded &&
+                startRange == that.startRange &&
+                endRange == that.endRange &&
+                Objects.equals(logger, that.logger) &&
+                Objects.equals(url, that.url) &&
+                connectionStatus == that.connectionStatus &&
+                Objects.equals(downloadRangeFile, that.downloadRangeFile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(logger, id, url, number, rangeSize, rangeDownloaded, connectionStatus, startRange, endRange, downloadRangeFile);
     }
 
     @Override

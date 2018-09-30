@@ -75,4 +75,14 @@ public class PreferencesSaveDTO implements Serializable {
         }
         return (new File(preferencesDirectoryCategoryDTOs.get(0).getPath())).getParentFile().getPath();
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesSaveDTO{" +
+                "preferencesDirectoryCategoryDTOs=" + preferencesDirectoryCategoryDTOs +
+                ", tempDirectory='" + tempDirectory + '\'' +
+                ", databasePath='" + databasePath + '\'' +
+                ", logPath='" + logPath + '\'' +
+                '}';
+    }
 }

@@ -44,4 +44,12 @@ public class PreferencesInterfaceDTO implements Serializable {
     public void setLocalName(String localName) {
         this.localName = localName;
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesInterfaceDTO{" +
+                "lookAndFeelName='" + lookAndFeelName + '\'' +
+                ", localName='" + localName + '\'' +
+                '}';
+    }
 }

@@ -73,4 +73,13 @@ public class OptionsCategoryDto {
     public void setColor(int r, int g, int b) {
         this.color = new Color(r, g, b);
     }
+
+    @Override
+    public String toString() {
+        return "OptionsCategoryDto{" +
+                "categoryName='" + categoryName + '\'' +
+                ", nodeNames=" + nodeNames +
+                ", color=" + color +
+                '}';
+    }
 }

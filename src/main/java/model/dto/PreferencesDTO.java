@@ -75,4 +75,15 @@ public class PreferencesDTO implements Serializable {
     public void setPreferencesInterfaceDTO(PreferencesInterfaceDTO preferencesInterfaceDTO) {
         this.preferencesInterfaceDTO = preferencesInterfaceDTO;
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesDTO{" +
+                "preferencesGeneralDTO=" + preferencesGeneralDTO +
+                ", preferencesConnectionDTO=" + preferencesConnectionDTO +
+                ", preferencesSaveDTO=" + preferencesSaveDTO +
+                ", preferencesProxyDTO=" + preferencesProxyDTO +
+                ", preferencesInterfaceDTO=" + preferencesInterfaceDTO +
+                '}';
+    }
 }

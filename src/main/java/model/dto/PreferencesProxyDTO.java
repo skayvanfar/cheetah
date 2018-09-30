@@ -197,4 +197,28 @@ public class PreferencesProxyDTO implements Serializable {
     public void setSocksProxyPassword(String socksProxyPassword) {
         this.socksProxyPassword = socksProxyPassword;
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesProxyDTO{" +
+                "proxySettingType=" + proxySettingType +
+                ", useProxyNotSocks=" + useProxyNotSocks +
+                ", httpProxyAddress='" + httpProxyAddress + '\'' +
+                ", httpProxyPort=" + httpProxyPort +
+                ", httpProxyUserName='" + httpProxyUserName + '\'' +
+                ", httpProxyPassword='" + httpProxyPassword + '\'' +
+                ", httpsProxyAddress='" + httpsProxyAddress + '\'' +
+                ", httpsProxyPort=" + httpsProxyPort +
+                ", httpsProxyUserName='" + httpsProxyUserName + '\'' +
+                ", httpsProxyPassword='" + httpsProxyPassword + '\'' +
+                ", ftpProxyAddress='" + ftpProxyAddress + '\'' +
+                ", ftpProxyPort=" + ftpProxyPort +
+                ", ftpProxyUserName='" + ftpProxyUserName + '\'' +
+                ", ftpProxyPassword='" + ftpProxyPassword + '\'' +
+                ", socksProxyAddress='" + socksProxyAddress + '\'' +
+                ", socksProxyPort=" + socksProxyPort +
+                ", socksProxyUserName='" + socksProxyUserName + '\'' +
+                ", socksProxyPassword='" + socksProxyPassword + '\'' +
+                '}';
+    }
 }

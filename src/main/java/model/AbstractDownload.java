@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -535,5 +536,53 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         for (DownloadRange downloadRange : downloadRangeList) {
             downloadRange.resetData();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractDownload that = (AbstractDownload) o;
+        return id == that.id &&
+                size == that.size &&
+                downloaded == that.downloaded &&
+                responseCode == that.responseCode &&
+                partCount == that.partCount &&
+                resumeCapability == that.resumeCapability &&
+                Objects.equals(logger, that.logger) &&
+                Objects.equals(messageLogger, that.messageLogger) &&
+                Objects.equals(url, that.url) &&
+                Objects.equals(downloadName, that.downloadName) &&
+                status == that.status &&
+                Objects.equals(transferRate, that.transferRate) &&
+                protocolType == that.protocolType &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(downloadPath, that.downloadPath) &&
+                Objects.equals(downloadRangePath, that.downloadRangePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(logger, messageLogger, id, url, downloadName, size, status, transferRate, protocolType, description, downloaded, responseCode, partCount, downloadPath, downloadRangePath, resumeCapability);
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractDownload{" +
+                "id=" + id +
+                ", url=" + url +
+                ", downloadName='" + downloadName + '\'' +
+                ", size=" + size +
+                ", status=" + status +
+                ", transferRate='" + transferRate + '\'' +
+                ", protocolType=" + protocolType +
+                ", description='" + description + '\'' +
+                ", downloaded=" + downloaded +
+                ", responseCode=" + responseCode +
+                ", partCount=" + partCount +
+                ", downloadPath=" + downloadPath +
+                ", downloadRangePath=" + downloadRangePath +
+                ", resumeCapability=" + resumeCapability +
+                '}';
     }
 }

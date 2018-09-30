@@ -39,4 +39,11 @@ public class PreferencesGeneralDTO implements Serializable {
     public void setLaunchOnsStartup(boolean launchOnsStartup) {
         this.launchOnsStartup = launchOnsStartup;
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesGeneralDTO{" +
+                "launchOnsStartup=" + launchOnsStartup +
+                '}';
+    }
 }

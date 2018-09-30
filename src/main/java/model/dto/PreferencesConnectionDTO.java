@@ -99,4 +99,16 @@ public class PreferencesConnectionDTO implements Serializable {
     public void setReadTimeOut(int readTimeOut) {
         this.readTimeOut = readTimeOut;
     }
+
+    @Override
+    public String toString() {
+        return "PreferencesConnectionDTO{" +
+                "connectionType=" + connectionType +
+                ", maxConnectionNumber=" + maxConnectionNumber +
+                ", timeBetweenAttempts=" + timeBetweenAttempts +
+                ", maxNumberAttempts=" + maxNumberAttempts +
+                ", connectionTimeOut=" + connectionTimeOut +
+                ", readTimeOut=" + readTimeOut +
+                '}';
+    }
 }
