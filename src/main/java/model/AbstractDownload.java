@@ -36,7 +36,10 @@ import java.util.Objects;
 import java.util.Vector;
 
 /**
+ * Skeletal Implementation of Download interface.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
+ * @see model.Download
  */
 public abstract class AbstractDownload implements Download, Runnable, DownloadRangeStatusListener {
 
@@ -94,171 +97,256 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         downloadStatusListeners = new Vector<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getId() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URL getUrl() {
         return url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUrl(URL url) {
         this.url = url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDownloadName() {
         return downloadName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadName(String downloadName) {
         this.downloadName = downloadName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getSize() {
         return size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSize(int size) {
         this.size = size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DownloadStatus getStatus() {
         return status;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setStatus(DownloadStatus status) {
         this.status = status;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTransferRate() {
         return transferRate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ProtocolType getProtocolType() {
         return protocolType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setProtocolType(ProtocolType protocolType) {
         this.protocolType = protocolType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getDownloaded() {
         return downloaded;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloaded(int downloaded) {
         this.downloaded = downloaded;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getDownloadPath() {
         return downloadPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadPath(File downloadPath) {
         this.downloadPath = downloadPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getDownloadRangePath() {
         return downloadRangePath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadRangePath(File downloadRangePath) {
         this.downloadRangePath = downloadRangePath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getResponseCode() { // todo must go to below class
         return responseCode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isResumeCapability() {
         return resumeCapability;
     }
 
-    // Get this download's size.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormattedSize() {
         return ConnectionUtil.roundSizeTypeFormat((float) size, SizeType.BYTE);
     }
 
-    // Get this download's progress.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float getProgress() {
         return ((float) downloaded / size); // *100
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getConnectTimeout() {
         return connectTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getReadTimeout() {
         return readTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<DownloadRange> getDownloadRangeList() {
         return downloadRangeList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadRangeList(List<DownloadRange> downloadRangeList) {
         this.downloadRangeList = downloadRangeList;
     }
 
     /**
-     * Adds an DownloadStatusListener to the set of downloadStatusListeners for this object, provided
-     * that it is not the same as some DownloadStatusListener already in the set.
-     * The order in which notifications will be delivered to multiple
-     * DownloadDialogListeners is not specified. See the class comment.
-     *
-     * @param   downloadStatusListener   an DownloadStatusListener to be added.
-     * @throws NullPointerException   if the parameter o is null.
+     * {@inheritDoc}
      */
     @Override
     public synchronized void addDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
@@ -270,27 +358,33 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     }
 
     /**
-     * Deletes an DownloadStatusListener from the set of downloadStatusListeners of this object.
-     * Passing <CODE>null</CODE> to this method will have no effect.
-     * @param   downloadStatusListener   the DownloadStatusListener to be deleted.
+     * {@inheritDoc}
      */
     @Override
     public synchronized void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
         downloadStatusListeners.removeElement(downloadStatusListener);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
         this.downloadInfoListener = downloadInfoListener;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeDownloadInfo(DownloadInfoListener downloadInfoListener) {
         if (this.downloadInfoListener.equals(downloadInfoListener))
             this.downloadInfoListener = null;
     }
 
-    // Pause this download.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void pause() {
         messageLogger.info("Download paused: " + downloadName);
@@ -300,7 +394,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
             downloadRange.disConnect();
     }
 
-    // Resume this download.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resume() {
         messageLogger.info("Download resumed: " + downloadName);
@@ -326,6 +422,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
             downloadInfoListener.downloadNeedSaved(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startTransferRate() {
         new Thread(new Runnable() {
@@ -423,10 +522,15 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     @Override
     public abstract void run();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract void createDownloadRanges();
 
-    // add a new downloadRange if not in downloadRangeList
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addDownloadRange(DownloadRange downloadRange) {
         if (!downloadRangeList.contains(downloadRange)) {
@@ -472,8 +576,6 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         updateInfo(downloadRange, readed);
         stateChanged();
     }
-
-
 
     private synchronized void updateInfo(DownloadRange downloadRange, int readed) {
         downloaded += readed;
@@ -529,6 +631,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         return state;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resetData() {
         downloaded = 0;

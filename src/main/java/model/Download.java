@@ -29,68 +29,189 @@ import java.net.URL;
 import java.util.List;
 
 /**
+ * An abstract representation of download file.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
+ * @see model.DownloadRange
  */
 public interface Download {
 
+    /**
+     * Gets the id of this {@code Download}.
+     *
+     * @return the id of this {@code Download}
+     */
     int getId();
 
-    void setId(int id);
+    /**
+     * @param id
+     */
+    void setId( int id);
 
+    /**
+     * Gets the url of this {@code Download}.
+     *
+     * @return the url of this {@code Download}
+     */
     URL getUrl();
 
+
+    /**
+     * @param url
+     */
     void setUrl(URL url);
 
+    /**
+     * Gets the downloadName of this {@code Download}.
+     *
+     * @return the downloadName of this {@code Download}
+     */
     String getDownloadName();
 
+    /**
+     * @param downloadName
+     */
     void setDownloadName(String downloadName);
 
+    /**
+     * Gets the size of this {@code Download}.
+     *
+     * @return the size of this {@code Download}
+     */
     int getSize();
 
+    /**
+     * @param size
+     */
     void setSize(int size);
 
+    /**
+     * Gets the downloadStatus of this {@code Download}.
+     *
+     * @return the downloadStatus of this {@code Download}
+     */
     DownloadStatus getStatus();
 
+    /**
+     * @param status
+     */
     void setStatus(DownloadStatus status);
 
+    /**
+     * Gets the transferRate of this {@code Download}.
+     *
+     * @return the transferRate of this {@code Download}
+     */
     String getTransferRate();
 
+    /**
+     * Gets the protocolType of this {@code Download}.
+     *
+     * @return the protocolType of this {@code Download}
+     */
     ProtocolType getProtocolType();
 
+    /**
+     * @param protocolType
+     */
     void setProtocolType(ProtocolType protocolType);
 
+    /**
+     * Gets the description of this {@code Download}.
+     *
+     * @return the description of this {@code Download}
+     */
     String getDescription();
 
+    /**
+     * @param description
+     */
     void setDescription(String description);
 
+    /**
+     * Gets amount of downloaded of this {@code Download}.
+     *
+     * @return amount of downloaded of this {@code Download}
+     */
     int getDownloaded();
 
+    /**
+     * @param downloaded
+     */
     void setDownloaded(int downloaded);
 
+    /**
+     * Gets the path of this {@code Download}.
+     *
+     * @return the path of this {@code Download}
+     */
     File getDownloadPath();
 
+    /**
+     * @param downloadPath
+     */
     void setDownloadPath(File downloadPath);
 
+    /**
+     * Gets the rangePath of this {@code Download}.
+     *
+     * @return the rangePath of this {@code Download}
+     */
     File getDownloadRangePath();
 
+    /**
+     * @param downloadRangePath
+     */
     void setDownloadRangePath(File downloadRangePath);
 
+    /**
+     * Gets the responseCode of this {@code Download}.
+     *
+     * @return the responseCode of this {@code Download}
+     */
     int getResponseCode();
 
+    /**
+     * @return
+     */
     boolean isResumeCapability();
 
-    // Get this download's size.
+    /**
+     * Gets the formattedSize of this {@code Download}.
+     *
+     * @return the formattedSize of this {@code Download}
+     */
     String getFormattedSize();
 
-    // Get this download's progress.
+    /**
+     * Gets the progress of this {@code Download}.
+     *
+     * @return the progress of this {@code Download}
+     */
     float getProgress();
 
+    /**
+     * Gets the connectTimeout of this {@code Download}.
+     *
+     * @return the connectTimeout of this {@code Download}
+     */
     int getConnectTimeout();
 
+    /**
+     * @param connectTimeout
+     */
     void setConnectTimeout(int connectTimeout);
 
+    /**
+     * Gets the readTimeout of this {@code Download}.
+     *
+     * @return the readTimeout of this {@code Download}
+     */
     int getReadTimeout();
 
+    /**
+     * @param readTimeout
+     */
     void setReadTimeout(int readTimeout);
 
     /**
@@ -111,27 +232,56 @@ public interface Download {
      */
     void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener);
 
+    /**
+     * Gets list of downloadRanges of this {@code Download}.
+     *
+     * @return list of downloadRanges of this {@code Download}
+     */
     List<DownloadRange> getDownloadRangeList();
 
+    /**
+     * @param downloadRangeList
+     */
     void setDownloadRangeList(List<DownloadRange> downloadRangeList);
 
+    /**
+     * @param downloadInfoListener
+     */
     void setDownloadInfoListener(DownloadInfoListener downloadInfoListener);
 
+    /**
+     * @param downloadInfoListener
+     */
     void removeDownloadInfo(DownloadInfoListener downloadInfoListener);
 
-    // Pause this download.
+    /**
+     * Pause this download.
+     */
     void pause();
 
-    // Resume this download.
+    /**
+     * Resume this download.
+     */
     void resume();
 
+    /**
+     * createDownloadRanges
+     */
     void createDownloadRanges();
 
-    // add a new downloadRange if not in downloadRangeList
+    /**
+     * add a new downloadRange if not in downloadRangeList
+     * @param downloadRange
+     */
     void addDownloadRange(DownloadRange downloadRange);
 
-    // reset data of download for redownload
+    /**
+     * reset data of download for redownload
+     */
     void resetData();
 
+    /**
+     * startTransferRate
+     */
     void startTransferRate();
 }

@@ -28,7 +28,10 @@ import java.util.Objects;
 import java.util.Vector;
 
 /**
+ * Skeletal Implementation of DownloadRange interface.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
+ * @see model.DownloadRange
  */
 public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
 
@@ -73,125 +76,186 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         downloadRangeStatusListeners = new Vector<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getId() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URL getUrl() {
         return url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUrl(URL url) {
         this.url = url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumber() {
         return number;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNumber(int number) {
         this.number = number;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getRangeSize() {
         return rangeSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRangeSize(int rangeSize) {
         this.rangeSize = rangeSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getRangeDownloaded() {
         return rangeDownloaded;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRangeDownloaded(int rangeDownloaded) {
         this.rangeDownloaded = rangeDownloaded;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConnectionStatus getConnectionStatus() {
         return connectionStatus;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConnectionStatus(ConnectionStatus connectionStatus) {
         this.connectionStatus = connectionStatus;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getStartRange() {
         return startRange;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setStartRange(int startRange) {
         this.startRange = startRange;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getEndRange() {
         return endRange;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEndRange(int endRange) {
         this.endRange = endRange;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getDownloadRangeFile() {
         return downloadRangeFile;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDownloadRangeFile(File downloadRangeFile) {
         this.downloadRangeFile = downloadRangeFile;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getConnectTimeout() {
         return connectTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getReadTimeout() {
         return readTimeout;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
     /**
-     * Adds an DownloadRangeStatusListener to the set of downloadRangeStatusListeners for this object, provided
-     * that it is not the same as some DownloadRangeStatusListener already in the set.
-     * The order in which notifications will be delivered to multiple
-     * downloadRangeStatusListeners is not specified. See the class comment.
-     *
-     * @param   downloadRangeStatusListener   an DownloadRangeStatusListener to be added.
-     * @throws NullPointerException   if the parameter is null.
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void addDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener) { // todo may be go to DownloadRange
         if (downloadRangeStatusListener == null)
             throw new NullPointerException();
@@ -201,10 +265,9 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     }
 
     /**
-     * Deletes an DownloadRangeStatusListener from the set of downloadRangeStatusListeners of this object.
-     * Passing <CODE>null</CODE> to this method will have no effect.
-     * @param   downloadRangeStatusListener   the DownloadRangeStatusListener to be deleted.
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void deleteDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener) {
         downloadRangeStatusListeners.removeElement(downloadRangeStatusListener);
     }
@@ -220,7 +283,9 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
         stateChanged(0); // TODO two time call and print "disconnect from download .... "
     }
 
-    // Resume this download.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resume() {
         if (connectionStatus != ConnectionStatus.COMPLETED) {
@@ -249,6 +314,9 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
             downloadRangeStatusListener.downloadStatusChanged(this, readed);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resetData() {
         rangeSize = -1;

@@ -31,7 +31,10 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
+ * Http implementation of Download interface.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
+ * @see model.Download
  */
 public class HttpDownload extends AbstractDownload implements Download {
 
@@ -105,6 +108,10 @@ public class HttpDownload extends AbstractDownload implements Download {
         downloadInfoListener.newDownloadInfoGot(HttpDownload.this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void createDownloadRanges() {
         int partSize= ConnectionUtil.getPartSizeOfDownload(size, partCount);
         int startRange = 0;

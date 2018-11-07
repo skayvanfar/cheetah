@@ -26,50 +26,108 @@ import java.io.File;
 import java.net.URL;
 
 /**
+ * An abstract representation of a part of download file.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
+ * @see model.Download
  */
 public interface DownloadRange {
 
+    /**
+     * Gets the id of this {@code Download}.
+     *
+     * @return the id of this {@code Download}
+     */
     int getId();
 
     void setId(int id);
 
+    /**
+     * Gets the url of this {@code Download}.
+     *
+     * @return the url of this {@code Download}
+     */
     URL getUrl();
 
     void setUrl(URL url);
 
+    /**
+     * Gets the number of this {@code Download}.
+     *
+     * @return the number of this {@code Download}
+     */
     int getNumber();
 
     void setNumber(int number);
 
+    /**
+     * Gets the size of this {@code Download}.
+     *
+     * @return the size of this {@code Download}
+     */
     int getRangeSize();
 
     void setRangeSize(int rangeSize);
 
+    /**
+     * Gets amount of downloaded of this {@code Download}.
+     *
+     * @return amount of downloaded of this {@code Download}
+     */
     int getRangeDownloaded();
 
     void setRangeDownloaded(int rangeDownloaded);
 
+    /**
+     * Gets the connectionStatus of this {@code Download}.
+     *
+     * @return the connectionStatus of this {@code Download}
+     */
     ConnectionStatus getConnectionStatus();
 
     void setConnectionStatus(ConnectionStatus connectionStatus);
 
+    /**
+     * Gets the start of this {@code Download}.
+     *
+     * @return the start of this {@code Download}
+     */
     int getStartRange();
 
     void setStartRange(int startRange);
 
+    /**
+     * Gets the end of this {@code Download}.
+     *
+     * @return the end of this {@code Download}
+     */
     int getEndRange();
 
     void setEndRange(int endRange);
 
+    /**
+     * Gets the downloadRangeFile of this {@code Download}.
+     *
+     * @return the downloadRangeFile of this {@code Download}
+     */
     File getDownloadRangeFile();
 
     void setDownloadRangeFile(File downloadRangeFile);
 
+    /**
+     * Gets the connectTimeout of this {@code Download}.
+     *
+     * @return the connectTimeout of this {@code Download}
+     */
     int getConnectTimeout();
 
     void setConnectTimeout(int connectTimeout);
 
+    /**
+     * Gets the url of this {@code Download}.
+     *
+     * @return the url of this {@code Download}
+     */
     int getReadTimeout();
 
     void setReadTimeout(int readTimeout);
@@ -92,12 +150,18 @@ public interface DownloadRange {
      */
     void deleteDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener);
 
-    // Pause this download.
+    /**
+     * Pause this download.
+     */
     void disConnect();
 
-    // Resume this download.
+    /**
+     * Resume this download.
+     */
     void resume();
 
-    // Reset data
+    /**
+     * Reset data
+     */
     void resetData();
 }

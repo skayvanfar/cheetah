@@ -31,7 +31,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
+ * Https implementation of DownloadRange interface.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/26/2015
+ * @see model.DownloadRange
  */
 public class HttpsDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 

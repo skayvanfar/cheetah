@@ -32,7 +32,10 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
+ * Https implementation of Download interface.
+ *
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/26/2015
+ * @see model.Download
  */
 public class HttpsDownload extends AbstractDownload implements Download {
 
