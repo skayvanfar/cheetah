@@ -159,6 +159,7 @@ class CategoryPanel extends JPanel {
     }
 
     public void setCategoryPanelListener(CategoryPanelListener categoryPanelListener) {
+        Objects.requireNonNull(categoryPanelListener, "categoryPanelListener");
         this.categoryPanelListener = categoryPanelListener;
     }
 

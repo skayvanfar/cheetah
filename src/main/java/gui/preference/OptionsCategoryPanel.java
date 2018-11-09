@@ -10,6 +10,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Created by Saeed on 9/22/2015.
@@ -73,6 +74,7 @@ class OptionsCategoryPanel extends JPanel {
     }
 
     public void setOptionsCategoryPanelListener(OptionsCategoryPanelListener optionsCategoryPanelListener) {
+        Objects.requireNonNull(optionsCategoryPanelListener, "optionsCategoryPanelListener");
         this.optionsCategoryPanelListener = optionsCategoryPanelListener;
     }
 

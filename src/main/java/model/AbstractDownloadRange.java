@@ -257,8 +257,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
      */
     @Override
     public synchronized void addDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener) { // todo may be go to DownloadRange
-        if (downloadRangeStatusListener == null)
-            throw new NullPointerException();
+        Objects.requireNonNull(downloadRangeStatusListener, "downloadRangeStatusListener");
         if (!downloadRangeStatusListeners.contains(downloadRangeStatusListener)) {
             downloadRangeStatusListeners.addElement(downloadRangeStatusListener);
         }
@@ -269,6 +268,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
      */
     @Override
     public synchronized void deleteDownloadRangeStatusListener(DownloadRangeStatusListener downloadRangeStatusListener) {
+        Objects.requireNonNull(downloadRangeStatusListener, "downloadRangeStatusListener");
         downloadRangeStatusListeners.removeElement(downloadRangeStatusListener);
     }
 

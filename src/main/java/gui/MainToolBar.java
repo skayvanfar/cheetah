@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -151,6 +152,7 @@ class MainToolBar extends JToolBar implements ActionListener {
     }
 
     public void setMainToolbarListener(MainToolbarListener mainToolbarListener) {
+        Objects.requireNonNull(mainToolbarListener, "mainToolbarListener");
         this.mainToolbarListener = mainToolbarListener;
     }
 

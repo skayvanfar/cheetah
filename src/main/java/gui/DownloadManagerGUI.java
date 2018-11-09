@@ -147,51 +147,53 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
    //     preferenceDialog.setDefaults(preferencesDTO);
 
         addNewDownloadDialog.setAddNewDownloadListener(textUrl -> {
-            if (textUrl != null) {
-                String downloadName;
-                try {
-                    downloadName = ConnectionUtil.getRealFileName(textUrl);
-                } catch (IOException e) {
-                    logger.error("Can't get real name of file that you want to download." + textUrl);
-                    messageLogger.error("Can't get real name of file that you want to download." + textUrl);
-                    downloadName = ConnectionUtil.getFileName(textUrl);
-                }
-                String fileExtension =  FilenameUtils.getExtension(downloadName);
-                File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
-                File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
-                int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
+            Objects.requireNonNull(textUrl, "textUrl");
+            if (textUrl.equals(""))
+                throw new IllegalArgumentException("textUrl is empty");
 
-                Download download = null;
-
-                List<Download> downloads = downloadPanel.getDownloadList();
-                String properDownloadName = getProperNameForDownload(downloadName, downloads, downloadPathFile);
-
-                // todo must set stretegy pattern
-                switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
-                    case HTTP:
-                        download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
-                                downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
-                        break;
-                    case FTP:
-                        // todo must be created ...
-                        break;
-                    case HTTPS:
-                        download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
-                                downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
-                        break;
-                }
-
-                // select proper name for new Download that is not repeated in Download list and file system.
-                //getProperNameForDownload() {
-
-                //    for (Download download1 : downloads) {
-                //       ffff
-                //   }
-                //}
-
-
-                downloadPanel.addDownload(download);
+            String downloadName;
+            try {
+                downloadName = ConnectionUtil.getRealFileName(textUrl);
+            } catch (IOException e) {
+                logger.error("Can't get real name of file that you want to download." + textUrl);
+                messageLogger.error("Can't get real name of file that you want to download." + textUrl);
+                downloadName = ConnectionUtil.getFileName(textUrl);
             }
+            String fileExtension =  FilenameUtils.getExtension(downloadName);
+            File downloadPathFile = new File(preferencesDTO.getPreferencesSaveDTO().getPathByFileExtension(fileExtension));
+            File downloadRangeFile = new File(preferencesDTO.getPreferencesSaveDTO().getTempDirectory());
+            int maxNum = preferencesDTO.getPreferencesConnectionDTO().getMaxConnectionNumber();
+
+            Download download = null;
+
+            List<Download> downloads = downloadPanel.getDownloadList();
+            String properDownloadName = getProperNameForDownload(downloadName, downloads, downloadPathFile);
+
+            // todo must set stretegy pattern
+            switch (ProtocolType.valueOfByDesc(textUrl.getProtocol())) {
+                case HTTP:
+                    download = new HttpDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
+                            downloadPathFile, downloadRangeFile, ProtocolType.HTTP);
+                    break;
+                case FTP:
+                    // todo must be created ...
+                    break;
+                case HTTPS:
+                    download = new HttpsDownload(downloadPanel.getNextDownloadID(), textUrl, properDownloadName, maxNum,
+                            downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
+                    break;
+            }
+
+            // select proper name for new Download that is not repeated in Download list and file system.
+            //getProperNameForDownload() {
+
+            //    for (Download download1 : downloads) {
+            //       ffff
+            //   }
+            //}
+
+
+            downloadPanel.addDownload(download);
         });
 
         // Add panels to display.

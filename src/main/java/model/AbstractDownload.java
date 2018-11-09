@@ -30,10 +30,7 @@ import utils.FileUtil;
 import javax.swing.*;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Skeletal Implementation of Download interface.
@@ -334,7 +331,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public List<DownloadRange> getDownloadRangeList() {
-        return downloadRangeList;
+        return downloadRangeList.isEmpty() ? Collections.emptyList() : new ArrayList<>(downloadRangeList);
     }
 
     /**
@@ -350,8 +347,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public synchronized void addDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
-        if (downloadStatusListener == null)
-            throw new NullPointerException();
+        Objects.requireNonNull(downloadStatusListener, "downloadStatusListener");
         if (!downloadStatusListeners.contains(downloadStatusListener)) {
             downloadStatusListeners.addElement(downloadStatusListener);
         }
@@ -362,6 +358,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public synchronized void deleteDownloadStatusListener(DownloadStatusListener downloadStatusListener) {
+        Objects.requireNonNull(downloadStatusListener, "downloadStatusListener");
         downloadStatusListeners.removeElement(downloadStatusListener);
     }
 
@@ -370,6 +367,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
+        Objects.requireNonNull(downloadInfoListener, "downloadInfoListener");
         this.downloadInfoListener = downloadInfoListener;
     }
 
@@ -378,6 +376,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public void removeDownloadInfo(DownloadInfoListener downloadInfoListener) {
+        Objects.requireNonNull(downloadInfoListener, "downloadInfoListener");
         if (this.downloadInfoListener.equals(downloadInfoListener))
             this.downloadInfoListener = null;
     }
@@ -533,6 +532,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public void addDownloadRange(DownloadRange downloadRange) {
+        Objects.requireNonNull(downloadRange);
         if (!downloadRangeList.contains(downloadRange)) {
             downloadRangeList.add(downloadRange);
             downloadRange.addDownloadRangeStatusListener(this);

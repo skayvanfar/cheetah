@@ -32,6 +32,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -179,6 +180,7 @@ class AddNewDownloadDialog extends JDialog {
     }
 
     public void setAddNewDownloadListener(AddNewDownloadListener addNewDownloadListener) {
+        Objects.requireNonNull(addNewDownloadListener, "addNewDownloadListener");
         this.addNewDownloadListener = addNewDownloadListener;
     }
 

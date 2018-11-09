@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -528,6 +529,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     }
 
     public void setDownloadPanelListener(DownloadPanelListener downloadPanelListener) {
+        Objects.requireNonNull(downloadPanelListener, "downloadPanelListener");
         this.downloadPanelListener = downloadPanelListener;
     }
 
