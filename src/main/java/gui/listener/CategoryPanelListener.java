@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/13/2015
  */
+@FunctionalInterface
 public interface CategoryPanelListener {
     void categoryNodeSelected(List<String> fileExtensions, DownloadCategory downloadCategory);
 }

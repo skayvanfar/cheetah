@@ -22,6 +22,7 @@ package gui.listener;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/30/2015
  */
+@FunctionalInterface
 public interface DownloadPropertiesPanelListener {
     void okButtonClicked(String downloadDescription);
 }
