@@ -89,11 +89,7 @@ class AddNewDownloadDialog extends JDialog {
         layoutControls();
 
         // can use ActionListener for class and use that
-        newButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                addAction();
-            }
-        });
+        newButton.addActionListener(actionEvent -> addAction());
 
         useAuthorizationCheckBox.addItemListener(new ItemListener() {
             @Override

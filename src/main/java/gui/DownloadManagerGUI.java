@@ -126,12 +126,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         aboutDialog = new AboutDialog(this);
 
-        categoryPanel.setCategoryPanelListener(new CategoryPanelListener() {
-            @Override
-            public void categoryNodeSelected(List<String> fileExtensions, DownloadCategory downloadCategory) {
-                downloadPanel.setDownloadsByDownloadPath(fileExtensions, downloadCategory);
-            }
-        });
+        categoryPanel.setCategoryPanelListener((fileExtensions, downloadCategory) -> downloadPanel.setDownloadsByDownloadPath(fileExtensions, downloadCategory));
 
         //     preferenceDialog.setDefaults(preferencesDTO);
 
