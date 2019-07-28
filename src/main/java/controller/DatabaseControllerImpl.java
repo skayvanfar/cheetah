@@ -21,6 +21,7 @@ package controller;
 
 import dao.DatabaseDao;
 import dao.JDBCDatabaseDao;
+import ir.sk.concurrencyutils.annotation.ThreadSafe;
 import model.Download;
 
 import java.net.MalformedURLException;
@@ -30,9 +31,10 @@ import java.util.List;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/30/2015
  */
+@ThreadSafe
 public class DatabaseControllerImpl implements DatabaseController {
 
-    private DatabaseDao databaseDao;
+    private final DatabaseDao databaseDao;
 
     public DatabaseControllerImpl(String driver, String connectionURL, int port, String userName, String password) {
         databaseDao = new JDBCDatabaseDao(driver, connectionURL, port, userName, password);

@@ -20,6 +20,7 @@
 package model;
 
 import enums.ConnectionStatus;
+import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import java.util.Observable;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/12/2015
  */
+@NotThreadSafe
 public class EmmediatelyStopDownloadRange extends Observable implements Runnable {
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());

@@ -20,6 +20,7 @@
 package model.httpImpl;
 
 import enums.ConnectionStatus;
+import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import model.AbstractDownloadRange;
 import org.apache.log4j.Logger;
 
@@ -32,6 +33,7 @@ import java.net.URL;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/24/2015
  */
+@NotThreadSafe
 public class BlockedHttpDownloadRange extends AbstractDownloadRange implements model.DownloadRange {
 
     // Logger

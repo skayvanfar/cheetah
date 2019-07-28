@@ -21,6 +21,7 @@ package model.httpImpl;
 
 import enums.DownloadStatus;
 import enums.ProtocolType;
+import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import model.*;
 import utils.ConnectionUtil;
 
@@ -36,6 +37,7 @@ import java.net.UnknownHostException;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  * @see model.Download
  */
+@NotThreadSafe
 public class HttpDownload extends AbstractDownload implements Download {
 
     public HttpDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {

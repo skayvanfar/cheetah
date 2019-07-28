@@ -23,6 +23,7 @@ import enums.*;
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadRangeStatusListener;
 import gui.listener.DownloadStatusListener;
+import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import org.apache.log4j.Logger;
 import utils.ConnectionUtil;
 import utils.FileUtil;
@@ -38,6 +39,7 @@ import java.util.*;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  * @see model.Download
  */
+@NotThreadSafe
 public abstract class AbstractDownload implements Download, Runnable, DownloadRangeStatusListener {
 
     // Logger

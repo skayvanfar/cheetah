@@ -21,6 +21,7 @@ package model;
 
 import enums.ConnectionStatus;
 import gui.listener.DownloadRangeStatusListener;
+import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 
 import java.io.File;
 import java.net.URL;
@@ -33,6 +34,7 @@ import java.util.Vector;
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  * @see model.DownloadRange
  */
+@NotThreadSafe
 public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
 
     // Max size of download buffer.

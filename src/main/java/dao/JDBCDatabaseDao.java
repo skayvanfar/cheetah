@@ -23,6 +23,8 @@ import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.ProtocolType;
 import exception.DriverNotFoundException;
+import ir.sk.concurrencyutils.annotation.GuardedBy;
+import ir.sk.concurrencyutils.annotation.ThreadSafe;
 import model.Download;
 import model.DownloadRange;
 import model.httpImpl.HttpDownload;
@@ -42,18 +44,29 @@ import java.util.List;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/30/2015
  */
+@ThreadSafe
 public class JDBCDatabaseDao implements DatabaseDao {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
+    @GuardedBy("this")
     private Connection con;
 
-    private String connectionUrl;
-    private String driver;
-    private int port; //todo ?
-    private String userName;
-    private String password;
+    @GuardedBy("this")
+    private final String connectionUrl;
+
+    @GuardedBy("this")
+    private final String driver;
+
+    @GuardedBy("this")
+    private final int port; //todo ?
+
+    @GuardedBy("this")
+    private final String userName;
+
+    @GuardedBy("this")
+    private final String password;
 
     public JDBCDatabaseDao(String driver, String connectionURL, int port, String userName, String password) {
         this.driver = driver;
@@ -71,7 +84,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
     }
 
     @Override
-    public boolean connect() throws SQLException {
+    public synchronized boolean connect() throws SQLException {
         if (con != null) return false;
 
         con = DriverManager.getConnection(connectionUrl, userName, password);
@@ -82,7 +95,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
     }
 
     @Override
-    public boolean disconnect() {
+    public synchronized boolean disconnect() {
         boolean result = false;
         if (con != null) {
             try {
@@ -97,7 +110,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         return result;
     }
 
-    private boolean isTablesExist() throws SQLException {
+    private synchronized boolean isTablesExist() throws SQLException {
         Statement existStatement = con.createStatement();
         String downloadCreateSql = "SELECT name FROM sqlite_master WHERE type='table' AND name='DOWNLOAD'";
 
@@ -105,7 +118,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         return checkResult.next();
     }
 
-    public void createTablesIfNotExist() throws SQLException {
+    public synchronized void createTablesIfNotExist() throws SQLException {
 
         connect();
         if (!isTablesExist()) {
@@ -154,7 +167,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
     }
 
     @Override
-    public void save(Download download) throws SQLException {
+    public synchronized void save(Download download) throws SQLException {
         connect();
         String checkSql = "SELECT COUNT(*) AS count FROM DOWNLOAD WHERE ID = ?";
         PreparedStatement checkStatement = con.prepareStatement(checkSql);
@@ -290,7 +303,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
     }
 
     @Override
-    public List<Download> load() throws SQLException, MalformedURLException {
+    public synchronized List<Download> load() throws SQLException, MalformedURLException {
 
         connect();
 
@@ -378,7 +391,7 @@ public class JDBCDatabaseDao implements DatabaseDao {
         return downloads;
     }
 
-    public void delete(int id) throws SQLException {
+    public synchronized void delete(int id) throws SQLException {
         connect();
         String cascadeSql = "PRAGMA foreign_keys = ON";
         //    con.setAutoCommit(false);
