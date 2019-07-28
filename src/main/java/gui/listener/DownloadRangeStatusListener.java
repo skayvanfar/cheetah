@@ -24,6 +24,7 @@ import model.DownloadRange;
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 10/17/2015
  */
+@FunctionalInterface
 public interface DownloadRangeStatusListener {
     void downloadStatusChanged(DownloadRange downloadRange, int readed);
 }

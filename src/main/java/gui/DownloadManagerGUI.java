@@ -38,7 +38,6 @@ import utils.LookAndFeel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidClassException;
@@ -105,16 +104,6 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         preferences = Preferences.userRoot().node("db");
         final PreferencesDTO preferencesDTO = getPreferences();
 
-        try {
-            PreferencesDTO preferencesDTOTest = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO");
-        } catch (ClassCastException | ClassNotFoundException | BackingStoreException | IOException e) {
-            try {
-                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-            } catch (IOException | ClassNotFoundException | BackingStoreException e1) {
-                e1.printStackTrace();
-            }
-        }
-
         LookAndFeel.setLaf(preferencesDTO.getPreferencesInterfaceDTO().getLookAndFeelName());
 
         createFileHierarchy();
@@ -137,14 +126,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         aboutDialog = new AboutDialog(this);
 
-        categoryPanel.setCategoryPanelListener(new CategoryPanelListener() {
-            @Override
-            public void categoryNodeSelected(List<String> fileExtensions, DownloadCategory downloadCategory) {
-                downloadPanel.setDownloadsByDownloadPath(fileExtensions, downloadCategory);
-            }
-        });
+        categoryPanel.setCategoryPanelListener((fileExtensions, downloadCategory) -> downloadPanel.setDownloadsByDownloadPath(fileExtensions, downloadCategory));
 
-   //     preferenceDialog.setDefaults(preferencesDTO);
+        //     preferenceDialog.setDefaults(preferencesDTO);
 
         addNewDownloadDialog.setAddNewDownloadListener(textUrl -> {
             Objects.requireNonNull(textUrl, "textUrl");
@@ -183,15 +167,6 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                             downloadPathFile, downloadRangeFile, ProtocolType.HTTPS);
                     break;
             }
-
-            // select proper name for new Download that is not repeated in Download list and file system.
-            //getProperNameForDownload() {
-
-            //    for (Download download1 : downloads) {
-            //       ffff
-            //   }
-            //}
-
 
             downloadPanel.addDownload(download);
         });
@@ -273,13 +248,12 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         preferenceDialog.setPreferencesListener(new PreferencesListener() {
             @Override
             public void preferencesSet(PreferencesDTO preferenceDTO) {
-                setPreferences(preferenceDTO);
+                setPreferencesOS(preferenceDTO);
             }
 
             @Override
             public void preferenceReset() {
                 PreferencesDTO resetPreferencesDTO = getPreferences();
-                checkAndSetPreferencesDTO(resetPreferencesDTO);
                 preferenceDialog.setPreferencesDTO(resetPreferencesDTO);
                 categoryPanel.setTreeModel(resetPreferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
             }
@@ -287,7 +261,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
             @Override
             public void preferenceDefaults() {
                 PreferencesDTO defaultPreferenceDTO = new PreferencesDTO();
-                checkAndSetPreferencesDTO(defaultPreferenceDTO);
+                resetAndSetPreferencesDTOFromConf(defaultPreferenceDTO);
                 preferenceDialog.setPreferencesDTO(defaultPreferenceDTO);
                 categoryPanel.setTreeModel(defaultPreferenceDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
             }
@@ -340,10 +314,10 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         openFolderItem.setEnabled(false);
         resumeItem.setEnabled(false);
         pauseItem.setEnabled(false);
-    //    pauseAllButton.setEnabled(true);
+        //    pauseAllButton.setEnabled(true);
         clearItem.setEnabled(false);
-   //     clearAllCompletedButton.setEnabled(true);
-  //      preferencesButton.setEnabled(true);
+        //     clearAllCompletedButton.setEnabled(true);
+        //      preferencesButton.setEnabled(true);
         reJoinItem.setEnabled(false);
         reDownloadItem.setEnabled(false);
         moveToQueueItem.setEnabled(false);
@@ -352,213 +326,145 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
     }
 
     private PreferencesDTO getPreferences() {
-
-        PreferencesDTO preferencesDTO = null;
-        try {
-       //   PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-            try {
-                preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
-            } catch(NullPointerException | EOFException | InvalidClassException e) {
-                PrefObj.putObject(preferences, "preferenceDTO", new PreferencesDTO());
-            }
-
-
-            checkAndSetPreferencesDTO(preferencesDTO);
-            setPreferences(preferencesDTO);
-        } catch (IOException | BackingStoreException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        Optional<PreferencesDTO> preferencesDTOOptional = getPreferencesOS();
+        PreferencesDTO preferencesDTO;
+        if (!preferencesDTOOptional.isPresent()) {
+            preferencesDTO = new PreferencesDTO();
+            resetAndSetPreferencesDTOFromConf(preferencesDTO);
+            setPreferencesOS(preferencesDTO);
+        } else
+            preferencesDTO = preferencesDTOOptional.get();
 
         return preferencesDTO;
     }
 
-    private void checkAndSetPreferencesDTO(PreferencesDTO preferencesDTO) {
+    private void resetAndSetPreferencesDTOFromConf(PreferencesDTO preferencesDTO) {
         String homeDir = System.getProperty("user.home");
 
         String path = homeDir + File.separator + "Downloads" + File.separator + "Cheetah Downloaded Files" + File.separator;
 
+        PreferencesGeneralDTO preferencesGeneralDTO = preferencesDTO.getPreferencesGeneralDTO();
+        preferencesGeneralDTO.setLaunchOnsStartup(Boolean.valueOf(defaultPreferencesBundle.getString("launchOnsStartup")));
+
         // PreferencesConnectionDTO
         PreferencesConnectionDTO preferencesConnectionDTO = preferencesDTO.getPreferencesConnectionDTO();
-        if (preferencesConnectionDTO == null) {
-            preferencesConnectionDTO = new PreferencesConnectionDTO();
-        }
-        if (preferencesConnectionDTO.getConnectionType() == null) {
-            preferencesConnectionDTO.setConnectionType(ConnectionType.valueOfByDesc(defaultPreferencesBundle.getString("connectionType")));
-        }
-        if (preferencesConnectionDTO.getMaxConnectionNumber() == 0) {
-            preferencesConnectionDTO.setMaxConnectionNumber(Integer.parseInt(defaultPreferencesBundle.getString("maxConnectionNumber")));
-        }
-        if (preferencesConnectionDTO.getTimeBetweenAttempts() == 0) {
-            preferencesConnectionDTO.setTimeBetweenAttempts(Integer.parseInt(defaultPreferencesBundle.getString("timeBetweenAttempts")));
-        }
-        if (preferencesConnectionDTO.getMaxNumberAttempts() == 0) {
-            preferencesConnectionDTO.setMaxNumberAttempts(Integer.parseInt(defaultPreferencesBundle.getString("maxNumberAttempts")));
-        }
-        if (preferencesConnectionDTO.getConnectionTimeOut() == 0) {
-            preferencesConnectionDTO.setConnectionTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("connectionTimeOut")));
-        }
-        if (preferencesConnectionDTO.getReadTimeOut() == 0) {
-            preferencesConnectionDTO.setReadTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("readTimeOut")));
-        }
+        preferencesConnectionDTO.setConnectionType(ConnectionType.valueOfByDesc(defaultPreferencesBundle.getString("connectionType")));
+        preferencesConnectionDTO.setMaxConnectionNumber(Integer.parseInt(defaultPreferencesBundle.getString("maxConnectionNumber")));
+        preferencesConnectionDTO.setTimeBetweenAttempts(Integer.parseInt(defaultPreferencesBundle.getString("timeBetweenAttempts")));
+        preferencesConnectionDTO.setMaxNumberAttempts(Integer.parseInt(defaultPreferencesBundle.getString("maxNumberAttempts")));
+        preferencesConnectionDTO.setConnectionTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("connectionTimeOut")));
+        preferencesConnectionDTO.setReadTimeOut(Integer.parseInt(defaultPreferencesBundle.getString("readTimeOut")));
 
         // preferencesSaveDTO
         PreferencesSaveDTO preferencesSaveDTO = preferencesDTO.getPreferencesSaveDTO();
-        if (preferencesSaveDTO == null) {
-            preferencesSaveDTO = new PreferencesSaveDTO();
-        }
-        if (preferencesSaveDTO.getPreferencesDirectoryCategoryDTOs() == null) { // or empty ????
-            List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs = new ArrayList<>();
-
-            // preferencesCompressedDirCategoryDTO
-            PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
-
-            preferencesCompressedDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("compressedDirectoryCategory.directoryName"));
-            preferencesCompressedDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("compressedDirectoryCategory.path"));
-            String [] fileCompressedExtensions = defaultPreferencesBundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
-            preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
-            preferencesCompressedDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("compressedDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesCompressedDirCategoryDTO);
 
 
-            PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+        List<PreferencesDirectoryCategoryDTO> preferencesDirectoryCategoryDTOs = new ArrayList<>();
 
-            preferencesDocumentDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("documentDirectoryCategory.directoryName"));
-            preferencesDocumentDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("documentDirectoryCategory.path"));
-            String [] fileDocumentExtensions = defaultPreferencesBundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
-            preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
-            preferencesDocumentDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("documentDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesDocumentDirCategoryDTO);
+        // preferencesCompressedDirCategoryDTO
+        PreferencesDirectoryCategoryDTO preferencesCompressedDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-
-            PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
-
-            preferencesMusicDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("musicDirectoryCategory.directoryName"));
-            preferencesMusicDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("musicDirectoryCategory.path"));
-            String [] fileMusicExtensions = defaultPreferencesBundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
-            preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
-            preferencesMusicDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("musicDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesMusicDirCategoryDTO);
+        preferencesCompressedDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("compressedDirectoryCategory.directoryName"));
+        preferencesCompressedDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("compressedDirectoryCategory.path"));
+        String [] fileCompressedExtensions = defaultPreferencesBundle.getString("compressedDirectoryCategory.fileExtensions").split(" ");
+        preferencesCompressedDirCategoryDTO.setFileExtensions(fileCompressedExtensions);
+        preferencesCompressedDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("compressedDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesCompressedDirCategoryDTO);
 
 
-            PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+        PreferencesDirectoryCategoryDTO preferencesDocumentDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            preferencesProgramDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("programDirectoryCategory.directoryName"));
-            preferencesProgramDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("programDirectoryCategory.path"));
-            String [] fileProgramExtensions = defaultPreferencesBundle.getString("programDirectoryCategory.fileExtensions").split(" ");
-            preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
-            preferencesProgramDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("programDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesProgramDirCategoryDTO);
-
-
-            PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
-
-            preferencesVideoDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("videoDirectoryCategory.directoryName"));
-            preferencesVideoDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("videoDirectoryCategory.path"));
-            String [] fileVideoExtensions = defaultPreferencesBundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
-            preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
-            preferencesVideoDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("videoDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesVideoDirCategoryDTO);
-
-            PreferencesDirectoryCategoryDTO preferencesImageDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
-
-            preferencesImageDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("imageDirectoryCategory.directoryName"));
-            preferencesImageDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("imageDirectoryCategory.path"));
-            String [] fileImageExtensions = defaultPreferencesBundle.getString("imageDirectoryCategory.fileExtensions").split(" ");
-            preferencesImageDirCategoryDTO.setFileExtensions(fileImageExtensions);
-            preferencesImageDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("imageDirectoryCategory.icon"));
-            preferencesDirectoryCategoryDTOs.add(preferencesImageDirCategoryDTO);
+        preferencesDocumentDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("documentDirectoryCategory.directoryName"));
+        preferencesDocumentDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("documentDirectoryCategory.path"));
+        String [] fileDocumentExtensions = defaultPreferencesBundle.getString("documentDirectoryCategory.fileExtensions").split(" ");
+        preferencesDocumentDirCategoryDTO.setFileExtensions(fileDocumentExtensions);
+        preferencesDocumentDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("documentDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesDocumentDirCategoryDTO);
 
 
-            preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
+        PreferencesDirectoryCategoryDTO preferencesMusicDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
 
-            // todo other needed ... use other method
-        }
-        if (preferencesSaveDTO.getTempDirectory() == null || preferencesSaveDTO.getTempDirectory().equals("")) {
-            preferencesSaveDTO.setTempDirectory(path + defaultPreferencesBundle.getString("tempDirectory"));
-        }
-        if (preferencesSaveDTO.getDatabasePath() == null || preferencesSaveDTO.getDatabasePath().equals("")) {
-            preferencesSaveDTO.setDatabasePath(path + defaultPreferencesBundle.getString("databasePath"));
-        }
-        if (preferencesSaveDTO.getLogPath() == null || preferencesSaveDTO.getLogPath().equals("")) {
-            preferencesSaveDTO.setLogPath(path + defaultPreferencesBundle.getString("logPath"));
-        }
+        preferencesMusicDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("musicDirectoryCategory.directoryName"));
+        preferencesMusicDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("musicDirectoryCategory.path"));
+        String [] fileMusicExtensions = defaultPreferencesBundle.getString("musicDirectoryCategory.fileExtensions").split(" ");
+        preferencesMusicDirCategoryDTO.setFileExtensions(fileMusicExtensions);
+        preferencesMusicDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("musicDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesMusicDirCategoryDTO);
+
+
+        PreferencesDirectoryCategoryDTO preferencesProgramDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+        preferencesProgramDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("programDirectoryCategory.directoryName"));
+        preferencesProgramDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("programDirectoryCategory.path"));
+        String [] fileProgramExtensions = defaultPreferencesBundle.getString("programDirectoryCategory.fileExtensions").split(" ");
+        preferencesProgramDirCategoryDTO.setFileExtensions(fileProgramExtensions);
+        preferencesProgramDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("programDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesProgramDirCategoryDTO);
+
+        PreferencesDirectoryCategoryDTO preferencesVideoDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+        preferencesVideoDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("videoDirectoryCategory.directoryName"));
+        preferencesVideoDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("videoDirectoryCategory.path"));
+        String [] fileVideoExtensions = defaultPreferencesBundle.getString("videoDirectoryCategory.fileExtensions").split(" ");
+        preferencesVideoDirCategoryDTO.setFileExtensions(fileVideoExtensions);
+        preferencesVideoDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("videoDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesVideoDirCategoryDTO);
+
+        PreferencesDirectoryCategoryDTO preferencesImageDirCategoryDTO = new PreferencesDirectoryCategoryDTO();
+
+        preferencesImageDirCategoryDTO.setDirectoryName(defaultPreferencesBundle.getString("imageDirectoryCategory.directoryName"));
+        preferencesImageDirCategoryDTO.setPath(path + defaultPreferencesBundle.getString("imageDirectoryCategory.path"));
+        String [] fileImageExtensions = defaultPreferencesBundle.getString("imageDirectoryCategory.fileExtensions").split(" ");
+        preferencesImageDirCategoryDTO.setFileExtensions(fileImageExtensions);
+        preferencesImageDirCategoryDTO.setIconPath(defaultPreferencesBundle.getString("imageDirectoryCategory.icon"));
+        preferencesDirectoryCategoryDTOs.add(preferencesImageDirCategoryDTO);
+
+        preferencesSaveDTO.setPreferencesDirectoryCategoryDTOs(preferencesDirectoryCategoryDTOs);
+        preferencesSaveDTO.setTempDirectory(path + defaultPreferencesBundle.getString("tempDirectory"));
+        preferencesSaveDTO.setDatabasePath(path + defaultPreferencesBundle.getString("databasePath"));
+        preferencesSaveDTO.setLogPath(path + defaultPreferencesBundle.getString("logPath"));
 
         // PreferenceProxyDTO
         PreferencesProxyDTO preferencesProxyDTO = preferencesDTO.getPreferencesProxyDTO();
-        if (preferencesProxyDTO == null) {
-            preferencesProxyDTO = new PreferencesProxyDTO();
-        }
-
-        if (preferencesProxyDTO.getProxySettingType() == 0) {
-            preferencesProxyDTO.setProxySettingType(Integer.parseInt(defaultPreferencesBundle.getString("proxySettingType")));
-        }
-
-        if (preferencesProxyDTO.isUseProxyNotSocks() == true) { // todo must use better way
-            preferencesProxyDTO.setUseProxyNotSocks(Boolean.parseBoolean(defaultPreferencesBundle.getString("useProxyNotSocks")));
-        }
-
-        if (preferencesProxyDTO.getHttpProxyAddress() == null || preferencesProxyDTO.getHttpProxyAddress().equals("")) {
-            preferencesProxyDTO.setHttpProxyAddress(defaultPreferencesBundle.getString("httpProxyAddress"));
-        }
-        if (preferencesProxyDTO.getHttpProxyPort() == 0) {  // todo must use better way
-            preferencesProxyDTO.setHttpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpProxyPort")));
-        }
-        if (preferencesProxyDTO.getHttpProxyUserName() == null || preferencesProxyDTO.getHttpProxyUserName().equals("")) {
-            preferencesProxyDTO.setHttpProxyUserName(defaultPreferencesBundle.getString("httpProxyUserName"));
-        }
-        if (preferencesProxyDTO.getHttpProxyPassword() == null || preferencesProxyDTO.getHttpProxyPassword().equals("")) {
-            preferencesProxyDTO.setHttpProxyPassword(defaultPreferencesBundle.getString("httpProxyPassword"));
-        }
-
-        if (preferencesProxyDTO.getHttpsProxyAddress() == null || preferencesProxyDTO.getHttpsProxyAddress().equals("")) {
-            preferencesProxyDTO.setHttpsProxyAddress(defaultPreferencesBundle.getString("httpsProxyAddress"));
-        }
-        if (preferencesProxyDTO.getHttpsProxyPort() == 0) {  // todo must use better way
-            preferencesProxyDTO.setHttpsProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpsProxyPort")));
-        }
-        if (preferencesProxyDTO.getHttpsProxyUserName() == null || preferencesProxyDTO.getHttpsProxyUserName().equals("")) {
-            preferencesProxyDTO.setHttpsProxyUserName(defaultPreferencesBundle.getString("httpsProxyUserName"));
-        }
-        if (preferencesProxyDTO.getHttpsProxyPassword() == null || preferencesProxyDTO.getHttpsProxyPassword().equals("")) {
-            preferencesProxyDTO.setHttpsProxyPassword(defaultPreferencesBundle.getString("httpsProxyPassword"));
-        }
-
-        if (preferencesProxyDTO.getFtpProxyAddress() == null || preferencesProxyDTO.getFtpProxyAddress().equals("")) {
-            preferencesProxyDTO.setFtpProxyAddress(defaultPreferencesBundle.getString("ftpProxyAddress"));
-        }
-        if (preferencesProxyDTO.getFtpProxyPort() == 0) {  // todo must use better way
-            preferencesProxyDTO.setFtpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("ftpProxyPort")));
-        }
-        if (preferencesProxyDTO.getFtpProxyUserName() == null || preferencesProxyDTO.getFtpProxyUserName().equals("")) {
-            preferencesProxyDTO.setFtpProxyUserName(defaultPreferencesBundle.getString("ftpProxyUserName"));
-        }
-        if (preferencesProxyDTO.getFtpProxyPassword() == null || preferencesProxyDTO.getFtpProxyPassword().equals("")) {
-            preferencesProxyDTO.setFtpProxyPassword(defaultPreferencesBundle.getString("ftpProxyPassword"));
-        }
+        preferencesProxyDTO.setProxySettingType(Integer.parseInt(defaultPreferencesBundle.getString("proxySettingType")));
+        preferencesProxyDTO.setUseProxyNotSocks(Boolean.parseBoolean(defaultPreferencesBundle.getString("useProxyNotSocks")));
+        preferencesProxyDTO.setHttpProxyAddress(defaultPreferencesBundle.getString("httpProxyAddress"));
+        preferencesProxyDTO.setHttpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpProxyPort")));
+        preferencesProxyDTO.setHttpProxyUserName(defaultPreferencesBundle.getString("httpProxyUserName"));
+        preferencesProxyDTO.setHttpProxyPassword(defaultPreferencesBundle.getString("httpProxyPassword"));
+        preferencesProxyDTO.setHttpsProxyAddress(defaultPreferencesBundle.getString("httpsProxyAddress"));
+        preferencesProxyDTO.setHttpsProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("httpsProxyPort")));
+        preferencesProxyDTO.setHttpsProxyUserName(defaultPreferencesBundle.getString("httpsProxyUserName"));
+        preferencesProxyDTO.setHttpsProxyPassword(defaultPreferencesBundle.getString("httpsProxyPassword"));
+        preferencesProxyDTO.setFtpProxyAddress(defaultPreferencesBundle.getString("ftpProxyAddress"));
+        preferencesProxyDTO.setFtpProxyPort(Integer.parseInt(defaultPreferencesBundle.getString("ftpProxyPort")));
+        preferencesProxyDTO.setFtpProxyUserName(defaultPreferencesBundle.getString("ftpProxyUserName"));
+        preferencesProxyDTO.setFtpProxyPassword(defaultPreferencesBundle.getString("ftpProxyPassword"));
 
         // PreferenceInterfaceDTO
         PreferencesInterfaceDTO preferencesInterfaceDTO = preferencesDTO.getPreferencesInterfaceDTO();
-        if (preferencesInterfaceDTO == null) {
-            preferencesInterfaceDTO = new PreferencesInterfaceDTO();
-        }
-
-        if (preferencesInterfaceDTO.getLookAndFeelName() == null || preferencesInterfaceDTO.getLookAndFeelName().equals("")) {
-            preferencesInterfaceDTO.setLookAndFeelName(defaultPreferencesBundle.getString("lookAndFeelName"));
-        }
-        if (preferencesInterfaceDTO.getLocalName() == null || preferencesInterfaceDTO.getLocalName().equals("")) {
-            preferencesInterfaceDTO.setLocalName(getLocale().getLanguage());
-        }
-
+        preferencesInterfaceDTO.setLookAndFeelName(defaultPreferencesBundle.getString("lookAndFeelName"));
+        preferencesInterfaceDTO.setLocalName(getLocale().getLanguage());
 
         // add all Main preferences objects
+        preferencesDTO.setPreferencesGeneralDTO(preferencesGeneralDTO);
         preferencesDTO.setPreferencesConnectionDTO(preferencesConnectionDTO);
         preferencesDTO.setPreferencesSaveDTO(preferencesSaveDTO);
         preferencesDTO.setPreferencesProxyDTO(preferencesProxyDTO);
         preferencesDTO.setPreferencesInterfaceDTO(preferencesInterfaceDTO);
     }
 
-    private void setPreferences(PreferencesDTO preferenceDTO) {
- //       preferences.putInt("maxConnectionNumber", preferenceDTO.getPreferencesConnectionDTO().getMaxConnectionNumber());
+    private Optional<PreferencesDTO> getPreferencesOS() {
+        PreferencesDTO preferencesDTO = null;
+        try {
+            preferencesDTO = (PreferencesDTO) PrefObj.getObject(preferences, "preferenceDTO"); // todo must find a way to delete preferenceDTO from OS
+        } catch(IOException | BackingStoreException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(preferencesDTO);
+    }
+
+    private void setPreferencesOS(PreferencesDTO preferenceDTO) {
         try {
             PrefObj.putObject(preferences, "preferenceDTO", preferenceDTO);
         } catch (IOException | BackingStoreException | ClassNotFoundException e) {
@@ -617,8 +523,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         exportDataItem.setEnabled(false);
         importDataItem.setEnabled(false);
 
-   //     fileMenu.add(exportDataItem);
-   //     fileMenu.add(importDataItem);
+        //     fileMenu.add(exportDataItem);
+        //     fileMenu.add(importDataItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
 
@@ -798,9 +704,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         JMenuItem clicked= (JMenuItem) e.getSource();
 
         if (clicked == exportDataItem) {
-        //    addNewDownloadDialog.setVisible(true);
+            //    addNewDownloadDialog.setVisible(true);
         } else if (clicked == importDataItem) {
-        //    addNewDownloadDialog.setVisible(true);
+            //    addNewDownloadDialog.setVisible(true);
         } else if (clicked == exitItem) {
             WindowListener[]  listeners = getWindowListeners();
             for (WindowListener listener : listeners)

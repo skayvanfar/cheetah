@@ -37,6 +37,8 @@ public class PreferencesDTO implements Serializable {
     }
 
     public PreferencesGeneralDTO getPreferencesGeneralDTO() {
+        if (preferencesGeneralDTO == null)
+            preferencesGeneralDTO = new PreferencesGeneralDTO(false);
         return preferencesGeneralDTO;
     }
 
@@ -45,6 +47,8 @@ public class PreferencesDTO implements Serializable {
     }
 
     public PreferencesConnectionDTO getPreferencesConnectionDTO() {
+        if (preferencesConnectionDTO == null)
+            preferencesConnectionDTO = new PreferencesConnectionDTO();
         return preferencesConnectionDTO;
     }
 
@@ -53,6 +57,8 @@ public class PreferencesDTO implements Serializable {
     }
 
     public PreferencesSaveDTO getPreferencesSaveDTO() {
+        if (preferencesSaveDTO == null)
+            preferencesSaveDTO = new PreferencesSaveDTO();
         return preferencesSaveDTO;
     }
 
@@ -61,6 +67,8 @@ public class PreferencesDTO implements Serializable {
     }
 
     public PreferencesProxyDTO getPreferencesProxyDTO() {
+        if (preferencesProxyDTO == null)
+            preferencesProxyDTO = new PreferencesProxyDTO();
         return preferencesProxyDTO;
     }
 
@@ -69,6 +77,8 @@ public class PreferencesDTO implements Serializable {
     }
 
     public PreferencesInterfaceDTO getPreferencesInterfaceDTO() {
+        if (preferencesInterfaceDTO == null)
+            preferencesInterfaceDTO = new PreferencesInterfaceDTO();
         return preferencesInterfaceDTO;
     }
 

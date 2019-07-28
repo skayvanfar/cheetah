@@ -21,6 +21,7 @@ package model.dto;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +38,8 @@ public class PreferencesSaveDTO implements Serializable {
     }
 
     public List<PreferencesDirectoryCategoryDTO> getPreferencesDirectoryCategoryDTOs() {
+        if (preferencesDirectoryCategoryDTOs == null)
+            preferencesDirectoryCategoryDTOs = new ArrayList<>();
         return preferencesDirectoryCategoryDTOs;
     }
 
