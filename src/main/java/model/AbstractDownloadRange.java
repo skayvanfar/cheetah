@@ -45,7 +45,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     protected int number;
     protected int rangeSize; // size of download in bytes
     protected int rangeDownloaded; // number of bytes downloaded
-    protected ConnectionStatus connectionStatus; // current status of download
+    protected volatile ConnectionStatus connectionStatus; // current status of download
 
     protected int startRange;
     protected int endRange;

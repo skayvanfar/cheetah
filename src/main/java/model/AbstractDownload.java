@@ -32,6 +32,9 @@ import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Skeletal Implementation of Download interface.
@@ -50,7 +53,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected URL url; // download URL
     protected String downloadName;
     protected int size; // size of download in bytes
-    protected DownloadStatus status; // current status of download
+    protected volatile DownloadStatus status; // current status of download
     protected String transferRate; // rate of transfer
     protected ProtocolType protocolType;
     protected String description;
@@ -73,6 +76,8 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
     protected DownloadInfoListener downloadInfoListener;
 
     protected Vector<DownloadStatusListener> downloadStatusListeners;
+
+    private static final ExecutorService exec = Executors.newCachedThreadPool();
 
     // Constructor for download.
     public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
@@ -393,6 +398,7 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
         stateChanged();
         for (DownloadRange downloadRange : downloadRangeList)
             downloadRange.disConnect();
+        exec.shutdown();
     }
 
     /**
@@ -428,12 +434,12 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
      */
     @Override
     public void startTransferRate() {
-        new Thread(new Runnable() {
+        exec.submit(new Callable<Void>() {
             ///////////////////////////////////////////////////////////////////////////////////// download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
 
             @Override
-            public void run() {
+            public Void call() throws Exception {
                 while (status == DownloadStatus.DOWNLOADING) {
                     Integer previousDownloaded = threadLocal.get();
 
@@ -455,8 +461,9 @@ public abstract class AbstractDownload implements Download, Runnable, DownloadRa
                         e.printStackTrace();
                     }
                 }
+                return null;
             }
-        }).start();
+        });
     }
 
     private long previousTime = 0;
