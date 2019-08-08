@@ -27,6 +27,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Skeletal Implementation of DownloadRange interface.
@@ -35,10 +38,13 @@ import java.util.Vector;
  * @see model.DownloadRange
  */
 @NotThreadSafe
-public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
+public abstract class AbstractDownloadRange implements DownloadRange, Callable<Void> {
 
     // Max size of download buffer.
     protected static final int MAX_BUFFER_SIZE = 1024; // 1024 - 4096
+
+    private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
+    private final static ExecutorService downloadRangeExec = Executors.newFixedThreadPool(N_CPUS + 1);
 
     protected int id;
     protected URL url; // download URL
@@ -303,12 +309,11 @@ public abstract class AbstractDownloadRange implements DownloadRange, Runnable {
     }
 
     protected void download() {
-        thread = new Thread(this);
-        thread.start();
+        downloadRangeExec.submit(this);
     }
 
     @Override
-    public abstract void run();
+    public abstract Void call();
 
     // Notify observers that this download's status has changed.
     protected void stateChanged(int readed) {

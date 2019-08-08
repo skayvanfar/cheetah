@@ -293,6 +293,15 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setVisible(true);
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    downloadPanel.shutdownAllDownloads();
+                }
+                catch (InterruptedException ignored) {}
+            }
+        });
     }
 
     /**
