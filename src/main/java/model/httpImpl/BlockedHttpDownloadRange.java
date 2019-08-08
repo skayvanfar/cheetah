@@ -44,7 +44,7 @@ public class BlockedHttpDownloadRange extends AbstractDownloadRange implements m
     }
 
     @Override
-    public void run() {
+    public Void call() {
 
         RandomAccessFile randomAccessFile = null;
         InputStream stream = null;
@@ -173,5 +173,6 @@ public class BlockedHttpDownloadRange extends AbstractDownloadRange implements m
                 }
             }
         }
+        return null;
     }
 }

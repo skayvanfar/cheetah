@@ -75,7 +75,7 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
 
 
     @Override
-    public void run() {
+    public Void call() {
 //      RandomAccessFile randomAccessFile = null;
         //      InputStream stream = null;
 
@@ -205,6 +205,7 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 }
             }
         }
+        return null;
     }
 
     private void stopDownload() {

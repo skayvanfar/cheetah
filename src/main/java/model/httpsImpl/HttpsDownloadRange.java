@@ -47,7 +47,7 @@ public class HttpsDownloadRange extends AbstractDownloadRange implements model.D
     }
 
     @Override
-    public void run() {
+    public Void call() {
         RandomAccessFile randomAccessFile = null;
         InputStream stream = null;
 
@@ -178,5 +178,6 @@ public class HttpsDownloadRange extends AbstractDownloadRange implements model.D
                 }
             }
         }
+        return null;
     }
 }

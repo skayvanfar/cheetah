@@ -46,7 +46,7 @@ public class HttpsDownload extends AbstractDownload implements Download {
     }
 
     @Override
-    public void run() {
+    public Void call() {
         HttpsURLConnection connection = null;
         try {
             // Open connection to URL.
@@ -105,7 +105,7 @@ public class HttpsDownload extends AbstractDownload implements Download {
         }
 
         downloadInfoListener.newDownloadInfoGot(HttpsDownload.this); // todo may be download
-
+        return null;
     }
 
     @Override
