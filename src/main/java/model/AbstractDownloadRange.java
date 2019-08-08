@@ -19,6 +19,8 @@
 
 package model;
 
+import concurrent.MyThreadFactory;
+import concurrent.TimingThreadPool;
 import enums.ConnectionStatus;
 import gui.listener.DownloadRangeStatusListener;
 import ir.sk.concurrencyutils.annotation.NotThreadSafe;
@@ -27,9 +29,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Skeletal Implementation of DownloadRange interface.
@@ -44,7 +44,12 @@ public abstract class AbstractDownloadRange implements DownloadRange, Callable<V
     protected static final int MAX_BUFFER_SIZE = 1024; // 1024 - 4096
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
-    private final static ExecutorService downloadRangeExec = Executors.newFixedThreadPool(N_CPUS + 1);
+  //  private final static ExecutorService downloadRangeExec = Executors.newFixedThreadPool(N_CPUS + 1);
+
+    private final static ThreadPoolExecutor downloadRangeExec = new TimingThreadPool(N_CPUS, N_CPUS,
+            0L, java.util.concurrent.TimeUnit.MICROSECONDS,
+            new LinkedBlockingQueue<>(), new MyThreadFactory("downloadRangeExec"),
+            new ThreadPoolExecutor.CallerRunsPolicy());
 
     protected int id;
     protected URL url; // download URL

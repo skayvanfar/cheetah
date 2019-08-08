@@ -21,6 +21,7 @@ package model;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import concurrent.MyThreadFactory;
+import concurrent.TimingThreadPool;
 import enums.*;
 import enums.TimeUnit;
 import gui.listener.DownloadInfoListener;
@@ -80,7 +81,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
   //  private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
-    private final static ThreadPoolExecutor downloadExec = new ThreadPoolExecutor(N_CPUS, N_CPUS,
+    private final static ThreadPoolExecutor downloadExec = new TimingThreadPool(N_CPUS, N_CPUS,
             0L, java.util.concurrent.TimeUnit.MICROSECONDS,
             new LinkedBlockingQueue<>(), new MyThreadFactory("downloadExec"),
           new ThreadPoolExecutor.CallerRunsPolicy());
