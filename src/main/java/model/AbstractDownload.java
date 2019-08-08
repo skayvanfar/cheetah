@@ -19,6 +19,7 @@
 
 package model;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import enums.*;
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadRangeStatusListener;
@@ -80,7 +81,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
     private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
 
-    private final static ExecutorService transferRateExec = Executors.newCachedThreadPool();
+    private final static ExecutorService transferRateExec = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
     // Constructor for download.
     public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
