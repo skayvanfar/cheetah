@@ -20,7 +20,9 @@
 package model;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import concurrent.MyThreadFactory;
 import enums.*;
+import enums.TimeUnit;
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadRangeStatusListener;
 import gui.listener.DownloadStatusListener;
@@ -33,9 +35,7 @@ import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Skeletal Implementation of Download interface.
@@ -79,7 +79,11 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
     protected Vector<DownloadStatusListener> downloadStatusListeners;
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
-    private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
+  //  private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
+    private final static ThreadPoolExecutor downloadExec = new ThreadPoolExecutor(N_CPUS, N_CPUS,
+            0L, java.util.concurrent.TimeUnit.MICROSECONDS,
+            new LinkedBlockingQueue<>(), new MyThreadFactory("downloadExec"),
+          new ThreadPoolExecutor.CallerRunsPolicy());
 
     private final static ExecutorService transferRateExec = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
