@@ -19,6 +19,8 @@
 
 package gui;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import concurrent.BackgroundTask;
 import gui.listener.AddNewDownloadListener;
 import org.apache.log4j.Logger;
 
@@ -33,6 +35,8 @@ import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
@@ -42,6 +46,8 @@ class AddNewDownloadDialog extends JDialog {
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final Logger messageLogger = Logger.getLogger("message");
+
+    private final static ExecutorService backgroundExec = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
     // Add download text field.
     private JTextField newTextField;
@@ -109,6 +115,17 @@ class AddNewDownloadDialog extends JDialog {
        // setSize(740, 150);
         setResizable(true);
         setLocationRelativeTo(parent);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosed(e);
+
+
+
+
+
+            }
+        });
     }
 
     // TODO for controls set
@@ -183,20 +200,45 @@ class AddNewDownloadDialog extends JDialog {
     // can be in DownloadManagerUI
     // Add a new download.
     private void addAction() {
-        messageLogger.info("New Download URL added: " + newTextField.getText());
-        URL verifiedUrl = verifyUrl(newTextField.getText());
-        if (verifiedUrl != null) {
-            messageLogger.info("URL verified.");
-            if (addNewDownloadListener != null) {
-                addNewDownloadListener.newDownloadEventOccured(verifiedUrl);
+        class WindowListener extends WindowAdapter {
+            BackgroundTask<?> task;
+
+            @Override
+            public void windowClosing(WindowEvent event) {
+                if (task != null)
+                    task.cancel(true);
             }
-            newTextField.setText(""); // reset new text field
-            setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(this,
-                    "Invalid download URL", "Error",
-                    JOptionPane.ERROR_MESSAGE);
         }
+        final WindowListener listener = new WindowListener();
+        listener.task = new BackgroundTask<Void>() {
+            public Void compute() {
+                doSomeWork();
+                return null;
+            }
+            public void onCompletion(boolean cancelled, String s,
+                                     Throwable exception) {
+                removeWindowListener(listener);
+            }
+
+            private void doSomeWork() {
+                messageLogger.info("New Download URL added: " + newTextField.getText());
+                URL verifiedUrl = verifyUrl(newTextField.getText());
+                if (verifiedUrl != null) {
+                    messageLogger.info("URL verified.");
+                    if (addNewDownloadListener != null) {
+                        addNewDownloadListener.newDownloadEventOccured(verifiedUrl);
+                    }
+                    newTextField.setText(""); // reset new text field
+                    setVisible(false);
+                } else {
+                    JOptionPane.showMessageDialog(AddNewDownloadDialog.this,
+                            "Invalid download URL", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        addWindowListener(listener);
+        backgroundExec.execute(listener.task);
     }
 
     // can be in DownloadManagerUI
@@ -240,4 +282,8 @@ class AddNewDownloadDialog extends JDialog {
         }//try
 
     }//onPaste
+
+    public static void shutdownThreads() {
+        backgroundExec.shutdown();
+    }
 }

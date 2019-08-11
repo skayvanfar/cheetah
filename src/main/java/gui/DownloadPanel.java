@@ -676,8 +676,4 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         reDownloadItem.setEnabled(reDownloadState);
         propertiesItem.setEnabled(propertiesState);
     }
-
-    public void shutdownAllDownloads() throws InterruptedException {
-        downloadList.stream().forEach(download -> download.pause());
-    }
 }

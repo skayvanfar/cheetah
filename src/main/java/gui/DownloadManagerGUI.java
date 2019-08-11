@@ -19,6 +19,7 @@
 
 package gui;
 
+import concurrent.BackgroundTask;
 import controller.DialogAuthenticator;
 import enums.ConnectionType;
 import enums.DownloadCategory;
@@ -44,6 +45,8 @@ import java.io.InvalidClassException;
 import java.net.Authenticator;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -276,6 +279,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                 if (action == JOptionPane.OK_OPTION) {
                     logger.info("Window Closing");
                     downloadPanel.actionPauseAll();
+                    AddNewDownloadDialog.shutdownThreads();
                     dispose();
                     System.gc();
                 }
@@ -296,10 +300,8 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                try {
-                    downloadPanel.shutdownAllDownloads();
-                }
-                catch (InterruptedException ignored) {}
+                downloadPanel.actionPauseAll();
+                AddNewDownloadDialog.shutdownThreads();
             }
         });
     }
