@@ -213,11 +213,13 @@ class AddNewDownloadDialog extends JDialog {
         listener.task = new BackgroundTask<Void>() {
             public Void compute() {
                 doSomeWork();
+                onCompletion(false, "", null);
                 return null;
             }
             public void onCompletion(boolean cancelled, String s,
                                      Throwable exception) {
                 removeWindowListener(listener);
+                newButton.setEnabled(true);
             }
 
             private void doSomeWork() {
@@ -225,6 +227,7 @@ class AddNewDownloadDialog extends JDialog {
                 URL verifiedUrl = verifyUrl(newTextField.getText());
                 if (verifiedUrl != null) {
                     messageLogger.info("URL verified.");
+                    newButton.setEnabled(false);
                     if (addNewDownloadListener != null) {
                         addNewDownloadListener.newDownloadEventOccured(verifiedUrl);
                     }
