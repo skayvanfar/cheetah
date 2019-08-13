@@ -105,6 +105,7 @@ public class HttpDownload extends AbstractDownload implements Download {
         } finally {
             if (connection != null) ///???
                 connection.disconnect();
+            downloadExec.shutdown();
         }
 
         downloadInfoListener.newDownloadInfoGot(HttpDownload.this);

@@ -46,7 +46,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Callable<V
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
   //  private final static ExecutorService downloadRangeExec = Executors.newFixedThreadPool(N_CPUS + 1);
 
-    private final static ThreadPoolExecutor downloadRangeExec = new TimingThreadPool(N_CPUS, N_CPUS,
+    protected final static ThreadPoolExecutor downloadRangeExec = new TimingThreadPool(N_CPUS, N_CPUS,
             0L, java.util.concurrent.TimeUnit.MICROSECONDS,
             new LinkedBlockingQueue<>(), new MyThreadFactory("downloadRangeExec"),
             new ThreadPoolExecutor.CallerRunsPolicy());
@@ -294,6 +294,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Callable<V
         stop = true;
    //     thread.interrupt();
         stateChanged(0); // TODO two time call and print "disconnect from download .... "
+        downloadRangeExec.shutdown();
     }
 
     /**
@@ -311,6 +312,7 @@ public abstract class AbstractDownloadRange implements DownloadRange, Callable<V
     protected void error() {
         connectionStatus = ConnectionStatus.ERROR;
         stateChanged(0);
+        downloadRangeExec.shutdown();
     }
 
     protected void download() {

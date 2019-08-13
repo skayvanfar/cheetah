@@ -81,7 +81,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
   //  private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
-    private final static ThreadPoolExecutor downloadExec = new TimingThreadPool(N_CPUS, N_CPUS,
+  protected final static ThreadPoolExecutor downloadExec = new TimingThreadPool(N_CPUS, N_CPUS,
             0L, java.util.concurrent.TimeUnit.MICROSECONDS,
             new LinkedBlockingQueue<>(), new MyThreadFactory("downloadExec"),
           new ThreadPoolExecutor.CallerRunsPolicy());
@@ -408,6 +408,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
         for (DownloadRange downloadRange : downloadRangeList)
             downloadRange.disConnect();
         transferRateExec.shutdown();
+        downloadExec.shutdown();
     }
 
     /**

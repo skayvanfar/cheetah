@@ -179,6 +179,8 @@ public class HttpDownloadRange extends AbstractDownloadRange implements model.Do
                 } catch (Exception ignored) {
                 }
             }
+
+            downloadRangeExec.shutdown();
         }
         return null;
     }
