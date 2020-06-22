@@ -3,6 +3,8 @@ Cheetah is a Free Fast Downloader built using java with a Swing rich-client user
 
 Version 1.0.0
 
+![Alt text](/src/main/resources/images/Cheetah-Icon.png?raw=true "Cheetah")
+
 # Features
 * Downloading files in any format
 * Http, Https Support for now
