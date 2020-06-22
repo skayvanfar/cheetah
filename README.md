@@ -3,8 +3,6 @@ Cheetah is a Free Fast Downloader built using java with a Swing rich-client user
 
 Version 1.0.0
 
-[Website](https://skayvanfar.github.io/cheetah.github.io)
-
 # Features
 * Downloading files in any format
 * Http, Https Support for now

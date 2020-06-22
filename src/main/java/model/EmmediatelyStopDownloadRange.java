@@ -19,8 +19,8 @@
 
 package model;
 
+import concurrent.annotation.NotThreadSafe;
 import enums.ConnectionStatus;
-import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import org.apache.log4j.Logger;
 
 import java.io.File;

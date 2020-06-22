@@ -19,8 +19,8 @@
 
 package model.httpsImpl;
 
+import concurrent.annotation.NotThreadSafe;
 import enums.ConnectionStatus;
-import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import model.AbstractDownloadRange;
 import org.apache.log4j.Logger;
 

@@ -1,0 +1,61 @@
+<!--
+  ~ Cheetah - A Free Fast Downloader
+  ~
+  ~ Copyright © 2019 Saeed Kayvanfar
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 http://maven.apache.org/xsd/decoration-1.8.0.xsd"
+         name="Apache Maven">
+
+    <bannerLeft>
+        <name>${project.name}</name>
+        <src>images/Cheetah-Icon.png</src>
+        <href>.</href>
+    </bannerLeft>
+
+    <publishDate position="left" format="yyyy-MM-dd" />
+
+    <poweredBy>
+        <logo name="logo" href="." img="images/Cheetah-Icon.png" position="left"/>
+    </poweredBy>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.8</version>
+    </skin>
+
+    <body>
+        <head/>
+        <links></links>
+        <breadcrumbs>
+            <item name="Ref" href="../" />
+            <item name="Maven ${project.version}" href="./" />
+        </breadcrumbs>
+
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="JavaDocs" href="apidocs/index.html"/>
+            <item name="Source Xref" href="xref/index.html"/>
+            <!--item name="FAQ" href="faq.html"/-->
+            <item name="License" href="http://www.apache.org/licenses/"/>
+            <item name="Download" href="/download.html"/>
+        </menu>
+
+        <footer><![CDATA[All rights reserved.]]></footer>
+    </body>
+</project>

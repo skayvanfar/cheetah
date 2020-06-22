@@ -19,12 +19,12 @@
 
 package dao;
 
+import concurrent.annotation.GuardedBy;
+import concurrent.annotation.ThreadSafe;
 import enums.ConnectionStatus;
 import enums.DownloadStatus;
 import enums.ProtocolType;
 import exception.DriverNotFoundException;
-import ir.sk.concurrencyutils.annotation.GuardedBy;
-import ir.sk.concurrencyutils.annotation.ThreadSafe;
 import model.Download;
 import model.DownloadRange;
 import model.httpImpl.HttpDownload;

@@ -19,9 +19,9 @@
 
 package controller;
 
+import concurrent.annotation.ThreadSafe;
 import dao.DatabaseDao;
 import dao.JDBCDatabaseDao;
-import ir.sk.concurrencyutils.annotation.ThreadSafe;
 import model.Download;
 
 import java.net.MalformedURLException;

@@ -19,9 +19,9 @@
 
 package model.httpImpl;
 
+import concurrent.annotation.NotThreadSafe;
 import enums.DownloadStatus;
 import enums.ProtocolType;
-import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import model.*;
 import utils.ConnectionUtil;
 

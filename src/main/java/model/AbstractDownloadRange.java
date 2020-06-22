@@ -21,9 +21,9 @@ package model;
 
 import concurrent.MyThreadFactory;
 import concurrent.TimingThreadPool;
+import concurrent.annotation.NotThreadSafe;
 import enums.ConnectionStatus;
 import gui.listener.DownloadRangeStatusListener;
-import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 
 import java.io.File;
 import java.net.URL;

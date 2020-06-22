@@ -19,9 +19,9 @@
 
 package model.httpsImpl;
 
+import concurrent.annotation.NotThreadSafe;
 import enums.DownloadStatus;
 import enums.ProtocolType;
-import ir.sk.concurrencyutils.annotation.NotThreadSafe;
 import model.AbstractDownload;
 import model.Download;
 import utils.ConnectionUtil;
