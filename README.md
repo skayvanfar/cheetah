@@ -1,7 +1,7 @@
 # Cheetah Download Manager
 Cheetah is a Free Fast Downloader built using java with a Swing rich-client user interface.
 
-Version 1.0.0
+Version 1.0.1
 
 ![Alt text](/src/main/resources/images/ms-icon-150x150.png?raw=true "Cheetah")
 
