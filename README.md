@@ -5,6 +5,10 @@ Version 1.0.1
 
 ![Alt text](/src/main/resources/images/ms-icon-150x150.png?raw=true "Cheetah")
 
+# Contributing
+
+This repository is contribution friendly. If you'd like to add or improve or add new features, your contribution is welcome.
+
 # Features
 * Downloading files in any format
 * Http, Https Support for now
