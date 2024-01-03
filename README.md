@@ -40,8 +40,8 @@ On the other hand, just run it from an Intellj IDEA project with Cheetah-With-Ma
 The Cheetah project is provided under the GPL, version 2 or later.
 
 # Contact us
-Lead developer: Saeed Kayvanfar
+Lead developer: Saeid Keyvanfar
 
-kayvanfar.sj@gmail.com
+sad.keyvanfar@gmail.com
 
 https://github.com/skayvanfar
