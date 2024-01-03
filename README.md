@@ -1,3 +1,4 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 # Cheetah Download Manager
 Cheetah is a Free Fast Downloader built using java with a Swing rich-client user interface.
 
