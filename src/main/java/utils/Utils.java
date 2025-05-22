@@ -43,10 +43,11 @@ public class Utils {
     }
 
     public static ImageIcon createIcon(String path) {
-        URL url = System.class.getResource(path);
+        URL url = Utils.class.getClassLoader().getResource(path);
 
         if (url == null) {
             System.out.println("Unable to load image: " + path);
+            return null;
         }
 
         return new ImageIcon(url);
