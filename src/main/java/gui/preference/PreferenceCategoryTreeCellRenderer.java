@@ -37,7 +37,7 @@ public class PreferenceCategoryTreeCellRenderer implements TreeCellRenderer {
         Object nodeInfo = node.getUserObject();
         leafRenderer.setForeground(Color.blue); // selectionForeground
 
-        leafRenderer.setIcon(Utils.createIcon("/images/primo48/others/unknown.png"));
+        leafRenderer.setIcon(Utils.createIcon("images/primo48/others/unknown.png"));
 
         if (selected) {
             leafRenderer.setForeground(Color.blue); // selectionForeground

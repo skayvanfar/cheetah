@@ -49,9 +49,9 @@ class CategortyTreeCellRenderer implements TreeCellRenderer {
         leafRenderer = new JLabel();
 //        nonLeafRenderer = new DefaultTreeCellRenderer();
 //
-//        nonLeafRenderer.setLeafIcon(Utils.createIcon("/images/primo48/others/all_download.png"));
-//        nonLeafRenderer.setOpenIcon(Utils.createIcon("/images/primo48/others/unfinished.png"));
-//        nonLeafRenderer.setClosedIcon(Utils.createIcon("/images/primo48/others/finished.png"));
+//        nonLeafRenderer.setLeafIcon(Utils.createIcon("images/primo48/others/all_download.png"));
+//        nonLeafRenderer.setOpenIcon(Utils.createIcon("images/primo48/others/unfinished.png"));
+//        nonLeafRenderer.setClosedIcon(Utils.createIcon("images/primo48/others/finished.png"));
 
         textForeground = UIManager.getColor("Tree.textForeground");
         textBackground = UIManager.getColor("Tree.textBackground");
@@ -69,9 +69,9 @@ class CategortyTreeCellRenderer implements TreeCellRenderer {
             String iconPath = preferencesDirectoryCategoryDTO.getIconPath();
 
             if (iconPath != null) {
-                leafRenderer.setIcon(Utils.createIcon(iconPath));
+                leafRenderer.setIcon(Utils.createIcon(iconPath.substring(1))); // todo needs to be fixed in a proper way
             } else {
-                leafRenderer.setIcon(Utils.createIcon("/images/primo48/others/unknown.png"));
+                leafRenderer.setIcon(Utils.createIcon("images/primo48/others/unknown.png"));
             }
 
 
