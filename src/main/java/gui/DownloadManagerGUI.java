@@ -529,7 +529,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         exportDataItem = new JMenuItem("Export Data...");
         importDataItem = new JMenuItem("Import Data...");
         exitItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.exitItem.name"));
-        exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.exitItem.iconPath")))); // NOI18N
+        exitItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.exitItem.iconPath")))); // NOI18N
 
         exportDataItem.setEnabled(false);
         importDataItem.setEnabled(false);
@@ -543,7 +543,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         JMenu windowMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.windowMenu.name"));
         JMenu showMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.showMenu.name"));
         prefsItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.prefsItem.name"));
-        prefsItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.prefsItem.iconPath"))));
+        prefsItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.prefsItem.iconPath"))));
 
 
         JCheckBoxMenuItem showFormItem = new JCheckBoxMenuItem(messagesBundle.getString("downloadManagerGUI.showFormItem.name"));
@@ -561,29 +561,29 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         /////////////////////////////////////////////////////////////////////////
         JMenu downloadsMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.downloadsMenu.name"));
         newDownloadItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.newDownloadItem.name"));
-        newDownloadItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.newDownloadItem.iconPath"))));
+        newDownloadItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.newDownloadItem.iconPath"))));
         openItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openItem.name"));
         openFolderItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.openFolderItem.name"));
         resumeItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.resumeItem.name"));
-        resumeItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.resumeItem.iconPath"))));
+        resumeItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.resumeItem.iconPath"))));
         pauseItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseItem.name"));
-        pauseItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.pauseItem.iconPath"))));
+        pauseItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.pauseItem.iconPath"))));
         pauseAllItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.pauseAllItem.name"));
-        pauseAllItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.pauseAllItem.iconPath"))));
+        pauseAllItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.pauseAllItem.iconPath"))));
         clearItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearItem.name"));
-        clearItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.clearItem.iconPath"))));
+        clearItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.clearItem.iconPath"))));
         clearAllCompletedItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.name"));
-        clearAllCompletedItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.iconPath"))));
+        clearAllCompletedItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.clearAllCompletedItem.iconPath"))));
         reJoinItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.reJoinItem.name"));
-        reJoinItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.reJoinItem.iconPath"))));
+        reJoinItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.reJoinItem.iconPath"))));
         reDownloadItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.reDownloadItem.name"));
-        reDownloadItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.reDownloadItem.iconPath"))));
+        reDownloadItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.reDownloadItem.iconPath"))));
 
         moveToQueueItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.moveToQueueItem.name"));
 
         removeFromQueueItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.removeFromQueueItem.name"));
         propertiesItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.propertiesItem.name"));
-        propertiesItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.propertiesItem.iconPath"))));
+        propertiesItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.propertiesItem.iconPath"))));
 
         downloadsMenu.add(newDownloadItem);
         downloadsMenu.add(new JSeparator());
@@ -623,7 +623,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         /////////////////////////////////////////////////////////////////////////
         JMenu helpMenu = new JMenu(messagesBundle.getString("downloadManagerGUI.helpMenu.name"));
         aboutItem = new JMenuItem(messagesBundle.getString("downloadManagerGUI.aboutItem.name"));
-        aboutItem.setIcon(new javax.swing.ImageIcon(getClass().getResource(messagesBundle.getString("downloadManagerGUI.aboutItem.iconPath"))));
+        aboutItem.setIcon(new javax.swing.ImageIcon(getClass().getClassLoader().getResource(messagesBundle.getString("downloadManagerGUI.aboutItem.iconPath"))));
 
         helpMenu.add(aboutItem);
 
