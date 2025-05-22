@@ -20,6 +20,7 @@
 package gui;
 
 import concurrent.BackgroundTask;
+import concurrent.DownloadExecutor;
 import controller.DialogAuthenticator;
 import enums.ConnectionType;
 import enums.DownloadCategory;
@@ -280,6 +281,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                     logger.info("Window Closing");
                     downloadPanel.actionPauseAll();
                     AddNewDownloadDialog.shutdownThreads();
+                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        DownloadExecutor.shutdown();
+                    }));
                     dispose();
                     System.gc();
                 }

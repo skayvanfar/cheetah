@@ -20,6 +20,7 @@
 package model;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import concurrent.DownloadExecutor;
 import concurrent.MyThreadFactory;
 import concurrent.TimingThreadPool;
 import concurrent.annotation.NotThreadSafe;
@@ -80,13 +81,6 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
     protected Vector<DownloadStatusListener> downloadStatusListeners;
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
-  //  private final static ExecutorService downloadExec = Executors.newFixedThreadPool(N_CPUS + 1);
-  protected final static ThreadPoolExecutor downloadExec = new TimingThreadPool(N_CPUS, N_CPUS,
-            0L, java.util.concurrent.TimeUnit.MICROSECONDS,
-            new LinkedBlockingQueue<>(), new MyThreadFactory("downloadExec"),
-          new ThreadPoolExecutor.CallerRunsPolicy());
-
-    private final static ExecutorService transferRateExec = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
     // Constructor for download.
     public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
@@ -407,8 +401,6 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
         stateChanged();
         for (DownloadRange downloadRange : downloadRangeList)
             downloadRange.disConnect();
-        transferRateExec.shutdown();
-        downloadExec.shutdown();
     }
 
     /**
@@ -444,7 +436,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
      */
     @Override
     public void startTransferRate() {
-        transferRateExec.submit(new Callable<Void>() {
+        DownloadExecutor.getExecutor().submit(new Callable<Void>() {
             ///////////////////////////////////////////////////////////////////////////////////// download Watch
             ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
 
@@ -493,7 +485,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
 
     // Start or resume downloading.
     protected void download() {
-        downloadExec.submit(this);
+        DownloadExecutor.getExecutor().submit(this);
 
         /**     Second way that use SwingWorker
          SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {

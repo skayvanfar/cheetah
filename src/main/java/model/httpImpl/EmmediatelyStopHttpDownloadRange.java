@@ -205,8 +205,6 @@ public class EmmediatelyStopHttpDownloadRange extends AbstractDownloadRange impl
                 } catch (Exception ignored) {
                 }
             }
-
-            downloadRangeExec.shutdown();
         }
         return null;
     }

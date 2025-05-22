@@ -172,8 +172,6 @@ public class BlockedHttpDownloadRange extends AbstractDownloadRange implements m
                 } catch (Exception ignored) {
                 }
             }
-
-            downloadRangeExec.shutdown();
         }
         return null;
     }
