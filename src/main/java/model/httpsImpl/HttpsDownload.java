@@ -110,39 +110,46 @@ public class HttpsDownload extends AbstractDownload implements Download {
 
     @Override
     public void createDownloadRanges() {
-        int partSize= ConnectionUtil.getPartSizeOfDownload(size, partCount);
+        int partSize = ConnectionUtil.getPartSizeOfDownload(size, partCount);
         int startRange = 0;
-        int endRange = partSize - 1;
+        int endRange;
 
         model.DownloadRange downloadRange;
 
-        // if connection is able to part download
         if (responseCode == 206) {
-            for (int i = 0;  i < partCount; i++) {
-                //   String fileName = ConnectionUtil.getFileName(url);
-                String partFileName = downloadName + ".00" + (i + 1);
-                downloadRange = new HttpsDownloadRange(i + 1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, endRange);
+            for (int i = 0; i < partCount; i++) {
+                // Ensure correct endRange calculation
+                if (i < partCount - 1) {
+                    endRange = startRange + partSize - 1;
+                } else {
+                    endRange = size - 1; // Last part should end at total file size
+                }
 
+                String partFileName = downloadName + ".00" + String.format("%02d", i + 1);
+                File rangeFile = new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName);
+
+                downloadRange = new HttpsDownloadRange(i + 1, url, rangeFile, startRange, endRange);
                 addDownloadRange(downloadRange);
-
                 downloadRange.resume();
 
                 startRange = endRange + 1;
-                if (i != partCount - 2) {
-                    endRange = startRange + partSize - 1;
-                } else {
-                    endRange = 0;
-                }
             }
         } else {
-            //     String fileName = ConnectionUtil.getFileName(url);
-            String partFileName = downloadName + ".00" + 1;
-            downloadRange = new HttpsDownloadRange(1, url, new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName), startRange, size);
+            // Single-threaded fallback
+            String partFileName = downloadName + ".001";
+            File rangeFile = new File(downloadRangePath + File.separator + downloadName + File.separator + partFileName);
+
+            downloadRange = new HttpsDownloadRange(1, url, rangeFile, startRange, size - 1);
             addDownloadRange(downloadRange);
+            System.out.println("Staring 1 RANGE in the thread: " + Thread.currentThread().getName());
+
             downloadRange.resume();
         }
-        if (downloadInfoListener != null)
+
+        if (downloadInfoListener != null) {
             downloadInfoListener.downloadNeedSaved(this);
+        }
         startTransferRate();
     }
+
 }

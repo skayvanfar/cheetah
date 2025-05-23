@@ -250,7 +250,6 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
         int downloaded = 0;
         for (DownloadRange downloadRange : download.getDownloadRangeList()) {
             long rangeDownloaded = downloadRange.getDownloadRangeFile().length();
-            downloadRange.setRangeDownloaded((int) rangeDownloaded);
             downloaded += rangeDownloaded;
         }
         download.setDownloaded(downloaded);
@@ -335,8 +334,6 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 downloadDialog.setVisible(true);
 
                 download.createDownloadRanges();
-                for (DownloadRange downloadRange : download.getDownloadRangeList())
-                    downloadRange.resume();
                 download.startTransferRate();
             }
 

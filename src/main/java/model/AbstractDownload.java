@@ -52,6 +52,8 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final Logger messageLogger = Logger.getLogger("message");
 
+    private volatile boolean downloadCompleted = false;
+
     protected int id;
     protected URL url; // download URL
     protected String downloadName;
@@ -555,6 +557,10 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
 
     protected void endOfDownload() {
         messageLogger.info("End Of Download from remote: " + downloadName);
+        if (downloadCompleted) {
+            System.out.println("End Of Download from in the thread: " + Thread.currentThread().getName());
+        }
+
         List<File> files = new ArrayList<>();
         for (DownloadRange downloadRange : downloadRangeList) {
             files.add(downloadRange.getDownloadRangeFile());
@@ -622,7 +628,9 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
                 messageLogger.info("All download parts has finished: " + downloadName);
                 logger.info("downloaded = " + downloaded + " size = " + size + "  downloadRange = " + downloadRange.getRangeDownloaded() + " startRange= " +
                         downloadRange.getStartRange() + " end range= " + downloadRange.getEndRange());
-                if (downloaded >= size) { // when all parts downloaded
+                if (downloaded >= size && !downloadCompleted) { // when all parts downloaded
+                    downloadCompleted = true;
+                    System.out.println("downloaded >= size in the thread: " + Thread.currentThread().getName() + " downloaded >= size: " + (downloaded >= size));
                     endOfDownload();
                 }
                 break;

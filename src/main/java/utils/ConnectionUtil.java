@@ -112,8 +112,8 @@ public class ConnectionUtil {
         }
     }
 
-    public static int getPartSizeOfDownload(int downloadSize, int connectionSize) {
-        return downloadSize /connectionSize;
+    public static int getPartSizeOfDownload(int downloadSize, int partCount) {
+        return (int) Math.ceil((double) downloadSize / partCount); // avoids truncating
     }
 
     public static float calculateTransferRateInUnit(float differenceDownloaded, int longTime, TimeUnit timeUnit) {
