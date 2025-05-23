@@ -22,6 +22,10 @@ This repository is contribution friendly. If you'd like to add or improve or add
 
 # Screenshot
 
+Cheetah in MacOS
+
+![Alt text](/doc/Cheetah%20in%20MacOS.png?raw=true "Cheetah")
+
 Cheetah in Linux
 
 ![Alt text](/doc/Cheetah%20in%20Linux.png?raw=true "Cheetah")
