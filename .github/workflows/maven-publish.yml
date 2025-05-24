@@ -23,9 +23,9 @@ jobs:
       - name: List contents of target directory (debug)
         run: ls -l target
 
-      - name: Find shaded JAR file
+      - name: Find final JAR
         id: find_jar
-        run: echo "JAR_PATH=$(find target -name '*-shaded.jar')" >> $GITHUB_ENV
+        run: echo "JAR_PATH=$(find target -name 'cheetah-*.jar' -not -name 'original-*')" >> $GITHUB_ENV
 
       - name: Upload JAR to Release
         uses: actions/upload-release-asset@v1
