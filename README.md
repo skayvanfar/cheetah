@@ -35,6 +35,26 @@ Cheetah in Windows
 
 ![Alt text](/doc/Cheetah%20in%20Windows.png?raw=true "Cheetah") 
 
+## Building and Running the Project
+
+### Build
+
+To build the project and create an executable JAR file, run:
+
+```bash
+mvn clean package
+```
+
+This will generate a fat JAR file (including all dependencies) in the target directory, typically named:
+
+### Run
+
+To run the application, use the following command:
+
+```bash
+java -jar target/cheetah-1.0.0.jar 
+```
+
 # Status
 This project is currently a work-in-progress.
 If you execute maven goal "assembly:assembly", This will give you the Cheetah application jar and all of the dependencies - you can simply execute java -jar cheetah-...-jar-with-dependencies.jar and the application should start.
