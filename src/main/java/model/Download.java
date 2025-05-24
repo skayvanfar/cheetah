@@ -283,5 +283,5 @@ public interface Download {
     /**
      * startTransferRate
      */
-    void startTransferRate();
+    void startTransferRateMonitor();
 }

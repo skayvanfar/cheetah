@@ -35,8 +35,6 @@ import org.apache.log4j.Logger;
 import utils.FileUtil;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -334,7 +332,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
                 downloadDialog.setVisible(true);
 
                 download.createDownloadRanges();
-                download.startTransferRate();
+                download.startTransferRateMonitor();
             }
 
             @Override

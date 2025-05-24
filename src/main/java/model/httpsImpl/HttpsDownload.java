@@ -89,7 +89,7 @@ public class HttpsDownload extends AbstractDownload implements Download {
 
             resumeCapability = responseCode == 206;
 
-            stateChanged();
+            notifyStatusChanged();
 
             //         createDownloadRanges(connection, partCount);
         } catch (UnknownHostException e) {
@@ -148,7 +148,7 @@ public class HttpsDownload extends AbstractDownload implements Download {
         if (downloadInfoListener != null) {
             downloadInfoListener.downloadNeedSaved(this);
         }
-        startTransferRate();
+        startTransferRateMonitor();
     }
 
 }

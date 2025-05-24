@@ -2,15 +2,12 @@ package model;
 
 import gui.listener.DownloadInfoListener;
 import gui.listener.DownloadStatusListener;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import model.*;
 import enums.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -88,13 +85,13 @@ class AbstractDownloadTest {
         DownloadStatusListener listener = mock(DownloadStatusListener.class);
 
         download.addDownloadStatusListener(listener);
-        download.stateChanged();
+        download.notifyStatusChanged();
 
         // The listener should receive callback
         verify(listener, timeout(1000)).downloadStatusChanged(download);
 
         download.deleteDownloadStatusListener(listener);
-        download.stateChanged();
+        download.notifyStatusChanged();
         // After removal, listener should not get called again (timeout means fail if no call)
         verifyNoMoreInteractions(listener);
     }
