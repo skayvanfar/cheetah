@@ -45,7 +45,7 @@ public class HttpDownload extends AbstractDownload implements Download {
     }
 
     @Override
-    public Void call() {
+    public Void performDownload() {
         HttpURLConnection connection = null;
         try {
             // Open connection to URL.

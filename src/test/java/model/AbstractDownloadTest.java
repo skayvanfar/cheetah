@@ -28,7 +28,7 @@ class AbstractDownloadTest {
         }
 
         @Override
-        public Void call() {
+        public Void performDownload() {
             return null; // no-op
         }
 

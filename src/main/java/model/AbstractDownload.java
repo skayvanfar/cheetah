@@ -19,10 +19,7 @@
 
 package model;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import concurrent.DownloadExecutor;
-import concurrent.MyThreadFactory;
-import concurrent.TimingThreadPool;
 import concurrent.annotation.NotThreadSafe;
 import enums.*;
 import enums.TimeUnit;
@@ -46,7 +43,7 @@ import java.util.concurrent.*;
  * @see model.Download
  */
 @NotThreadSafe
-public abstract class AbstractDownload implements Download, Callable<Void>, DownloadRangeStatusListener {
+public abstract class AbstractDownload implements Download, DownloadRangeStatusListener {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -419,7 +416,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
                 downloadRange.resume();
             startTransferRate();
         } else {
-            download();
+            performDownload();
         }
     }
 
@@ -486,52 +483,7 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
     }
 
     // Start or resume downloading.
-    protected void download() {
-        DownloadExecutor.getExecutor().submit(this);
-
-        /**     Second way that use SwingWorker
-         SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {
-
-         ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
-
-         @Override protected Void doInBackground() throws Exception {
-         while (status == DownloadStatus.DOWNLOADING) {
-         Integer previousDownloaded = threadLocal.get();
-
-         if (previousDownloaded == null) {
-         previousDownloaded = 0;
-         }
-         int newDownloaded = downloaded;
-         int differenceDownloaded = (newDownloaded - previousDownloaded) / 1024; // in KB
-
-         // save new downloaded into threadLocal
-         threadLocal.set(newDownloaded);
-
-         // calculate differenceDownloaded
-         String differenceDownloadedString = differenceDownloaded + "KB/sec";
-         publish(differenceDownloadedString);
-         //  stateChanged();
-         try {
-         Thread.sleep(1000);
-         } catch (InterruptedException e) {
-         e.printStackTrace();
-         }
-         }
-         return null;
-         }
-
-         @Override protected void process(List<String> chunks) {
-         // Here we receive the values that we publish().
-         // They may come grouped in chunks.
-         transferRate = chunks.get(chunks.size() - 1);
-
-         }
-         };
-         worker.execute(); */
-    }
-
-    @Override
-    public abstract Void call();
+    public abstract Void performDownload();
 
     /**
      * {@inheritDoc}

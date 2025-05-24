@@ -41,7 +41,7 @@ class HttpsDownloadRangeTest {
     }
 
     @Test
-    void testCall_SuccessfulDownloadRange() throws Exception {
+    void testPerformDownload_SuccessfulDownloadRange() throws Exception {
         // Simulate reading data by returning some bytes then EOF (-1)
         when(mockInputStream.read(any(byte[].class), anyInt(), anyInt()))
                 .thenReturn(10)  // read 10 bytes first call

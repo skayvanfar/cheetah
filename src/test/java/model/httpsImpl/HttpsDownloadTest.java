@@ -5,14 +5,12 @@ import enums.ProtocolType;
 import gui.listener.DownloadInfoListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class HttpsDownloadTest {
@@ -36,7 +34,7 @@ class HttpsDownloadTest {
     }
 
     @Test
-    void testCallSuccessfulResponse() throws Exception {
+    void testPerformDownloadSuccessfulResponse() throws Exception {
         // Mock HttpsURLConnection and its behavior
         HttpsURLConnection connection = mock(HttpsURLConnection.class);
 
@@ -52,7 +50,7 @@ class HttpsDownloadTest {
         when(connection.getContentLength()).thenReturn(1000);
 
         // Just verify no exception and state is as expected after call()
-        httpsDownload.call();
+        httpsDownload.performDownload();
 
         // Verify expected setters/fields were updated
         assertEquals(200, httpsDownload.getResponseCode());
