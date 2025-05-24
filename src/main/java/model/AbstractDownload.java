@@ -19,7 +19,7 @@
 
 package model;
 
-import concurrent.DownloadExecutor;
+import concurrent.BackgroundExecutor;
 import concurrent.annotation.NotThreadSafe;
 import enums.*;
 import enums.TimeUnit;
@@ -34,7 +34,6 @@ import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Skeletal Implementation of Download interface.
@@ -397,7 +396,7 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
     public void pause() {
         messageLogger.info("Download paused: " + downloadName);
         status = DownloadStatus.DISCONNECTING;
-        stateChanged();
+        notifyStatusChanged();
         for (DownloadRange downloadRange : downloadRangeList)
             downloadRange.disConnect();
     }
@@ -410,11 +409,11 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
         messageLogger.info("Download resumed: " + downloadName);
         status = DownloadStatus.DOWNLOADING;
 
-        stateChanged();
+        notifyStatusChanged();
         if (!downloadRangeList.isEmpty()) {
             for (DownloadRange downloadRange : downloadRangeList)
                 downloadRange.resume();
-            startTransferRate();
+            startTransferRateMonitor();
         } else {
             performDownload();
         }
@@ -424,7 +423,7 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
     protected void error() {
         messageLogger.info("Download has error: " + downloadName);
         status = DownloadStatus.ERROR;
-        stateChanged();
+        notifyStatusChanged();
 
         if (downloadInfoListener != null)
             downloadInfoListener.downloadNeedSaved(this);
@@ -434,35 +433,24 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
      * {@inheritDoc}
      */
     @Override
-    public void startTransferRate() {
-        DownloadExecutor.getExecutor().submit(new Callable<Void>() {
-            ///////////////////////////////////////////////////////////////////////////////////// download Watch
-            ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
+    public void startTransferRateMonitor() {
+        BackgroundExecutor.getExecutor().submit(() -> {
+            int previousDownloaded = 0;
 
-            @Override
-            public Void call() throws Exception {
-                while (status == DownloadStatus.DOWNLOADING) {
-                    Integer previousDownloaded = threadLocal.get();
+            while (status == DownloadStatus.DOWNLOADING && !Thread.currentThread().isInterrupted()) {
+                transferRate = ConnectionUtil.roundSizeTypeFormat(
+                        ConnectionUtil.calculateTransferRateInUnit(
+                                downloaded - previousDownloaded, 1000, TimeUnit.SEC),
+                        SizeType.BYTE) + "/sec";
 
-                    if (previousDownloaded == null) {
-                        previousDownloaded = 0;
-                    }
-                    int newDownloaded = downloaded;
-                    float differenceDownloaded = ConnectionUtil.calculateTransferRateInUnit((newDownloaded - previousDownloaded), 1000, TimeUnit.SEC); // in Byte
+                previousDownloaded = downloaded;
+                notifyStatusChanged();
 
-                    // save new downloaded into threadLocal
-                    threadLocal.set(newDownloaded);
-
-                    // calculate differenceDownloaded
-                    transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloaded, SizeType.BYTE) + "/sec";
-                    stateChanged();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-                return null;
             }
         });
     }
@@ -476,7 +464,7 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
 
         // calculate differenceDownloaded
         transferRate = ConnectionUtil.roundSizeTypeFormat(differenceDownloaded, SizeType.BYTE) + "/sec";
-        stateChanged();
+        notifyStatusChanged();
         previousTime = currentTime;
 
 
@@ -524,25 +512,27 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
         FileUtil.joinDownloadedParts(files, downloadPath, downloadName);
 
         status = DownloadStatus.COMPLETE;
-        stateChanged();
+        notifyStatusChanged();
         if (downloadInfoListener != null)
             downloadInfoListener.downloadNeedSaved(this);
     }
 
     // Notify observers that this download's status has changed.
-    protected synchronized void stateChanged() {
-        for (final DownloadStatusListener downloadStatusListener : downloadStatusListeners)
-            SwingUtilities.invokeLater(new Runnable() { // togo cut and  past to download dialog
-            public void run() { // todo must got to class that listen this class
-                downloadStatusListener.downloadStatusChanged(AbstractDownload.this); // todo dDOwnload maybe
-            }
-        });
+    protected void notifyStatusChanged() {
+        final List<DownloadStatusListener> listenersSnapshot;
+        synchronized (this) {
+            listenersSnapshot = new ArrayList<>(downloadStatusListeners);
+        }
+
+        for (DownloadStatusListener listener : listenersSnapshot) {
+            SwingUtilities.invokeLater(() -> listener.downloadStatusChanged(AbstractDownload.this));
+        }
     }
 
     @Override
     public void downloadStatusChanged(DownloadRange downloadRange, int readed) {
         updateInfo(downloadRange, readed);
-        stateChanged();
+        notifyStatusChanged();
     }
 
     private synchronized void updateInfo(DownloadRange downloadRange, int readed) {

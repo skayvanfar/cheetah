@@ -93,7 +93,7 @@ public class HttpDownload extends AbstractDownload implements Download {
             resumeCapability = responseCode == 206;
 
             connection.disconnect();
-            stateChanged();
+            notifyStatusChanged();
 
             //         createDownloadRanges(connection, partCount);
         } catch (UnknownHostException e) {
