@@ -39,3 +39,4 @@ Gemefile.lock
 
 # IDE
 /.idea
+/dependency-reduced-pom.xml
