@@ -20,10 +20,27 @@ import java.util.Collections;
 
 class AbstractDownloadTest {
 
-    TestDownload download;
-    URL url = new URL("http://example.com/file");
-    File downloadPath = new File("testDownload");
-    File downloadRangePath = new File("testRange");
+    private AbstractDownload download;
+
+    private static class TestDownload extends AbstractDownload {
+        public TestDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
+            super(id, url, downloadName, partCount, downloadPath, downloadRangePath, protocolType);
+        }
+
+        @Override
+        public Void call() {
+            return null; // no-op
+        }
+
+        @Override
+        public void createDownloadRanges() {
+            // no-op for tests
+        }
+    }
+
+    private URL url = new URL("http://example.com/file");
+    private File downloadPath = new File("testDownload");
+    private File downloadRangePath = new File("testRange");
 
     AbstractDownloadTest() throws MalformedURLException {
     }
