@@ -439,14 +439,12 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
      */
     @Override
     public void startTransferRateMonitor() {
-        if (scheduler == null || scheduler.isShutdown()) {
+        if (scheduler == null || scheduler.isShutdown() || scheduler.isTerminated()) {
             scheduler = BackgroundExecutor.getScheduler();
         }
 
         scheduler.scheduleAtFixedRate(() -> {
-            if (status != DownloadStatus.DOWNLOADING) {
-                // Stop the scheduler if not downloading anymore
-                scheduler.shutdown();
+            if (status == DownloadStatus.COMPLETE || status == DownloadStatus.CANCELLED || status == DownloadStatus.ERROR) {
                 return;
             }
 
@@ -457,7 +455,6 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
                     TimeUnit.SEC);
 
             transferRate = ConnectionUtil.roundSizeTypeFormat(rate, SizeType.BYTE) + "/sec";
-
             notifyStatusChanged();
         }, 0, 1, java.util.concurrent.TimeUnit.SECONDS);
     }
