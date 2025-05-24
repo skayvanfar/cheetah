@@ -197,7 +197,6 @@ class AddNewDownloadDialog extends JDialog {
         this.addNewDownloadListener = addNewDownloadListener;
     }
 
-    // can be in DownloadManagerUI
     // Add a new download.
     private void addAction() {
         class WindowListener extends WindowAdapter {

@@ -26,6 +26,8 @@ import enums.ConnectionType;
 import enums.DownloadCategory;
 import enums.DownloadStatus;
 import enums.ProtocolType;
+import gui.controller.DownloadController;
+import gui.controller.DownloadControllerImpl;
 import gui.listener.*;
 import gui.preference.PreferenceDialog;
 import model.Download;
@@ -114,9 +116,10 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
 
         mainToolbar = new MainToolBar();
         categoryPanel = new CategoryPanel(preferencesDTO.getPreferencesSaveDTO().getPreferencesDirectoryCategoryDTOs());
-        downloadPanel = new DownloadPanel(this, preferencesDTO.getPreferencesSaveDTO().getDatabasePath(),
-                preferencesDTO.getPreferencesConnectionDTO().getConnectionTimeOut(), preferencesDTO.getPreferencesConnectionDTO().getReadTimeOut());
-        messagePanel = new MessagePanel(this);
+        DownloadController downloadController = new DownloadControllerImpl(preferencesDTO.getPreferencesSaveDTO().getDatabasePath(), preferencesDTO.getPreferencesConnectionDTO().getConnectionTimeOut(),
+                preferencesDTO.getPreferencesConnectionDTO().getReadTimeOut());
+        downloadPanel = new DownloadPanel(this, downloadController);
+        messagePanel = new MessagePanel();
         JTabbedPane mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
         mainSplitPane.setOneTouchExpandable(true);
@@ -280,8 +283,9 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
                 if (action == JOptionPane.OK_OPTION) {
                     logger.info("Window Closing");
                     downloadPanel.actionPauseAll();
-                    AddNewDownloadDialog.shutdownThreads();
+
                     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        AddNewDownloadDialog.shutdownThreads();
                         DownloadExecutor.shutdown();
                     }));
                     dispose();
