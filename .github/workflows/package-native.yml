@@ -30,7 +30,7 @@ jobs:
           echo "Found JAR: $JAR"
 
       - name: Upload JAR as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cheetah-jar
           path: target/${{ steps.find_jar.outputs.jar_name }}
@@ -62,7 +62,7 @@ jobs:
           java-version: 17
 
       - name: Download JAR artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: cheetah-jar
           path: target/
