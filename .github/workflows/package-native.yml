@@ -78,7 +78,7 @@ jobs:
       - name: Find installer file
         id: find_installer
         run: |
-          FILE=$(ls dist/Cheetah*.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }})
+          FILE=$(ls dist/cheetah*.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }})
           echo "installer_file=$FILE" >> $GITHUB_OUTPUT
 
       - name: Upload installer to release
@@ -86,7 +86,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ steps.find_installer.outputs.installer_file }}
-          asset_name: cheetah-${{ runner.os }}-${{ github.event.release.tag_name }}.installer
+          asset_name: cheetah-${{ runner.os }}-${{ github.event.release.tag_name }}
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
