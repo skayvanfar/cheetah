@@ -81,19 +81,23 @@ jobs:
         run: |
           if [[ "${{ runner.os }}" == "macOS" ]]; then
             FILE=$(ls dist/Cheetah*.dmg)
+            EXT=".dmg"
           elif [[ "${{ runner.os }}" == "Windows" ]]; then
             FILE=$(ls dist/Cheetah*.exe)
+            EXT=".exe"
           else
             FILE=$(ls dist/cheetah_*.deb)
+            EXT=".deb"
           fi
           echo "installer_file=$FILE" >> $GITHUB_OUTPUT
+          echo "ext=$EXT" >> $GITHUB_OUTPUT
 
       - name: Upload installer to release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ steps.find_installer.outputs.installer_file }}
-          asset_name: cheetah-${{ runner.os }}-${{ github.event.release.tag_name }}
+          asset_name: cheetah-${{ runner.os }}-${{ github.event.release.tag_name }}${{ steps.find_installer.outputs.ext }}
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
