@@ -5,6 +5,9 @@ import controller.DatabaseControllerImpl;
 import model.Download;
 import enums.DownloadStatus;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,6 +104,22 @@ public class DownloadControllerImpl implements DownloadController {
             databaseController.save(download);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void openFile(String filePath) {
+        try {
+            Desktop.getDesktop().open(new File(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void remove(Download selectedDownload) {
+        synchronized (downloads) {
+            downloads.add(selectedDownload);
         }
     }
 

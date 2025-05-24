@@ -119,7 +119,7 @@ public class DownloadManagerGUI extends JFrame implements ActionListener {
         DownloadController downloadController = new DownloadControllerImpl(preferencesDTO.getPreferencesSaveDTO().getDatabasePath(), preferencesDTO.getPreferencesConnectionDTO().getConnectionTimeOut(),
                 preferencesDTO.getPreferencesConnectionDTO().getReadTimeOut());
         downloadPanel = new DownloadPanel(this, downloadController);
-        messagePanel = new MessagePanel(this);
+        messagePanel = new MessagePanel();
         JTabbedPane mainTabPane = new JTabbedPane();
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categoryPanel, mainTabPane);
         mainSplitPane.setOneTouchExpandable(true);

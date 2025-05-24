@@ -541,7 +541,6 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
 
     private synchronized void updateInfo(DownloadRange downloadRange, int readed) {
         downloaded += readed;
-  //      setTransferRate(readed);
 
         switch (downloadRange.getConnectionStatus()) {
             case DISCONNECTED:
@@ -554,13 +553,9 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
                 }
 
                 logger.info("disconnect from download .... ");
-                //      if (isLastDownloadRange(ConnectionStatus.DISCONNECTED)) {
-
-                //      }
                 break;
             case ERROR:
                 logger.info("error again");
-        //        downloadRange.resume(); // todo test for redownload
                 status = DownloadStatus.ERROR;
                 if (downloadInfoListener != null)
                     downloadInfoListener.downloadNeedSaved(this);

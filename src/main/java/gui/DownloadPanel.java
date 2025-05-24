@@ -45,9 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @author <a href="kayvanfar.sj@gmail.com">Saeed Kayvanfar</a> 9/10/2015
- */
 public class DownloadPanel extends JPanel implements DownloadInfoListener, DownloadStatusListener, ActionListener {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -56,7 +53,6 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     private final java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("messages/messages"); // NOI18N
 
     private DownloadController downloadController;
-
 
     private JTable downloadTable;
 
@@ -72,15 +68,12 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     private JMenuItem removeFromQueueItem;
     private JMenuItem propertiesItem;
 
-
     // download table's data model.
     private DownloadsTableModel downloadsTableModel;
 
     // Currently selected download.
     private Download selectedDownload;
 
-
-    // List of DownloadDialogs
     private List<DownloadDialog> downloadDialogs;
 
     private DownloadAskDialog downloadAskDialog;
@@ -198,7 +191,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             downloadDialog.setDownloadRanges(download.getDownloadRangeList());
         }
         setColumnWidths();
-        setStateOfMenuItems(); // todo may be remove this
+        setStateOfMenuItems();
     }
 
     private void setStateOfMenuItems() {
@@ -338,19 +331,11 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
     }
 
     public void actionOpenFile() {
-        try {
-            Desktop.getDesktop().open(new File(selectedDownload.getDownloadPath() + File.separator + selectedDownload.getDownloadName()));
-        } catch (IOException e) {
-            e.printStackTrace(); //todo
-        }
+        downloadController.openFile(selectedDownload.getDownloadPath() + File.separator + selectedDownload.getDownloadName());
     }
 
     public void actionOpenFolder() {
-        try {
-            Desktop.getDesktop().open(selectedDownload.getDownloadPath());
-        } catch (IOException e) {
-            e.printStackTrace(); //todo
-        }
+        downloadController.openFile(selectedDownload.getDownloadPath().getPath());
     }
 
     // Pause the selected download.
@@ -389,7 +374,7 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
             clearing = true;
             downloadsTableModel.clearDownload(selectedDownload);
             if (downloadController.getAllDownloads().contains(selectedDownload))
-                downloadController.getAllDownloads().remove(selectedDownload);
+                downloadController.remove(selectedDownload);
             clearing = false;
 
             //    selectedDownloadDialog = null;
@@ -420,7 +405,6 @@ public class DownloadPanel extends JPanel implements DownloadInfoListener, Downl
 
             clearing = true;
             downloadsTableModel.clearDownloads(selectedDownloads);
-            downloadController.getAllDownloads().removeAll(selectedDownloads);
             clearing = false;
 
             try {

@@ -11,4 +11,6 @@ public interface DownloadController {
     void addDownload(Download download);
     void deleteDownload(Download download);
     void saveDownload(Download download);
+    void openFile(String filePath);
+    void remove(Download selectedDownload);
 }
