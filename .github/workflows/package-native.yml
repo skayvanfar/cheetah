@@ -72,11 +72,17 @@ jobs:
           mkdir dist
           jpackage --input target --main-jar ${{ needs.build-jar.outputs.jar-name }} --name Cheetah --main-class gui.Application --type ${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }} --icon icons/${{ runner.os == 'Windows' && 'cheetah.ico' || runner.os == 'macOS' && 'cheetah.icns' || 'cheetah.png' }} --dest dist --app-version ${{ github.event.release.tag_name }}
 
+      - name: Find installer file
+        id: find_installer
+        run: |
+          FILE=$(ls dist/Cheetah*.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }})
+          echo "installer_file=$FILE" >> $GITHUB_OUTPUT
+
       - name: Upload installer to release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dist/Cheetah*.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }}
+          asset_path: ${{ steps.find_installer.outputs.installer_file }}
           asset_name: cheetah-${{ runner.os }}-${{ github.event.release.tag_name }}.installer
           asset_content_type: application/octet-stream
         env:
