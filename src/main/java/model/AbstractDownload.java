@@ -34,6 +34,8 @@ import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Skeletal Implementation of Download interface.
@@ -79,6 +81,9 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
     protected Vector<DownloadStatusListener> downloadStatusListeners;
 
     private final static int N_CPUS = Runtime.getRuntime().availableProcessors();
+
+    private ScheduledExecutorService scheduler;
+    private final AtomicInteger previousDownloaded = new AtomicInteger(0);
 
     // Constructor for download.
     public AbstractDownload(int id, URL url, String downloadName, int partCount, File downloadPath, File downloadRangePath, ProtocolType protocolType) {
@@ -434,25 +439,27 @@ public abstract class AbstractDownload implements Download, DownloadRangeStatusL
      */
     @Override
     public void startTransferRateMonitor() {
-        BackgroundExecutor.getExecutor().submit(() -> {
-            int previousDownloaded = 0;
+        if (scheduler == null || scheduler.isShutdown()) {
+            scheduler = BackgroundExecutor.getScheduler();
+        }
 
-            while (status == DownloadStatus.DOWNLOADING && !Thread.currentThread().isInterrupted()) {
-                transferRate = ConnectionUtil.roundSizeTypeFormat(
-                        ConnectionUtil.calculateTransferRateInUnit(
-                                downloaded - previousDownloaded, 1000, TimeUnit.SEC),
-                        SizeType.BYTE) + "/sec";
-
-                previousDownloaded = downloaded;
-                notifyStatusChanged();
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+        scheduler.scheduleAtFixedRate(() -> {
+            if (status != DownloadStatus.DOWNLOADING) {
+                // Stop the scheduler if not downloading anymore
+                scheduler.shutdown();
+                return;
             }
-        });
+
+            int currentDownloaded = downloaded;
+            float rate = ConnectionUtil.calculateTransferRateInUnit(
+                    currentDownloaded - previousDownloaded.getAndSet(currentDownloaded),
+                    1000,
+                    TimeUnit.SEC);
+
+            transferRate = ConnectionUtil.roundSizeTypeFormat(rate, SizeType.BYTE) + "/sec";
+
+            notifyStatusChanged();
+        }, 0, 1, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     private long previousTime = 0;

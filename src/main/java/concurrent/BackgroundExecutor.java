@@ -1,20 +1,21 @@
 package concurrent;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class BackgroundExecutor {
-    private static final ExecutorService daemonExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setDaemon(true); // Mark thread as daemon
-            return t;
-        }
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        t.setName("background-scheduler");
+        return t;
     });
 
-    public static ExecutorService getExecutor() {
-        return daemonExecutor;
+    public static ScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
+
+    public static void shutdown() {
+        scheduler.shutdown();
     }
 }
