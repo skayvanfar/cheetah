@@ -46,7 +46,7 @@ import java.util.concurrent.*;
  * @see model.Download
  */
 @NotThreadSafe
-public abstract class AbstractDownload implements Download, Callable<Void>, DownloadRangeStatusListener {
+public abstract class AbstractDownload implements Download, DownloadRangeStatusListener {
 
     // Logger
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -487,7 +487,12 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
 
     // Start or resume downloading.
     protected void download() {
-        DownloadExecutor.getExecutor().submit(this);
+        try {
+            call(); // Directly call the method
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Optionally, handle the failure or call error()
+        }
 
         /**     Second way that use SwingWorker
          SwingWorker<Void, String> worker = new PausableSwingWorker<Void, String>() {
@@ -530,7 +535,6 @@ public abstract class AbstractDownload implements Download, Callable<Void>, Down
          worker.execute(); */
     }
 
-    @Override
     public abstract Void call();
 
     /**
