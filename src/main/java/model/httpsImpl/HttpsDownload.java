@@ -89,7 +89,6 @@ public class HttpsDownload extends AbstractDownload implements Download {
 
             resumeCapability = responseCode == 206;
 
-            connection.disconnect();
             stateChanged();
 
             //         createDownloadRanges(connection, partCount);
