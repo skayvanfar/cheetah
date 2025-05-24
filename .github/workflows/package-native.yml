@@ -72,6 +72,9 @@ jobs:
           mkdir dist
           jpackage --input target --main-jar ${{ needs.build-jar.outputs.jar-name }} --name Cheetah --main-class gui.Application --type ${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'dmg' || 'deb' }} --icon icons/${{ runner.os == 'Windows' && 'cheetah.ico' || runner.os == 'macOS' && 'cheetah.icns' || 'cheetah.png' }} --dest dist --app-version ${{ github.event.release.tag_name }}
 
+      - name: List dist contents for debugging
+        run: ls -l dist
+
       - name: Find installer file
         id: find_installer
         run: |
